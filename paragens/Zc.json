@@ -1,0 +1,254 @@
+{
+    "ZC": {
+        "ida": [
+            {
+                "codigo": "AANT5",
+                "nome": "Alameda Das Antas",
+                "lat": 41.16156,
+                "lon": -8.58368
+            },
+            {
+                "codigo": "EDRG1",
+                "nome": "Estádio Do Dragão",
+                "lat": 41.16049,
+                "lon": -8.58284
+            },
+            {
+                "codigo": "CRJ1",
+                "nome": "Corujeira",
+                "lat": 41.15783,
+                "lon": -8.58079
+            },
+            {
+                "codigo": "PCRJ1",
+                "nome": "Pr. Da Corujeira",
+                "lat": 41.15556,
+                "lon": -8.58019
+            },
+            {
+                "codigo": "JFC",
+                "nome": "Junta Freg. Campanhã",
+                "lat": 41.15174,
+                "lon": -8.58309
+            },
+            {
+                "codigo": "FSTO1",
+                "nome": "Ferr. Dos Santos",
+                "lat": 41.15017,
+                "lon": -8.58169
+            },
+            {
+                "codigo": "BFAL1",
+                "nome": "Br. Falcão",
+                "lat": 41.14817,
+                "lon": -8.57944
+            },
+            {
+                "codigo": "MCAM3",
+                "nome": "Monte Campanhã",
+                "lat": 41.14736,
+                "lon": -8.57726
+            },
+            {
+                "codigo": "ICAM1",
+                "nome": "Igreja Campanhã",
+                "lat": 41.14812,
+                "lon": -8.57463
+            },
+            {
+                "codigo": "QBNJ2",
+                "nome": "Quinta De Bonjóia",
+                "lat": 41.14920,
+                "lon": -8.57211
+            },
+            {
+                "codigo": "TBNJ2",
+                "nome": "Travessa De Bonjóia",
+                "lat": 41.14920,
+                "lon": -8.57018
+            },
+            {
+                "codigo": "PINC2",
+                "nome": "Pinheiro De Campanhã",
+                "lat": 41.14930,
+                "lon": -8.56784
+            },
+            {
+                "codigo": "CMP5",
+                "nome": "Campanhã",
+                "lat": 41.14929,
+                "lon": -8.56385
+            },
+            {
+                "codigo": "NDA1",
+                "nome": "Noeda",
+                "lat": 41.14652,
+                "lon": -8.56044
+            },
+            {
+                "codigo": "EDP1",
+                "nome": "Edp",
+                "lat": 41.14364,
+                "lon": -8.56064
+            },
+            {
+                "codigo": "FRX3",
+                "nome": "Freixo",
+                "lat": 41.14150,
+                "lon": -8.56372
+            },
+            {
+                "codigo": "RSH",
+                "nome": "Sra. Da Hora",
+                "lat": 41.14194,
+                "lon": -8.56711
+            },
+            {
+                "codigo": "SP3",
+                "nome": "S. Pedro",
+                "lat": 41.14256,
+                "lon": -8.57008
+            },
+            {
+                "codigo": "MERL",
+                "nome": "Meiral",
+                "lat": 41.14324,
+                "lon": -8.57262
+            },
+            {
+                "codigo": "VML",
+                "nome": "Viela Meiral",
+                "lat": 41.14441,
+                "lon": -8.57476
+            },
+            {
+                "codigo": "LGT1",
+                "nome": "Lagarteiro",
+                "lat": 41.14589,
+                "lon": -8.57398
+            },
+            {
+                "codigo": "AZV1",
+                "nome": "Azevedo",
+                "lat": 41.14711,
+                "lon": -8.57053
+            },
+            {
+                "codigo": "TVA1",
+                "nome": "Tv. Aldeia",
+                "lat": 41.14813,
+                "lon": -8.56728
+            },
+            {
+                "codigo": "PNG3",
+                "nome": "Pêgo Negro",
+                "lat": 41.15135,
+                "lon": -8.56631
+            },
+            {
+                "codigo": "JD1",
+                "nome": "João De Deus",
+                "lat": 41.15414,
+                "lon": -8.56661
+            },
+            {
+                "codigo": "AREI",
+                "nome": "Areias",
+                "lat": 41.15715,
+                "lon": -8.56834
+            }
+        ],
+        "volta": [
+            {
+                "codigo": "AREI2",
+                "nome": "Areias",
+                "lat": 41.15725,
+                "lon": -8.56846
+            },
+            {
+                "codigo": "JD4",
+                "nome": "João De Deus",
+                "lat": 41.15424,
+                "lon": -8.56671
+            },
+            {
+                "codigo": "PNG4",
+                "nome": "Pêgo Negro",
+                "lat": 41.15138,
+                "lon": -8.56643
+            },
+            {
+                "codigo": "TVA2",
+                "nome": "Tv. Aldeia",
+                "lat": 41.14818,
+                "lon": -8.56742
+            },
+            {
+                "codigo": "AZV",
+                "nome": "Azevedo",
+                "lat": 41.14716,
+                "lon": -8.57065
+            },
+            {
+                "codigo": "LGT2",
+                "nome": "Lagarteiro",
+                "lat": 41.14594,
+                "lon": -8.57410
+            },
+            {
+                "codigo": "RAZ",
+                "nome": "R. Azevedo",
+                "lat": 41.14446,
+                "lon": -8.57488
+            },
+            {
+                "codigo": "BNJ1",
+                "nome": "Bonjóia",
+                "lat": 41.14620,
+                "lon": -8.57500
+            },
+            {
+                "codigo": "ICAM2",
+                "nome": "Igreja De Campanhã",
+                "lat": 41.14818,
+                "lon": -8.57475
+            },
+            {
+                "codigo": "MCAM2",
+                "nome": "Monte Campanhã",
+                "lat": 41.14742,
+                "lon": -8.57738
+            },
+            {
+                "codigo": "BFAL2",
+                "nome": "Br. Falcão",
+                "lat": 41.14823,
+                "lon": -8.57956
+            },
+            {
+                "codigo": "CHOL2",
+                "nome": "Chaves Oliveira",
+                "lat": 41.15024,
+                "lon": -8.58180
+            },
+            {
+                "codigo": "CRJ2",
+                "nome": "Corujeira",
+                "lat": 41.15788,
+                "lon": -8.58091
+            },
+            {
+                "codigo": "EDRG2",
+                "nome": "Estádio Do Dragão",
+                "lat": 41.16054,
+                "lon": -8.58296
+            },
+            {
+                "codigo": "AANT5",
+                "nome": "Alameda Das Antas",
+                "lat": 41.16156,
+                "lon": -8.58368
+            }
+        ]
+    }
+}

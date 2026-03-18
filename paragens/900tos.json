@@ -1,0 +1,3878 @@
+{
+    "900": {
+        "ida": [
+            {
+                "codigo": "CORD5",
+                "nome": "Cordoaria",
+                "lat": 41.14652,
+                "lon": -8.61466
+            },
+            {
+                "codigo": "CMO",
+                "nome": "Carmo",
+                "lat": 41.14716,
+                "lon": -8.61596
+            },
+            {
+                "codigo": "HSA1",
+                "nome": "Hosp. Sto. António",
+                "lat": 41.14682,
+                "lon": -8.61864
+            },
+            {
+                "codigo": "PAL6",
+                "nome": "Palácio",
+                "lat": 41.14819,
+                "lon": -8.62534
+            },
+            {
+                "codigo": "EQ4",
+                "nome": "Entre Quintas",
+                "lat": 41.14856,
+                "lon": -8.63004
+            },
+            {
+                "codigo": "IGRM2",
+                "nome": "Igreja De Massarelos",
+                "lat": 41.14833,
+                "lon": -8.63381
+            },
+            {
+                "codigo": "MON2",
+                "nome": "Monchique",
+                "lat": 41.14582,
+                "lon": -8.62772
+            },
+            {
+                "codigo": "ALFG2",
+                "nome": "Alfândega",
+                "lat": 41.14292,
+                "lon": -8.62121
+            },
+            {
+                "codigo": "MRG2",
+                "nome": "Miragaia",
+                "lat": 41.14175,
+                "lon": -8.61864
+            },
+            {
+                "codigo": "RBRI2",
+                "nome": "Ribeira (infante)",
+                "lat": 41.14041,
+                "lon": -8.61483
+            },
+            {
+                "codigo": "RBR1",
+                "nome": "Ribeira",
+                "lat": 41.14064,
+                "lon": -8.61153
+            },
+            {
+                "codigo": "ELVG1",
+                "nome": "Elevador Guindais",
+                "lat": 41.14112,
+                "lon": -8.60942
+            },
+            {
+                "codigo": "PLU3",
+                "nome": "Ponte Luíz I",
+                "lat": 41.14013,
+                "lon": -8.60943
+            },
+            {
+                "codigo": "GNR3",
+                "nome": "Gnr",
+                "lat": 41.13524,
+                "lon": -8.60831
+            },
+            {
+                "codigo": "CM5",
+                "nome": "Camões",
+                "lat": 41.13154,
+                "lon": -8.60752
+            },
+            {
+                "codigo": "GENT2",
+                "nome": "General Torres",
+                "lat": 41.12783,
+                "lon": -8.60711
+            },
+            {
+                "codigo": "DSRR1",
+                "nome": "Daniel Serrão",
+                "lat": 41.12492,
+                "lon": -8.60672
+            },
+            {
+                "codigo": "CMG3",
+                "nome": "Câmara De Gaia",
+                "lat": 41.12194,
+                "lon": -8.60623
+            },
+            {
+                "codigo": "JD3",
+                "nome": "João De Deus",
+                "lat": 41.11894,
+                "lon": -8.60534
+            },
+            {
+                "codigo": "PREP2",
+                "nome": "Parque Da República",
+                "lat": 41.11651,
+                "lon": -8.60461
+            },
+            {
+                "codigo": "BIBG1",
+                "nome": "Biblioteca De Gaia",
+                "lat": 41.11362,
+                "lon": -8.60372
+            },
+            {
+                "codigo": "DJM1",
+                "nome": "D.joão Ii (metro)",
+                "lat": 41.11074,
+                "lon": -8.60281
+            },
+            {
+                "codigo": "SO2",
+                "nome": "Sto. Ovídio",
+                "lat": 41.10752,
+                "lon": -8.60193
+            },
+            {
+                "codigo": "ARR",
+                "nome": "António R.rocha",
+                "lat": 41.10423,
+                "lon": -8.60552
+            },
+            {
+                "codigo": "FMPT",
+                "nome": "Fernão Mendes Pinto",
+                "lat": 41.10221,
+                "lon": -8.60941
+            },
+            {
+                "codigo": "GAZ1",
+                "nome": "Gomes Azurara",
+                "lat": 41.10052,
+                "lon": -8.61312
+            },
+            {
+                "codigo": "TLHM1",
+                "nome": "Telheira Do Meio",
+                "lat": 41.09893,
+                "lon": -8.61661
+            },
+            {
+                "codigo": "BRRA1",
+                "nome": "Barreira",
+                "lat": 41.09641,
+                "lon": -8.61984
+            },
+            {
+                "codigo": "ALRD3",
+                "nome": "Alves Redol",
+                "lat": 41.09342,
+                "lon": -8.62252
+            },
+            {
+                "codigo": "JFVP3",
+                "nome": "Junta Freg. Vilar Do Paraíso",
+                "lat": 41.09113,
+                "lon": -8.62471
+            },
+            {
+                "codigo": "ALMT1",
+                "nome": "Alminhas Da Tarouquela",
+                "lat": 41.08862,
+                "lon": -8.62723
+            },
+            {
+                "codigo": "JQBX1",
+                "nome": "Junqueira De Baixo",
+                "lat": 41.08621,
+                "lon": -8.63012
+            },
+            {
+                "codigo": "SMRT1",
+                "nome": "Capela S. Martinho",
+                "lat": 41.08382,
+                "lon": -8.63344
+            },
+            {
+                "codigo": "AMSE",
+                "nome": "A.santos (escolas)",
+                "lat": 41.08253,
+                "lon": -8.63582
+            },
+            {
+                "codigo": "LEIR2",
+                "nome": "Largo Eirós",
+                "lat": 41.08112,
+                "lon": -8.63751
+            },
+            {
+                "codigo": "COEM",
+                "nome": "Coelho Moreira",
+                "lat": 41.08051,
+                "lon": -8.63982
+            },
+            {
+                "codigo": "VAL",
+                "nome": "Valadares (est)",
+                "lat": 41.07923,
+                "lon": -8.64321
+            },
+            {
+                "codigo": "CPNH2",
+                "nome": "Campolinho",
+                "lat": 41.08021,
+                "lon": -8.64812
+            },
+            {
+                "codigo": "JP3",
+                "nome": "José Portugal",
+                "lat": 41.08182,
+                "lon": -8.65063
+            },
+            {
+                "codigo": "CDFT1",
+                "nome": "Cedofeita",
+                "lat": 41.08271,
+                "lon": -8.65362
+            },
+            {
+                "codigo": "BCH1",
+                "nome": "Bicheiros",
+                "lat": 41.08212,
+                "lon": -8.65681
+            },
+            {
+                "codigo": "TART1",
+                "nome": "Tartumil",
+                "lat": 41.08264,
+                "lon": -8.65992
+            },
+            {
+                "codigo": "CHVL1",
+                "nome": "Chão Do Vale",
+                "lat": 41.08392,
+                "lon": -8.66311
+            },
+            {
+                "codigo": "RFEI1",
+                "nome": "R. Feital",
+                "lat": 41.08581,
+                "lon": -8.66482
+            },
+            {
+                "codigo": "NTRT3",
+                "nome": "Nuno Tristão",
+                "lat": 41.08652,
+                "lon": -8.66723
+            },
+            {
+                "codigo": "PVN1",
+                "nome": "Praia Valadares Norte",
+                "lat": 41.08471,
+                "lon": -8.66851
+            },
+            {
+                "codigo": "CRNO1",
+                "nome": "Centro Reabilitação Norte",
+                "lat": 41.08152,
+                "lon": -8.66792
+            },
+            {
+                "codigo": "PVS1",
+                "nome": "Praia Valadares Sul",
+                "lat": 41.07923,
+                "lon": -8.66711
+            },
+            {
+                "codigo": "VGM2",
+                "nome": "Vasco Gama",
+                "lat": 41.07721,
+                "lon": -8.66442
+            },
+            {
+                "codigo": "RSAS1",
+                "nome": "Rosas",
+                "lat": 41.07682,
+                "lon": -8.66013
+            },
+            {
+                "codigo": "FRCE1",
+                "nome": "Francelos (estação)",
+                "lat": 41.07651,
+                "lon": -8.65212
+            },
+            {
+                "codigo": "FRC",
+                "nome": "Francelos",
+                "lat": 41.07764,
+                "lon": -8.64756
+            }
+        ],
+        "volta": [
+            {
+                "codigo": "FRC",
+                "nome": "Francelos",
+                "lat": 41.07764,
+                "lon": -8.64756
+            },
+            {
+                "codigo": "FRCE2",
+                "nome": "Francelos (estação)",
+                "lat": 41.07641,
+                "lon": -8.65203
+            },
+            {
+                "codigo": "RSAS2",
+                "nome": "Rosas",
+                "lat": 41.07672,
+                "lon": -8.66024
+            },
+            {
+                "codigo": "VGM1",
+                "nome": "Vasco Gama",
+                "lat": 41.07731,
+                "lon": -8.66451
+            },
+            {
+                "codigo": "PVS2",
+                "nome": "Praia Valadares Sul",
+                "lat": 41.07932,
+                "lon": -8.66722
+            },
+            {
+                "codigo": "CRNO2",
+                "nome": "Centro Reabilitação Norte",
+                "lat": 41.08163,
+                "lon": -8.66801
+            },
+            {
+                "codigo": "PVN2",
+                "nome": "Praia Valadares Norte",
+                "lat": 41.08482,
+                "lon": -8.66862
+            },
+            {
+                "codigo": "NTRT4",
+                "nome": "Nuno Tristão",
+                "lat": 41.08661,
+                "lon": -8.66734
+            },
+            {
+                "codigo": "RFEI2",
+                "nome": "R. Feital",
+                "lat": 41.08592,
+                "lon": -8.66491
+            },
+            {
+                "codigo": "CHVL2",
+                "nome": "Chão Do Vale",
+                "lat": 41.08401,
+                "lon": -8.66322
+            },
+            {
+                "codigo": "TART2",
+                "nome": "Tartumil",
+                "lat": 41.08273,
+                "lon": -8.66003
+            },
+            {
+                "codigo": "BCH2",
+                "nome": "Bicheiros",
+                "lat": 41.08221,
+                "lon": -8.65692
+            },
+            {
+                "codigo": "CDFT2",
+                "nome": "Cedofeita",
+                "lat": 41.08282,
+                "lon": -8.65371
+            },
+            {
+                "codigo": "JP1",
+                "nome": "José Portugal",
+                "lat": 41.08191,
+                "lon": -8.65072
+            },
+            {
+                "codigo": "CPNH1",
+                "nome": "Campolinho",
+                "lat": 41.08032,
+                "lon": -8.64821
+            },
+            {
+                "codigo": "E109",
+                "nome": "Estr.nacional 109",
+                "lat": 41.07894,
+                "lon": -8.64452
+            },
+            {
+                "codigo": "VAL1",
+                "nome": "Valadares",
+                "lat": 41.07942,
+                "lon": -8.64333
+            },
+            {
+                "codigo": "LEIR",
+                "nome": "Largo Eirós",
+                "lat": 41.08123,
+                "lon": -8.63762
+            },
+            {
+                "codigo": "TPEN",
+                "nome": "Tv. Penedo",
+                "lat": 41.08351,
+                "lon": -8.63841
+            },
+            {
+                "codigo": "SEMR",
+                "nome": "Seminário",
+                "lat": 41.08562,
+                "lon": -8.63992
+            },
+            {
+                "codigo": "VALE",
+                "nome": "Valadares (escolas)",
+                "lat": 41.08723,
+                "lon": -8.64151
+            },
+            {
+                "codigo": "BNV2",
+                "nome": "Boa Nova",
+                "lat": 41.08552,
+                "lon": -8.63452
+            },
+            {
+                "codigo": "SMRT2",
+                "nome": "Capela S. Martinho",
+                "lat": 41.08391,
+                "lon": -8.63353
+            },
+            {
+                "codigo": "JQBX2",
+                "nome": "Junqueira De Baixo",
+                "lat": 41.08632,
+                "lon": -8.63021
+            },
+            {
+                "codigo": "ALMT2",
+                "nome": "Alminhas Da Tarouquela",
+                "lat": 41.08871,
+                "lon": -8.62734
+            },
+            {
+                "codigo": "JFVP4",
+                "nome": "Junta Freg. Vilar Do Paraíso",
+                "lat": 41.09122,
+                "lon": -8.62482
+            },
+            {
+                "codigo": "ALRD4",
+                "nome": "Alves Redol",
+                "lat": 41.09351,
+                "lon": -8.62261
+            },
+            {
+                "codigo": "BRRA2",
+                "nome": "Barreira",
+                "lat": 41.09652,
+                "lon": -8.61993
+            },
+            {
+                "codigo": "TLHM2",
+                "nome": "Telheira Do Meio",
+                "lat": 41.09902,
+                "lon": -8.61672
+            },
+            {
+                "codigo": "1RAS2",
+                "nome": "R. Da Rasa",
+                "lat": 41.10182,
+                "lon": -8.60831
+            },
+            {
+                "codigo": "1PA2",
+                "nome": "Pinto Aguiar",
+                "lat": 41.10443,
+                "lon": -8.60421
+            },
+            {
+                "codigo": "SO4",
+                "nome": "Sto. Ovídio",
+                "lat": 41.10724,
+                "lon": -8.60222
+            },
+            {
+                "codigo": "DJM2",
+                "nome": "D.joão Ii (metro)",
+                "lat": 41.11082,
+                "lon": -8.60301
+            },
+            {
+                "codigo": "BIBG2",
+                "nome": "Biblioteca De Gaia",
+                "lat": 41.11371,
+                "lon": -8.60392
+            },
+            {
+                "codigo": "JD2",
+                "nome": "João De Deus",
+                "lat": 41.11902,
+                "lon": -8.60551
+            },
+            {
+                "codigo": "PDC",
+                "nome": "Pádua Correia",
+                "lat": 41.12213,
+                "lon": -8.60641
+            },
+            {
+                "codigo": "LGAV2",
+                "nome": "Lgo. Dos Aviadores",
+                "lat": 41.12452,
+                "lon": -8.60672
+            },
+            {
+                "codigo": "HG3",
+                "nome": "Hosp. Gaia",
+                "lat": 41.12581,
+                "lon": -8.60691
+            },
+            {
+                "codigo": "GENT",
+                "nome": "General Torres",
+                "lat": 41.12792,
+                "lon": -8.60732
+            },
+            {
+                "codigo": "CM3",
+                "nome": "Camões",
+                "lat": 41.13161,
+                "lon": -8.60771
+            },
+            {
+                "codigo": "GNR2",
+                "nome": "Gnr",
+                "lat": 41.13532,
+                "lon": -8.60852
+            },
+            {
+                "codigo": "PLU2",
+                "nome": "Ponte Luíz I",
+                "lat": 41.14022,
+                "lon": -8.60961
+            },
+            {
+                "codigo": "ELVG2",
+                "nome": "Elevador Guindais",
+                "lat": 41.14121,
+                "lon": -8.60962
+            },
+            {
+                "codigo": "RBR2",
+                "nome": "Ribeira",
+                "lat": 41.14073,
+                "lon": -8.61172
+            },
+            {
+                "codigo": "RBRI1",
+                "nome": "Ribeira (infante)",
+                "lat": 41.14052,
+                "lon": -8.61491
+            },
+            {
+                "codigo": "MRG1",
+                "nome": "Miragaia",
+                "lat": 41.14184,
+                "lon": -8.61873
+            },
+            {
+                "codigo": "ALFG1",
+                "nome": "Alfândega",
+                "lat": 41.14301,
+                "lon": -8.62132
+            },
+            {
+                "codigo": "MON1",
+                "nome": "Monchique",
+                "lat": 41.14592,
+                "lon": -8.62781
+            },
+            {
+                "codigo": "IGRM1",
+                "nome": "Igreja De Massarelos",
+                "lat": 41.14842,
+                "lon": -8.63392
+            },
+            {
+                "codigo": "EQ3",
+                "nome": "Entre Quintas",
+                "lat": 41.14864,
+                "lon": -8.63013
+            },
+            {
+                "codigo": "PAL7",
+                "nome": "Palácio",
+                "lat": 41.14832,
+                "lon": -8.62542
+            },
+            {
+                "codigo": "HSA6",
+                "nome": "Hosp. Sto. António",
+                "lat": 41.14691,
+                "lon": -8.61873
+            },
+            {
+                "codigo": "0COR5",
+                "nome": "Cordoaria",
+                "lat": 41.14661,
+                "lon": -8.61474
+            }
+        ]
+    },
+    "901": {
+        "ida": [
+            {
+                "codigo": "TRD4",
+                "nome": "Trindade",
+                "lat": 41.15024,
+                "lon": -8.61012
+            },
+            {
+                "codigo": "AL3",
+                "nome": "Av. Aliados",
+                "lat": 41.14842,
+                "lon": -8.61081
+            },
+            {
+                "codigo": "MS2",
+                "nome": "Mouzinho Silveira",
+                "lat": 41.14283,
+                "lon": -8.61352
+            },
+            {
+                "codigo": "RBR1",
+                "nome": "Ribeira",
+                "lat": 41.14064,
+                "lon": -8.61153
+            },
+            {
+                "codigo": "ELVG1",
+                "nome": "Elevador Guindais",
+                "lat": 41.14112,
+                "lon": -8.60942
+            },
+            {
+                "codigo": "PLU3",
+                "nome": "Ponte Luíz I",
+                "lat": 41.14013,
+                "lon": -8.60943
+            },
+            {
+                "codigo": "GNR3",
+                "nome": "Gnr",
+                "lat": 41.13524,
+                "lon": -8.60831
+            },
+            {
+                "codigo": "GENT4",
+                "nome": "General Torres",
+                "lat": 41.12781,
+                "lon": -8.60742
+            },
+            {
+                "codigo": "CHP1",
+                "nome": "Choupelo",
+                "lat": 41.13251,
+                "lon": -8.61462
+            },
+            {
+                "codigo": "RMOT1",
+                "nome": "Rosa Mota",
+                "lat": 41.13192,
+                "lon": -8.61851
+            },
+            {
+                "codigo": "RECA1",
+                "nome": "Rot. Eng. Edgar Cardoso",
+                "lat": 41.12982,
+                "lon": -8.62312
+            },
+            {
+                "codigo": "JFAL1",
+                "nome": "José Falcão",
+                "lat": 41.12741,
+                "lon": -8.62542
+            },
+            {
+                "codigo": "DAG1",
+                "nome": "Dr.antónio Granjo",
+                "lat": 41.12453,
+                "lon": -8.62481
+            },
+            {
+                "codigo": "AGRO1",
+                "nome": "Agro",
+                "lat": 41.12192,
+                "lon": -8.62422
+            },
+            {
+                "codigo": "1CAP1",
+                "nome": "Castro Portugal",
+                "lat": 41.11981,
+                "lon": -8.62383
+            },
+            {
+                "codigo": "1MST1",
+                "nome": "Machado Dos Santos",
+                "lat": 41.11722,
+                "lon": -8.62342
+            },
+            {
+                "codigo": "MJP1",
+                "nome": "Major Pála",
+                "lat": 41.11551,
+                "lon": -8.62321
+            },
+            {
+                "codigo": "PRMR1",
+                "nome": "Pr. M. Silva Reis",
+                "lat": 41.11283,
+                "lon": -8.62252
+            },
+            {
+                "codigo": "LV1",
+                "nome": "Lavouras",
+                "lat": 41.11112,
+                "lon": -8.62221
+            },
+            {
+                "codigo": "COB4",
+                "nome": "Coimbrões",
+                "lat": 41.10984,
+                "lon": -8.62342
+            },
+            {
+                "codigo": "AGOM1",
+                "nome": "Augusto Gomes",
+                "lat": 41.10821,
+                "lon": -8.62512
+            },
+            {
+                "codigo": "RMT1",
+                "nome": "R. Das Matas",
+                "lat": 41.10652,
+                "lon": -8.62681
+            },
+            {
+                "codigo": "QBV1",
+                "nome": "Quinta Bela Vista",
+                "lat": 41.10421,
+                "lon": -8.62912
+            },
+            {
+                "codigo": "GDR1",
+                "nome": "Gandara",
+                "lat": 41.10252,
+                "lon": -8.63121
+            },
+            {
+                "codigo": "PTD1",
+                "nome": "Pitada",
+                "lat": 41.10081,
+                "lon": -8.63352
+            },
+            {
+                "codigo": "PDI1",
+                "nome": "Pedreiras",
+                "lat": 41.09822,
+                "lon": -8.63581
+            },
+            {
+                "codigo": "NVL1",
+                "nome": "Nova Lisboa",
+                "lat": 41.09651,
+                "lon": -8.63822
+            },
+            {
+                "codigo": "PCTO1",
+                "nome": "Praceta Oliveiras",
+                "lat": 41.09482,
+                "lon": -8.64051
+            },
+            {
+                "codigo": "MNH1",
+                "nome": "Maninho",
+                "lat": 41.09311,
+                "lon": -8.64282
+            },
+            {
+                "codigo": "GJ1",
+                "nome": "Gomes Júnior",
+                "lat": 41.09142,
+                "lon": -8.64511
+            },
+            {
+                "codigo": "AGU1",
+                "nome": "Aguim",
+                "lat": 41.08983,
+                "lon": -8.64742
+            },
+            {
+                "codigo": "ISS1",
+                "nome": "Isolino Sousa",
+                "lat": 41.08812,
+                "lon": -8.64971
+            },
+            {
+                "codigo": "CAB1",
+                "nome": "Cabine",
+                "lat": 41.08641,
+                "lon": -8.65202
+            },
+            {
+                "codigo": "SAN1",
+                "nome": "Sto. António",
+                "lat": 41.08472,
+                "lon": -8.65431
+            },
+            {
+                "codigo": "SNG1",
+                "nome": "Sousa Nogueira",
+                "lat": 41.08311,
+                "lon": -8.65662
+            },
+            {
+                "codigo": "CRST1",
+                "nome": "Crasto",
+                "lat": 41.08142,
+                "lon": -8.65891
+            },
+            {
+                "codigo": "ACNT1",
+                "nome": "Alberto O Cantador",
+                "lat": 41.07983,
+                "lon": -8.66122
+            },
+            {
+                "codigo": "JP1",
+                "nome": "José Portugal",
+                "lat": 41.08191,
+                "lon": -8.65072
+            },
+            {
+                "codigo": "CPNH1",
+                "nome": "Campolinho",
+                "lat": 41.08032,
+                "lon": -8.64821
+            },
+            {
+                "codigo": "E109",
+                "nome": "Estr.nacional 109",
+                "lat": 41.07894,
+                "lon": -8.64452
+            },
+            {
+                "codigo": "VAL1",
+                "nome": "Valadares",
+                "lat": 41.07942,
+                "lon": -8.64333
+            },
+            {
+                "codigo": "LEIR",
+                "nome": "Largo Eirós",
+                "lat": 41.08123,
+                "lon": -8.63762
+            },
+            {
+                "codigo": "TPEN",
+                "nome": "Tv. Penedo",
+                "lat": 41.08351,
+                "lon": -8.63841
+            },
+            {
+                "codigo": "SEMR",
+                "nome": "Seminário",
+                "lat": 41.08562,
+                "lon": -8.63992
+            },
+            {
+                "codigo": "VALE",
+                "nome": "Valadares (escolas)",
+                "lat": 41.08723,
+                "lon": -8.64151
+            }
+        ],
+        "volta": [
+            {
+                "codigo": "VALE",
+                "nome": "Valadares (escolas)",
+                "lat": 41.08723,
+                "lon": -8.64151
+            },
+            {
+                "codigo": "BNV2",
+                "nome": "Boa Nova",
+                "lat": 41.08552,
+                "lon": -8.63452
+            },
+            {
+                "codigo": "AMSE",
+                "nome": "A.santos (escolas)",
+                "lat": 41.08253,
+                "lon": -8.63582
+            },
+            {
+                "codigo": "LEIR2",
+                "nome": "Largo Eirós",
+                "lat": 41.08112,
+                "lon": -8.63751
+            },
+            {
+                "codigo": "COEM",
+                "nome": "Coelho Moreira",
+                "lat": 41.08051,
+                "lon": -8.63982
+            },
+            {
+                "codigo": "VAL",
+                "nome": "Valadares (est)",
+                "lat": 41.07923,
+                "lon": -8.64321
+            },
+            {
+                "codigo": "CPNH2",
+                "nome": "Campolinho",
+                "lat": 41.08021,
+                "lon": -8.64812
+            },
+            {
+                "codigo": "JP2",
+                "nome": "José Portugal",
+                "lat": 41.08184,
+                "lon": -8.65064
+            },
+            {
+                "codigo": "ACNT2",
+                "nome": "Alberto O Cantador",
+                "lat": 41.07991,
+                "lon": -8.66131
+            },
+            {
+                "codigo": "CRST2",
+                "nome": "Crasto",
+                "lat": 41.08151,
+                "lon": -8.65902
+            },
+            {
+                "codigo": "SNG2",
+                "nome": "Sousa Nogueira",
+                "lat": 41.08322,
+                "lon": -8.65671
+            },
+            {
+                "codigo": "SAN2",
+                "nome": "Sto. António",
+                "lat": 41.08481,
+                "lon": -8.65442
+            },
+            {
+                "codigo": "CAB2",
+                "nome": "Cabine",
+                "lat": 41.08652,
+                "lon": -8.65211
+            },
+            {
+                "codigo": "ISS2",
+                "nome": "Isolino Sousa",
+                "lat": 41.08821,
+                "lon": -8.64982
+            },
+            {
+                "codigo": "AGU2",
+                "nome": "Aguim",
+                "lat": 41.08992,
+                "lon": -8.64751
+            },
+            {
+                "codigo": "GJ2",
+                "nome": "Gomes Júnior",
+                "lat": 41.09151,
+                "lon": -8.64522
+            },
+            {
+                "codigo": "MNH2",
+                "nome": "Maninho",
+                "lat": 41.09322,
+                "lon": -8.64291
+            },
+            {
+                "codigo": "PCTO2",
+                "nome": "Praceta Oliveiras",
+                "lat": 41.09491,
+                "lon": -8.64062
+            },
+            {
+                "codigo": "NVL2",
+                "nome": "Nova Lisboa",
+                "lat": 41.09662,
+                "lon": -8.63831
+            },
+            {
+                "codigo": "PDI2",
+                "nome": "Pedreiras",
+                "lat": 41.09831,
+                "lon": -8.63592
+            },
+            {
+                "codigo": "RDA2",
+                "nome": "Rego D Água",
+                "lat": 41.09951,
+                "lon": -8.63472
+            },
+            {
+                "codigo": "PTD2",
+                "nome": "Pitada",
+                "lat": 41.10092,
+                "lon": -8.63361
+            },
+            {
+                "codigo": "GDR2",
+                "nome": "Gandara",
+                "lat": 41.10261,
+                "lon": -8.63132
+            },
+            {
+                "codigo": "QBV2",
+                "nome": "Quinta Bela Vista",
+                "lat": 41.10432,
+                "lon": -8.62921
+            },
+            {
+                "codigo": "RMT2",
+                "nome": "R. Das Matas",
+                "lat": 41.10661,
+                "lon": -8.62692
+            },
+            {
+                "codigo": "LGDM2",
+                "nome": "L. Domingos Matos",
+                "lat": 41.10852,
+                "lon": -8.62481
+            },
+            {
+                "codigo": "COB3",
+                "nome": "Coimbrões",
+                "lat": 41.10972,
+                "lon": -8.62331
+            },
+            {
+                "codigo": "LV2",
+                "nome": "Lavouras",
+                "lat": 41.11121,
+                "lon": -8.62232
+            },
+            {
+                "codigo": "PRMR2",
+                "nome": "Pr. M. Silva Reis",
+                "lat": 41.11292,
+                "lon": -8.62261
+            },
+            {
+                "codigo": "MJP2",
+                "nome": "Major Pála",
+                "lat": 41.11562,
+                "lon": -8.62331
+            },
+            {
+                "codigo": "LGM2",
+                "nome": "Lgo. Montinho",
+                "lat": 41.11821,
+                "lon": -8.62392
+            },
+            {
+                "codigo": "1DAG2",
+                "nome": "Dr.antónio Granjo",
+                "lat": 41.12442,
+                "lon": -8.62492
+            },
+            {
+                "codigo": "AGRO2",
+                "nome": "Agro",
+                "lat": 41.12181,
+                "lon": -8.62432
+            },
+            {
+                "codigo": "VTC2",
+                "nome": "Viterbo Campos",
+                "lat": 41.12652,
+                "lon": -8.62531
+            },
+            {
+                "codigo": "FTN2",
+                "nome": "Fonte Nova",
+                "lat": 41.12921,
+                "lon": -8.62352
+            },
+            {
+                "codigo": "CAVE4",
+                "nome": "Lgo. Da Cruz",
+                "lat": 41.13122,
+                "lon": -8.62121
+            },
+            {
+                "codigo": "LGAJ3",
+                "nome": "Lgo. Aljubarrota",
+                "lat": 41.13281,
+                "lon": -8.61892
+            },
+            {
+                "codigo": "SRP",
+                "nome": "Serpa Pinto",
+                "lat": 41.13342,
+                "lon": -8.61651
+            },
+            {
+                "codigo": "RMOT2",
+                "nome": "Rosa Mota",
+                "lat": 41.13182,
+                "lon": -8.61842
+            },
+            {
+                "codigo": "CHP2",
+                "nome": "Choupelo",
+                "lat": 41.13262,
+                "lon": -8.61471
+            },
+            {
+                "codigo": "GENT5",
+                "nome": "General Torres",
+                "lat": 41.12791,
+                "lon": -8.60751
+            },
+            {
+                "codigo": "GNR2",
+                "nome": "Gnr",
+                "lat": 41.13532,
+                "lon": -8.60852
+            },
+            {
+                "codigo": "PLU2",
+                "nome": "Ponte Luíz I",
+                "lat": 41.14022,
+                "lon": -8.60961
+            },
+            {
+                "codigo": "ELVG2",
+                "nome": "Elevador Guindais",
+                "lat": 41.14121,
+                "lon": -8.60962
+            },
+            {
+                "codigo": "RBR2",
+                "nome": "Ribeira",
+                "lat": 41.14073,
+                "lon": -8.61172
+            },
+            {
+                "codigo": "MS1",
+                "nome": "Mouzinho Silveira",
+                "lat": 41.14292,
+                "lon": -8.61361
+            },
+            {
+                "codigo": "SBNT3",
+                "nome": "Est. S.bento",
+                "lat": 41.14552,
+                "lon": -8.61031
+            },
+            {
+                "codigo": "PRDJ2",
+                "nome": "Pr.d.joão I",
+                "lat": 41.14751,
+                "lon": -8.61012
+            },
+            {
+                "codigo": "MCBL1",
+                "nome": "Mercado Do Bolhão",
+                "lat": 41.14922,
+                "lon": -8.60851
+            },
+            {
+                "codigo": "TRD4",
+                "nome": "Trindade",
+                "lat": 41.15024,
+                "lon": -8.61012
+            }
+        ]
+    },
+    "902": {
+        "ida": [
+            {
+                "codigo": "CMS2",
+                "nome": "Casa Da Música (metro)",
+                "lat": 41.15912,
+                "lon": -8.63223
+            },
+            {
+                "codigo": "BCM5",
+                "nome": "Boavista-casa Da Música",
+                "lat": 41.15834,
+                "lon": -8.63112
+            },
+            {
+                "codigo": "RBVM1",
+                "nome": "Boavista (mercado)",
+                "lat": 41.15612,
+                "lon": -8.63054
+            },
+            {
+                "codigo": "JM1",
+                "nome": "Junta Massarelos",
+                "lat": 41.14882,
+                "lon": -8.63351
+            },
+            {
+                "codigo": "GGT3",
+                "nome": "Gólgota",
+                "lat": 41.14853,
+                "lon": -8.63582
+            },
+            {
+                "codigo": "CHAS1",
+                "nome": "Chãs",
+                "lat": 41.14581,
+                "lon": -8.63642
+            },
+            {
+                "codigo": "NOC",
+                "nome": "Nó Candal",
+                "lat": 41.14382,
+                "lon": -8.63881
+            },
+            {
+                "codigo": "ARRB1",
+                "nome": "Arrábidashopping",
+                "lat": 41.14112,
+                "lon": -8.64052
+            },
+            {
+                "codigo": "CCB1",
+                "nome": "Camilo C. Branco",
+                "lat": 41.13921,
+                "lon": -8.64251
+            },
+            {
+                "codigo": "28J1",
+                "nome": "28 De Janeiro",
+                "lat": 41.13682,
+                "lon": -8.64412
+            },
+            {
+                "codigo": "EC",
+                "nome": "Electrocerâmica",
+                "lat": 41.13521,
+                "lon": -8.64621
+            },
+            {
+                "codigo": "1CAP1",
+                "nome": "Castro Portugal",
+                "lat": 41.11984,
+                "lon": -8.62383
+            },
+            {
+                "codigo": "1MST1",
+                "nome": "Machado Dos Santos",
+                "lat": 41.11722,
+                "lon": -8.62342
+            },
+            {
+                "codigo": "1TFL1",
+                "nome": "Tv. Fonte Lodosa",
+                "lat": 41.11602,
+                "lon": -8.63311
+            },
+            {
+                "codigo": "RFL1",
+                "nome": "R. Fonte Lodosa",
+                "lat": 41.11421,
+                "lon": -8.63422
+            },
+            {
+                "codigo": "RTV1",
+                "nome": "R. Tenente Valadim",
+                "lat": 41.11252,
+                "lon": -8.63611
+            },
+            {
+                "codigo": "QCMN1",
+                "nome": "Quatro Caminhos",
+                "lat": 41.11051,
+                "lon": -8.63852
+            },
+            {
+                "codigo": "ESPH1",
+                "nome": "Espinheiro",
+                "lat": 41.11182,
+                "lon": -8.64211
+            },
+            {
+                "codigo": "SCC1",
+                "nome": "Sport Clube Canidelo",
+                "lat": 41.11321,
+                "lon": -8.64652
+            },
+            {
+                "codigo": "BGJ1",
+                "nome": "Braga Júnior",
+                "lat": 41.11582,
+                "lon": -8.65121
+            },
+            {
+                "codigo": "CCL",
+                "nome": "Cancelinhas",
+                "lat": 41.11751,
+                "lon": -8.65582
+            },
+            {
+                "codigo": "ALUM1",
+                "nome": "Alumiara",
+                "lat": 41.12022,
+                "lon": -8.65921
+            },
+            {
+                "codigo": "FTS1",
+                "nome": "Fontes",
+                "lat": 41.12211,
+                "lon": -8.66212
+            },
+            {
+                "codigo": "PIC1",
+                "nome": "Picão",
+                "lat": 41.12452,
+                "lon": -8.66521
+            },
+            {
+                "codigo": "ACB1",
+                "nome": "Areias Cabedelo",
+                "lat": 41.12681,
+                "lon": -8.66812
+            },
+            {
+                "codigo": "ELV1",
+                "nome": "Estamparia Lavadores",
+                "lat": 41.12922,
+                "lon": -8.67121
+            },
+            {
+                "codigo": "JGD1",
+                "nome": "Jorge Dias",
+                "lat": 41.13151,
+                "lon": -8.67382
+            },
+            {
+                "codigo": "LVP",
+                "nome": "Lavadores (praia)",
+                "lat": 41.13324,
+                "lon": -8.67621
+            }
+        ],
+        "volta": [
+            {
+                "codigo": "LVP",
+                "nome": "Lavadores (praia)",
+                "lat": 41.13324,
+                "lon": -8.67621
+            },
+            {
+                "codigo": "JGD2",
+                "nome": "Jorge Dias",
+                "lat": 41.13162,
+                "lon": -8.67391
+            },
+            {
+                "codigo": "ELV2",
+                "nome": "Estamparia Lavadores",
+                "lat": 41.12931,
+                "lon": -8.67132
+            },
+            {
+                "codigo": "ACB2",
+                "nome": "Areias Cabedelo",
+                "lat": 41.12692,
+                "lon": -8.66821
+            },
+            {
+                "codigo": "PIC2",
+                "nome": "Picão",
+                "lat": 41.12461,
+                "lon": -8.66532
+            },
+            {
+                "codigo": "FTS2",
+                "nome": "Fontes",
+                "lat": 41.12222,
+                "lon": -8.66221
+            },
+            {
+                "codigo": "ALUM2",
+                "nome": "Alumiara",
+                "lat": 41.12031,
+                "lon": -8.65932
+            },
+            {
+                "codigo": "JMA",
+                "nome": "José Maria Alves",
+                "lat": 41.11852,
+                "lon": -8.65751
+            },
+            {
+                "codigo": "BGJ2",
+                "nome": "Braga Júnior",
+                "lat": 41.11591,
+                "lon": -8.65132
+            },
+            {
+                "codigo": "SCC2",
+                "nome": "Sport Clube Canidelo",
+                "lat": 41.11332,
+                "lon": -8.64661
+            },
+            {
+                "codigo": "ESPH2",
+                "nome": "Espinheiro",
+                "lat": 41.11191,
+                "lon": -8.64222
+            },
+            {
+                "codigo": "QCMN2",
+                "nome": "Quatro Caminhos",
+                "lat": 41.11062,
+                "lon": -8.63861
+            },
+            {
+                "codigo": "RTV2",
+                "nome": "R. Tenente Valadim",
+                "lat": 41.11261,
+                "lon": -8.63622
+            },
+            {
+                "codigo": "RFL2",
+                "nome": "R. Fonte Lodosa",
+                "lat": 41.11432,
+                "lon": -8.63431
+            },
+            {
+                "codigo": "TFL2",
+                "nome": "Tv. Fonte Lodosa",
+                "lat": 41.11611,
+                "lon": -8.63322
+            },
+            {
+                "codigo": "LGM2",
+                "nome": "Lgo. Montinho",
+                "lat": 41.11821,
+                "lon": -8.62392
+            },
+            {
+                "codigo": "AH",
+                "nome": "Alex. Herculano",
+                "lat": 41.13512,
+                "lon": -8.64812
+            },
+            {
+                "codigo": "28J2",
+                "nome": "28 De Janeiro",
+                "lat": 41.13691,
+                "lon": -8.64421
+            },
+            {
+                "codigo": "CCB2",
+                "nome": "Camilo C. Branco",
+                "lat": 41.13932,
+                "lon": -8.64262
+            },
+            {
+                "codigo": "ARRB2",
+                "nome": "Arrábidashopping",
+                "lat": 41.14121,
+                "lon": -8.64061
+            },
+            {
+                "codigo": "JA2",
+                "nome": "Jardins Da Arrábida",
+                "lat": 41.14422,
+                "lon": -8.63951
+            },
+            {
+                "codigo": "CHAS2",
+                "nome": "Chãs",
+                "lat": 41.14591,
+                "lon": -8.63652
+            },
+            {
+                "codigo": "NOC",
+                "nome": "Nó Candal",
+                "lat": 41.14382,
+                "lon": -8.63881
+            },
+            {
+                "codigo": "GONS2",
+                "nome": "Gonçalo Sampaio",
+                "lat": 41.15521,
+                "lon": -8.63352
+            },
+            {
+                "codigo": "1BS3",
+                "nome": "Boavista - B.sucesso",
+                "lat": 41.15682,
+                "lon": -8.63251
+            },
+            {
+                "codigo": "BS1",
+                "nome": "Boavista - B.sucesso",
+                "lat": 41.15651,
+                "lon": -8.63222
+            },
+            {
+                "codigo": "BCM2",
+                "nome": "Boavista-casa Da Música",
+                "lat": 41.15812,
+                "lon": -8.63091
+            },
+            {
+                "codigo": "CMS6",
+                "nome": "Casa Da Música (metro)",
+                "lat": 41.15931,
+                "lon": -8.63252
+            }
+        ]
+    },
+    "903": {
+        "ida": [
+            {
+                "codigo": "CMS2",
+                "nome": "Casa Da Música (metro)",
+                "lat": 41.15912,
+                "lon": -8.63223
+            },
+            {
+                "codigo": "BCM5",
+                "nome": "Boavista-casa Da Música",
+                "lat": 41.15834,
+                "lon": -8.63112
+            },
+            {
+                "codigo": "RBVM1",
+                "nome": "Boavista (mercado)",
+                "lat": 41.15612,
+                "lon": -8.63054
+            },
+            {
+                "codigo": "JM1",
+                "nome": "Junta Massarelos",
+                "lat": 41.14882,
+                "lon": -8.63351
+            },
+            {
+                "codigo": "GGT3",
+                "nome": "Gólgota",
+                "lat": 41.14853,
+                "lon": -8.63582
+            },
+            {
+                "codigo": "CHAS3",
+                "nome": "Chãs",
+                "lat": 41.14581,
+                "lon": -8.63642
+            },
+            {
+                "codigo": "JA1",
+                "nome": "Jardins Da Arrábida",
+                "lat": 41.14412,
+                "lon": -8.63941
+            },
+            {
+                "codigo": "ARRB3",
+                "nome": "Arrábidashopping",
+                "lat": 41.14112,
+                "lon": -8.64052
+            },
+            {
+                "codigo": "CCB1",
+                "nome": "Camilo C. Branco",
+                "lat": 41.13921,
+                "lon": -8.64251
+            },
+            {
+                "codigo": "28J1",
+                "nome": "28 De Janeiro",
+                "lat": 41.13682,
+                "lon": -8.64412
+            },
+            {
+                "codigo": "EC",
+                "nome": "Electrocerâmica",
+                "lat": 41.13521,
+                "lon": -8.64621
+            },
+            {
+                "codigo": "1CAP1",
+                "nome": "Castro Portugal",
+                "lat": 41.11981,
+                "lon": -8.62383
+            },
+            {
+                "codigo": "1MST1",
+                "nome": "Machado Dos Santos",
+                "lat": 41.11722,
+                "lon": -8.62342
+            },
+            {
+                "codigo": "MJP1",
+                "nome": "Major Pála",
+                "lat": 41.11551,
+                "lon": -8.62321
+            },
+            {
+                "codigo": "PRMR1",
+                "nome": "Pr. M. Silva Reis",
+                "lat": 41.11283,
+                "lon": -8.62252
+            },
+            {
+                "codigo": "LV1",
+                "nome": "Lavouras",
+                "lat": 41.11112,
+                "lon": -8.62221
+            },
+            {
+                "codigo": "COB6",
+                "nome": "Coimbrões 1",
+                "lat": 41.10974,
+                "lon": -8.62342
+            },
+            {
+                "codigo": "RGR1",
+                "nome": "Regueira",
+                "lat": 41.10821,
+                "lon": -8.62121
+            },
+            {
+                "codigo": "APRD1",
+                "nome": "Arco Do Prado",
+                "lat": 41.10652,
+                "lon": -8.61853
+            },
+            {
+                "codigo": "RFON1",
+                "nome": "Rio Da Fonte",
+                "lat": 41.10423,
+                "lon": -8.61622
+            },
+            {
+                "codigo": "HRC1",
+                "nome": "Henrique Cernache",
+                "lat": 41.10251,
+                "lon": -8.61452
+            },
+            {
+                "codigo": "AKI1",
+                "nome": "Aki",
+                "lat": 41.10122,
+                "lon": -8.61211
+            },
+            {
+                "codigo": "MAKR3",
+                "nome": "Makro",
+                "lat": 41.09983,
+                "lon": -8.61052
+            },
+            {
+                "codigo": "GSHP1",
+                "nome": "Gaiashopping",
+                "lat": 41.11024,
+                "lon": -8.61652
+            },
+            {
+                "codigo": "TELH1",
+                "nome": "Telheira",
+                "lat": 41.10221,
+                "lon": -8.60522
+            },
+            {
+                "codigo": "INFH1",
+                "nome": "Infante D. Henrique",
+                "lat": 41.10523,
+                "lon": -8.60412
+            },
+            {
+                "codigo": "SRRS1",
+                "nome": "Soares Dos Reis",
+                "lat": 41.10852,
+                "lon": -8.60451
+            },
+            {
+                "codigo": "DP5",
+                "nome": "D.pedro V",
+                "lat": 41.11221,
+                "lon": -8.60482
+            },
+            {
+                "codigo": "PREP2",
+                "nome": "Parque Da República",
+                "lat": 41.11651,
+                "lon": -8.60461
+            },
+            {
+                "codigo": "BIBG1",
+                "nome": "Biblioteca De Gaia",
+                "lat": 41.11362,
+                "lon": -8.60372
+            },
+            {
+                "codigo": "DJM1",
+                "nome": "D.joão Ii (metro)",
+                "lat": 41.11074,
+                "lon": -8.60281
+            },
+            {
+                "codigo": "SO2",
+                "nome": "Sto. Ovídio",
+                "lat": 41.10752,
+                "lon": -8.60193
+            },
+            {
+                "codigo": "ARR",
+                "nome": "António R.rocha",
+                "lat": 41.10423,
+                "lon": -8.60552
+            },
+            {
+                "codigo": "FMPT",
+                "nome": "Fernão Mendes Pinto",
+                "lat": 41.10221,
+                "lon": -8.60941
+            },
+            {
+                "codigo": "GAZ1",
+                "nome": "Gomes Azurara",
+                "lat": 41.10052,
+                "lon": -8.61312
+            },
+            {
+                "codigo": "BRIB1",
+                "nome": "Bernardim Ribeiro",
+                "lat": 41.10182,
+                "lon": -8.60831
+            },
+            {
+                "codigo": "BRC1",
+                "nome": "Br. Cedro",
+                "lat": 41.10352,
+                "lon": -8.60422
+            },
+            {
+                "codigo": "ACDR1",
+                "nome": "Alam. Cedro",
+                "lat": 41.10551,
+                "lon": -8.60211
+            },
+            {
+                "codigo": "LBM",
+                "nome": "Laborim",
+                "lat": 41.10022,
+                "lon": -8.60151
+            }
+        ],
+        "volta": [
+            {
+                "codigo": "LBM",
+                "nome": "Laborim",
+                "lat": 41.10022,
+                "lon": -8.60151
+            },
+            {
+                "codigo": "ACDR2",
+                "nome": "Alameda Cedro",
+                "lat": 41.10561,
+                "lon": -8.60222
+            },
+            {
+                "codigo": "BRC2",
+                "nome": "Br. Cedro",
+                "lat": 41.10362,
+                "lon": -8.60431
+            },
+            {
+                "codigo": "BRIB2",
+                "nome": "Bernardim Ribeiro",
+                "lat": 41.10191,
+                "lon": -8.60842
+            },
+            {
+                "codigo": "1FL2",
+                "nome": "Fernão Lopes",
+                "lat": 41.10121,
+                "lon": -8.60912
+            },
+            {
+                "codigo": "1RAS2",
+                "nome": "R. Da Rasa",
+                "lat": 41.10182,
+                "lon": -8.60831
+            },
+            {
+                "codigo": "1PA2",
+                "nome": "Pinto Aguiar",
+                "lat": 41.10443,
+                "lon": -8.60421
+            },
+            {
+                "codigo": "SO4",
+                "nome": "Sto. Ovídio",
+                "lat": 41.10724,
+                "lon": -8.60222
+            },
+            {
+                "codigo": "DJM2",
+                "nome": "D.joão Ii (metro)",
+                "lat": 41.11082,
+                "lon": -8.60301
+            },
+            {
+                "codigo": "BIBG2",
+                "nome": "Biblioteca De Gaia",
+                "lat": 41.11371,
+                "lon": -8.60392
+            },
+            {
+                "codigo": "JD2",
+                "nome": "João De Deus",
+                "lat": 41.11902,
+                "lon": -8.60551
+            },
+            {
+                "codigo": "PDC",
+                "nome": "Pádua Correia",
+                "lat": 41.12213,
+                "lon": -8.60641
+            },
+            {
+                "codigo": "LGAV2",
+                "nome": "Lgo. Dos Aviadores",
+                "lat": 41.12452,
+                "lon": -8.60672
+            },
+            {
+                "codigo": "BRRS",
+                "nome": "Barrosa",
+                "lat": 41.11921,
+                "lon": -8.61052
+            },
+            {
+                "codigo": "TCVC",
+                "nome": "Tv.conselheiro Veloso Da Cruz",
+                "lat": 41.11582,
+                "lon": -8.61181
+            },
+            {
+                "codigo": "ALPR1",
+                "nome": "Alféres Pereira",
+                "lat": 41.11251,
+                "lon": -8.61322
+            },
+            {
+                "codigo": "VDV2",
+                "nome": "Visconde Devesas",
+                "lat": 41.10921,
+                "lon": -8.61451
+            },
+            {
+                "codigo": "INFH2",
+                "nome": "Infante D.henrique",
+                "lat": 41.10532,
+                "lon": -8.60421
+            },
+            {
+                "codigo": "TELH2",
+                "nome": "Telheira",
+                "lat": 41.10231,
+                "lon": -8.60531
+            },
+            {
+                "codigo": "GSHP2",
+                "nome": "Gaiashopping",
+                "lat": 41.11032,
+                "lon": -8.61661
+            },
+            {
+                "codigo": "MAKR4",
+                "nome": "Makro",
+                "lat": 41.09992,
+                "lon": -8.61061
+            },
+            {
+                "codigo": "AKI2",
+                "nome": "Aki",
+                "lat": 41.10131,
+                "lon": -8.61222
+            },
+            {
+                "codigo": "HRC2",
+                "nome": "Henrique Cernache",
+                "lat": 41.10261,
+                "lon": -8.61461
+            },
+            {
+                "codigo": "RFON2",
+                "nome": "Rio Da Fonte",
+                "lat": 41.10432,
+                "lon": -8.61631
+            },
+            {
+                "codigo": "APRD3",
+                "nome": "Arco Do Prado",
+                "lat": 41.10661,
+                "lon": -8.61862
+            },
+            {
+                "codigo": "CMSM1",
+                "nome": "Cemitério Sta. Marinha",
+                "lat": 41.10821,
+                "lon": -8.61981
+            },
+            {
+                "codigo": "BVC2",
+                "nome": "B.v. Coimbrões",
+                "lat": 41.10982,
+                "lon": -8.62122
+            },
+            {
+                "codigo": "LV4",
+                "nome": "Lavouras",
+                "lat": 41.11131,
+                "lon": -8.62242
+            },
+            {
+                "codigo": "PRMR2",
+                "nome": "Pr. M. Silva Reis",
+                "lat": 41.11292,
+                "lon": -8.62261
+            },
+            {
+                "codigo": "MJP2",
+                "nome": "Major Pála",
+                "lat": 41.11562,
+                "lon": -8.62331
+            },
+            {
+                "codigo": "CDL2",
+                "nome": "Candal",
+                "lat": 41.11681,
+                "lon": -8.62362
+            },
+            {
+                "codigo": "LGM2",
+                "nome": "Lgo. Montinho",
+                "lat": 41.11821,
+                "lon": -8.62392
+            },
+            {
+                "codigo": "AH",
+                "nome": "Alex. Herculano",
+                "lat": 41.13512,
+                "lon": -8.64812
+            },
+            {
+                "codigo": "28J2",
+                "nome": "28 De Janeiro",
+                "lat": 41.13691,
+                "lon": -8.64421
+            },
+            {
+                "codigo": "CCB2",
+                "nome": "Camilo C. Branco",
+                "lat": 41.13932,
+                "lon": -8.64262
+            },
+            {
+                "codigo": "ARRB2",
+                "nome": "Arrábidashopping",
+                "lat": 41.14121,
+                "lon": -8.64061
+            },
+            {
+                "codigo": "JA2",
+                "nome": "Jardins Da Arrábida",
+                "lat": 41.14422,
+                "lon": -8.63951
+            },
+            {
+                "codigo": "CHAS2",
+                "nome": "Chãs",
+                "lat": 41.14591,
+                "lon": -8.63652
+            },
+            {
+                "codigo": "NOC",
+                "nome": "Nó Candal",
+                "lat": 41.14382,
+                "lon": -8.63881
+            },
+            {
+                "codigo": "GONS2",
+                "nome": "Gonçalo Sampaio",
+                "lat": 41.15521,
+                "lon": -8.63352
+            },
+            {
+                "codigo": "1BS3",
+                "nome": "Boavista - B.sucesso",
+                "lat": 41.15682,
+                "lon": -8.63251
+            },
+            {
+                "codigo": "BS1",
+                "nome": "Boavista - B.sucesso",
+                "lat": 41.15651,
+                "lon": -8.63222
+            },
+            {
+                "codigo": "BCM2",
+                "nome": "Boavista-casa Da Música",
+                "lat": 41.15812,
+                "lon": -8.63091
+            },
+            {
+                "codigo": "CMS6",
+                "nome": "Casa Da Música (metro)",
+                "lat": 41.15931,
+                "lon": -8.63252
+            }
+        ]
+    },
+    "904": {
+        "ida": [
+            {
+                "codigo": "TRD3",
+                "nome": "Trindade",
+                "lat": 41.15077,
+                "lon": -8.61111
+            },
+            {
+                "codigo": "AL3",
+                "nome": "Av. Aliados",
+                "lat": 41.14842,
+                "lon": -8.61081
+            },
+            {
+                "codigo": "1SBNT1",
+                "nome": "Est.s.bento",
+                "lat": 41.14552,
+                "lon": -8.61031
+            },
+            {
+                "codigo": "LPDZ",
+                "nome": "L.go 1º Dezembro",
+                "lat": 41.14300,
+                "lon": -8.60830
+            },
+            {
+                "codigo": "BTLH5",
+                "nome": "Batalha",
+                "lat": 41.14380,
+                "lon": -8.60750
+            },
+            {
+                "codigo": "ESPL1",
+                "nome": "Escarpa Serra Pilar",
+                "lat": 41.13960,
+                "lon": -8.60750
+            },
+            {
+                "codigo": "QSPL1",
+                "nome": "Quartel Srr. Pilar",
+                "lat": 41.13850,
+                "lon": -8.60800
+            },
+            {
+                "codigo": "JMRR1",
+                "nome": "Jardim Do Morro",
+                "lat": 41.13730,
+                "lon": -8.60900
+            },
+            {
+                "codigo": "GENT2",
+                "nome": "General Torres",
+                "lat": 41.12783,
+                "lon": -8.60711
+            },
+            {
+                "codigo": "DSRR1",
+                "nome": "Daniel Serrão",
+                "lat": 41.12492,
+                "lon": -8.60672
+            },
+            {
+                "codigo": "TRBG1",
+                "nome": "Tribunal De Gaia",
+                "lat": 41.12280,
+                "lon": -8.61020
+            },
+            {
+                "codigo": "DISP1",
+                "nome": "Dispensário",
+                "lat": 41.12150,
+                "lon": -8.61350
+            },
+            {
+                "codigo": "1DEV1",
+                "nome": "Devesas",
+                "lat": 41.12050,
+                "lon": -8.61680
+            },
+            {
+                "codigo": "1MZA1",
+                "nome": "Mouzinho Albuquerque",
+                "lat": 41.11900,
+                "lon": -8.61850
+            },
+            {
+                "codigo": "1JFT1",
+                "nome": "José Fontana",
+                "lat": 41.11750,
+                "lon": -8.62000
+            },
+            {
+                "codigo": "1DCM1",
+                "nome": "Dr. Costa Matos",
+                "lat": 41.11580,
+                "lon": -8.62120
+            },
+            {
+                "codigo": "APRD2",
+                "nome": "Arco Do Prado",
+                "lat": 41.10680,
+                "lon": -8.61880
+            },
+            {
+                "codigo": "CMSM1",
+                "nome": "Cemitério Sta. Marinha",
+                "lat": 41.10821,
+                "lon": -8.61981
+            },
+            {
+                "codigo": "BVC2",
+                "nome": "B.v. Coimbrões",
+                "lat": 41.10982,
+                "lon": -8.62122
+            },
+            {
+                "codigo": "LV1",
+                "nome": "Lavouras",
+                "lat": 41.11112,
+                "lon": -8.62221
+            },
+            {
+                "codigo": "COB4",
+                "nome": "Coimbrões",
+                "lat": 41.10984,
+                "lon": -8.62342
+            },
+            {
+                "codigo": "AGOM1",
+                "nome": "Augusto Gomes",
+                "lat": 41.10821,
+                "lon": -8.62512
+            },
+            {
+                "codigo": "RMT1",
+                "nome": "R. Das Matas",
+                "lat": 41.10652,
+                "lon": -8.62681
+            },
+            {
+                "codigo": "QBV1",
+                "nome": "Quinta Bela Vista",
+                "lat": 41.10421,
+                "lon": -8.62912
+            }
+        ],
+        "volta": [
+            {
+                "codigo": "QBV2",
+                "nome": "Quinta Bela Vista",
+                "lat": 41.10432,
+                "lon": -8.62921
+            },
+            {
+                "codigo": "RMT2",
+                "nome": "R. Das Matas",
+                "lat": 41.10661,
+                "lon": -8.62692
+            },
+            {
+                "codigo": "LGDM2",
+                "nome": "L. Domingos Matos",
+                "lat": 41.10852,
+                "lon": -8.62481
+            },
+            {
+                "codigo": "COB3",
+                "nome": "Coimbrões",
+                "lat": 41.10972,
+                "lon": -8.62331
+            },
+            {
+                "codigo": "COB6",
+                "nome": "Coimbrões 1",
+                "lat": 41.10974,
+                "lon": -8.62342
+            },
+            {
+                "codigo": "RGR1",
+                "nome": "Regueira",
+                "lat": 41.10821,
+                "lon": -8.62121
+            },
+            {
+                "codigo": "APRD1",
+                "nome": "Arco Do Prado",
+                "lat": 41.10652,
+                "lon": -8.61853
+            },
+            {
+                "codigo": "MRI1",
+                "nome": "Mariani",
+                "lat": 41.10750,
+                "lon": -8.61780
+            },
+            {
+                "codigo": "GA1",
+                "nome": "Guedes Amorim",
+                "lat": 41.11050,
+                "lon": -8.61700
+            },
+            {
+                "codigo": "DV2",
+                "nome": "Devesas",
+                "lat": 41.11450,
+                "lon": -8.61580
+            },
+            {
+                "codigo": "DVE1",
+                "nome": "Devesas (estação)",
+                "lat": 41.11950,
+                "lon": -8.61720
+            },
+            {
+                "codigo": "DISP2",
+                "nome": "Dispensário",
+                "lat": 41.12160,
+                "lon": -8.61360
+            },
+            {
+                "codigo": "TRBG2",
+                "nome": "Tribunal De Gaia",
+                "lat": 41.12290,
+                "lon": -8.61030
+            },
+            {
+                "codigo": "HGAI1",
+                "nome": "Hosp. Gaia",
+                "lat": 41.12581,
+                "lon": -8.60691
+            },
+            {
+                "codigo": "CMG1",
+                "nome": "Câmara De Gaia",
+                "lat": 41.12200,
+                "lon": -8.60630
+            },
+            {
+                "codigo": "GENT3",
+                "nome": "General Torres",
+                "lat": 41.12780,
+                "lon": -8.60730
+            },
+            {
+                "codigo": "JMRR2",
+                "nome": "Jardim Do Morro",
+                "lat": 41.13740,
+                "lon": -8.60910
+            },
+            {
+                "codigo": "QSPL2",
+                "nome": "Quartel Srr. Pilar",
+                "lat": 41.13860,
+                "lon": -8.60810
+            },
+            {
+                "codigo": "ESPL2",
+                "nome": "Escarpa Serra Pilar",
+                "lat": 41.13970,
+                "lon": -8.60760
+            },
+            {
+                "codigo": "DQL1",
+                "nome": "Duque Loulé",
+                "lat": 41.14150,
+                "lon": -8.60680
+            },
+            {
+                "codigo": "ALXH3",
+                "nome": "Alex. Herculano",
+                "lat": 41.14250,
+                "lon": -8.60600
+            },
+            {
+                "codigo": "BTLH1",
+                "nome": "Batalha",
+                "lat": 41.14390,
+                "lon": -8.60760
+            },
+            {
+                "codigo": "PRDJ",
+                "nome": "Pr. D. João I",
+                "lat": 41.14740,
+                "lon": -8.60980
+            },
+            {
+                "codigo": "AAL5",
+                "nome": "Av.aliados",
+                "lat": 41.14850,
+                "lon": -8.61090
+            },
+            {
+                "codigo": "TRD3",
+                "nome": "Trindade",
+                "lat": 41.15077,
+                "lon": -8.61111
+            }
+        ]
+    },
+    "905": {
+        "ida": [
+            {
+                "codigo": "TRD3",
+                "nome": "Trindade",
+                "lat": 41.15077,
+                "lon": -8.61111
+            },
+            {
+                "codigo": "AL3",
+                "nome": "Av. Aliados",
+                "lat": 41.14842,
+                "lon": -8.61081
+            },
+            {
+                "codigo": "1SBNT1",
+                "nome": "Est.s.bento",
+                "lat": 41.14552,
+                "lon": -8.61031
+            },
+            {
+                "codigo": "LPDZ",
+                "nome": "L.go 1º Dezembro",
+                "lat": 41.14300,
+                "lon": -8.60830
+            },
+            {
+                "codigo": "BTLH5",
+                "nome": "Batalha",
+                "lat": 41.14380,
+                "lon": -8.60750
+            },
+            {
+                "codigo": "ESPL1",
+                "nome": "Escarpa Serra Pilar",
+                "lat": 41.13960,
+                "lon": -8.60750
+            },
+            {
+                "codigo": "QSPL1",
+                "nome": "Quartel Srr. Pilar",
+                "lat": 41.13850,
+                "lon": -8.60800
+            },
+            {
+                "codigo": "JMRR1",
+                "nome": "Jardim Do Morro",
+                "lat": 41.13730,
+                "lon": -8.60900
+            },
+            {
+                "codigo": "GENT2",
+                "nome": "General Torres",
+                "lat": 41.12783,
+                "lon": -8.60711
+            },
+            {
+                "codigo": "DSRR1",
+                "nome": "Daniel Serrão",
+                "lat": 41.12492,
+                "lon": -8.60672
+            },
+            {
+                "codigo": "TRBG1",
+                "nome": "Tribunal De Gaia",
+                "lat": 41.12280,
+                "lon": -8.61020
+            },
+            {
+                "codigo": "LGAV3",
+                "nome": "Lgo. Dos Aviadores",
+                "lat": 41.12440,
+                "lon": -8.60680
+            },
+            {
+                "codigo": "BRRS",
+                "nome": "Barrosa",
+                "lat": 41.11921,
+                "lon": -8.61052
+            },
+            {
+                "codigo": "TCVC",
+                "nome": "Tv.conselheiro Veloso Da Cruz",
+                "lat": 41.11582,
+                "lon": -8.61181
+            },
+            {
+                "codigo": "ALPR1",
+                "nome": "Alféres Pereira",
+                "lat": 41.11251,
+                "lon": -8.61322
+            },
+            {
+                "codigo": "VDV2",
+                "nome": "Visconde Devesas",
+                "lat": 41.10921,
+                "lon": -8.61451
+            },
+            {
+                "codigo": "SRRS1",
+                "nome": "Soares Dos Reis",
+                "lat": 41.10852,
+                "lon": -8.60451
+            },
+            {
+                "codigo": "CSSR1",
+                "nome": "C. Saúde S. Reis",
+                "lat": 41.10542,
+                "lon": -8.60124
+            },
+            {
+                "codigo": "LGET1",
+                "nome": "L. Estevão Torres",
+                "lat": 41.10651,
+                "lon": -8.60053
+            },
+            {
+                "codigo": "SO1",
+                "nome": "Sto. Ovídio",
+                "lat": 41.10722,
+                "lon": -8.60181
+            },
+            {
+                "codigo": "ACDR2",
+                "nome": "Alameda Cedro",
+                "lat": 41.10561,
+                "lon": -8.60222
+            },
+            {
+                "codigo": "FCAS1",
+                "nome": "Ferreira De Castro",
+                "lat": 41.10321,
+                "lon": -8.60541
+            },
+            {
+                "codigo": "QTR3",
+                "nome": "Qta Das Rosas",
+                "lat": 41.10152,
+                "lon": -8.60922
+            },
+            {
+                "codigo": "ALRD1",
+                "nome": "Alves Redol",
+                "lat": 41.09351,
+                "lon": -8.62251
+            },
+            {
+                "codigo": "JFVP1",
+                "nome": "Junta Freg. Vilar Do Paraíso",
+                "lat": 41.09112,
+                "lon": -8.62461
+            },
+            {
+                "codigo": "VPRS1",
+                "nome": "Vilar Do Paraíso",
+                "lat": 41.08852,
+                "lon": -8.62711
+            },
+            {
+                "codigo": "TTOU1",
+                "nome": "Tv. Touce",
+                "lat": 41.09651,
+                "lon": -8.63252
+            },
+            {
+                "codigo": "LILH1",
+                "nome": "Lugar Da Ilha",
+                "lat": 41.09552,
+                "lon": -8.63681
+            },
+            {
+                "codigo": "PCTO2",
+                "nome": "Praceta Oliveiras",
+                "lat": 41.09491,
+                "lon": -8.64062
+            },
+            {
+                "codigo": "NVL2",
+                "nome": "Nova Lisboa",
+                "lat": 41.09662,
+                "lon": -8.63831
+            },
+            {
+                "codigo": "PDI2",
+                "nome": "Pedreiras",
+                "lat": 41.09831,
+                "lon": -8.63592
+            },
+            {
+                "codigo": "MNH3",
+                "nome": "Maninho",
+                "lat": 41.09302,
+                "lon": -8.64301
+            },
+            {
+                "codigo": "MDCS1",
+                "nome": "Madalena (c.saúde)",
+                "lat": 41.10521,
+                "lon": -8.65022
+            }
+        ],
+        "volta": [
+            {
+                "codigo": "MDCS1",
+                "nome": "Madalena (c.saúde)",
+                "lat": 41.10521,
+                "lon": -8.65022
+            },
+            {
+                "codigo": "PDI1",
+                "nome": "Pedreiras",
+                "lat": 41.09822,
+                "lon": -8.63581
+            },
+            {
+                "codigo": "NVL1",
+                "nome": "Nova Lisboa",
+                "lat": 41.09651,
+                "lon": -8.63822
+            },
+            {
+                "codigo": "PCTO1",
+                "nome": "Praceta Oliveiras",
+                "lat": 41.09482,
+                "lon": -8.64051
+            },
+            {
+                "codigo": "LILH2",
+                "nome": "Lugar Da Ilha",
+                "lat": 41.09561,
+                "lon": -8.63692
+            },
+            {
+                "codigo": "TTOU2",
+                "nome": "Tv. Touce",
+                "lat": 41.09662,
+                "lon": -8.63261
+            },
+            {
+                "codigo": "VPRS2",
+                "nome": "Vilar Do Paraíso",
+                "lat": 41.08861,
+                "lon": -8.62722
+            },
+            {
+                "codigo": "JFVP2",
+                "nome": "Junta Freg. Vilar Do Paraíso",
+                "lat": 41.09121,
+                "lon": -8.62472
+            },
+            {
+                "codigo": "ALRD2",
+                "nome": "Alves Redol",
+                "lat": 41.09362,
+                "lon": -8.62261
+            },
+            {
+                "codigo": "QTR4",
+                "nome": "Qta Das Rosas",
+                "lat": 41.10161,
+                "lon": -8.60932
+            },
+            {
+                "codigo": "FCAS2",
+                "nome": "Ferreira De Castro",
+                "lat": 41.10332,
+                "lon": -8.60551
+            },
+            {
+                "codigo": "ACDR1",
+                "nome": "Alam. Cedro",
+                "lat": 41.10551,
+                "lon": -8.60211
+            },
+            {
+                "codigo": "SO2",
+                "nome": "Sto. Ovídio",
+                "lat": 41.10752,
+                "lon": -8.60193
+            },
+            {
+                "codigo": "LGET2",
+                "nome": "L. Estevão Torres",
+                "lat": 41.10662,
+                "lon": -8.60061
+            },
+            {
+                "codigo": "CSSR2",
+                "nome": "C. Saúde S. Reis",
+                "lat": 41.10551,
+                "lon": -8.60132
+            },
+            {
+                "codigo": "SRRS2",
+                "nome": "Soares Dos Reis",
+                "lat": 41.10861,
+                "lon": -8.60461
+            },
+            {
+                "codigo": "LGAV1",
+                "nome": "Lgo. Dos Aviadores",
+                "lat": 41.12451,
+                "lon": -8.60671
+            },
+            {
+                "codigo": "HGAI1",
+                "nome": "Hosp. Gaia",
+                "lat": 41.12581,
+                "lon": -8.60691
+            },
+            {
+                "codigo": "CMG1",
+                "nome": "Câmara De Gaia",
+                "lat": 41.12200,
+                "lon": -8.60630
+            },
+            {
+                "codigo": "GENT3",
+                "nome": "General Torres",
+                "lat": 41.12780,
+                "lon": -8.60730
+            },
+            {
+                "codigo": "JMRR2",
+                "nome": "Jardim Do Morro",
+                "lat": 41.13740,
+                "lon": -8.60910
+            },
+            {
+                "codigo": "QSPL2",
+                "nome": "Quartel Srr. Pilar",
+                "lat": 41.13860,
+                "lon": -8.60810
+            },
+            {
+                "codigo": "ESPL2",
+                "nome": "Escarpa Serra Pilar",
+                "lat": 41.13970,
+                "lon": -8.60760
+            },
+            {
+                "codigo": "DQL1",
+                "nome": "Duque Loulé",
+                "lat": 41.14150,
+                "lon": -8.60680
+            },
+            {
+                "codigo": "ALXH3",
+                "nome": "Alex. Herculano",
+                "lat": 41.14250,
+                "lon": -8.60600
+            },
+            {
+                "codigo": "BTLH1",
+                "nome": "Batalha",
+                "lat": 41.14390,
+                "lon": -8.60760
+            },
+            {
+                "codigo": "PRDJ",
+                "nome": "Pr. D. João I",
+                "lat": 41.14740,
+                "lon": -8.60980
+            },
+            {
+                "codigo": "AAL5",
+                "nome": "Av.aliados",
+                "lat": 41.14850,
+                "lon": -8.61090
+            },
+            {
+                "codigo": "TRD3",
+                "nome": "Trindade",
+                "lat": 41.15077,
+                "lon": -8.61111
+            }
+        ]
+    },
+    "906": {
+        "ida": [
+            {
+                "codigo": "TRD4",
+                "nome": "Trindade",
+                "lat": 41.15024,
+                "lon": -8.61012
+            },
+            {
+                "codigo": "AL3",
+                "nome": "Av. Aliados",
+                "lat": 41.14842,
+                "lon": -8.61081
+            },
+            {
+                "codigo": "MS2",
+                "nome": "Mouzinho Silveira",
+                "lat": 41.14283,
+                "lon": -8.61352
+            },
+            {
+                "codigo": "RBR1",
+                "nome": "Ribeira",
+                "lat": 41.14064,
+                "lon": -8.61153
+            },
+            {
+                "codigo": "ELVG1",
+                "nome": "Elevador Guindais",
+                "lat": 41.14112,
+                "lon": -8.60942
+            },
+            {
+                "codigo": "PLU3",
+                "nome": "Ponte Luíz I",
+                "lat": 41.14013,
+                "lon": -8.60943
+            },
+            {
+                "codigo": "GNR3",
+                "nome": "Gnr",
+                "lat": 41.13524,
+                "lon": -8.60831
+            },
+            {
+                "codigo": "GENT4",
+                "nome": "General Torres",
+                "lat": 41.12781,
+                "lon": -8.60742
+            },
+            {
+                "codigo": "CHP1",
+                "nome": "Choupelo",
+                "lat": 41.13251,
+                "lon": -8.61462
+            },
+            {
+                "codigo": "RMOT1",
+                "nome": "Rosa Mota",
+                "lat": 41.13192,
+                "lon": -8.61851
+            },
+            {
+                "codigo": "RECA1",
+                "nome": "Rot. Eng. Edgar Cardoso",
+                "lat": 41.12982,
+                "lon": -8.62312
+            },
+            {
+                "codigo": "JFAL1",
+                "nome": "José Falcão",
+                "lat": 41.12741,
+                "lon": -8.62542
+            },
+            {
+                "codigo": "DAG1",
+                "nome": "Dr.antónio Granjo",
+                "lat": 41.12453,
+                "lon": -8.62481
+            },
+            {
+                "codigo": "AGRO1",
+                "nome": "Agro",
+                "lat": 41.12192,
+                "lon": -8.62422
+            },
+            {
+                "codigo": "1CAP1",
+                "nome": "Castro Portugal",
+                "lat": 41.11981,
+                "lon": -8.62383
+            },
+            {
+                "codigo": "1MST1",
+                "nome": "Machado Dos Santos",
+                "lat": 41.11722,
+                "lon": -8.62342
+            },
+            {
+                "codigo": "MJP1",
+                "nome": "Major Pála",
+                "lat": 41.11551,
+                "lon": -8.62321
+            },
+            {
+                "codigo": "PRMR1",
+                "nome": "Pr. M. Silva Reis",
+                "lat": 41.11283,
+                "lon": -8.62252
+            },
+            {
+                "codigo": "LV1",
+                "nome": "Lavouras",
+                "lat": 41.11112,
+                "lon": -8.62221
+            },
+            {
+                "codigo": "COB4",
+                "nome": "Coimbrões",
+                "lat": 41.10984,
+                "lon": -8.62342
+            },
+            {
+                "codigo": "AGOM1",
+                "nome": "Augusto Gomes",
+                "lat": 41.10821,
+                "lon": -8.62512
+            },
+            {
+                "codigo": "RMT1",
+                "nome": "R. Das Matas",
+                "lat": 41.10652,
+                "lon": -8.62681
+            },
+            {
+                "codigo": "QBV1",
+                "nome": "Quinta Bela Vista",
+                "lat": 41.10421,
+                "lon": -8.62912
+            },
+            {
+                "codigo": "GDR1",
+                "nome": "Gandara",
+                "lat": 41.10252,
+                "lon": -8.63121
+            },
+            {
+                "codigo": "PTD1",
+                "nome": "Pitada",
+                "lat": 41.10081,
+                "lon": -8.63352
+            },
+            {
+                "codigo": "PDI1",
+                "nome": "Pedreiras",
+                "lat": 41.09822,
+                "lon": -8.63581
+            },
+            {
+                "codigo": "NVL1",
+                "nome": "Nova Lisboa",
+                "lat": 41.09651,
+                "lon": -8.63822
+            },
+            {
+                "codigo": "PCTO1",
+                "nome": "Praceta Oliveiras",
+                "lat": 41.09482,
+                "lon": -8.64051
+            },
+            {
+                "codigo": "MNH1",
+                "nome": "Maninho",
+                "lat": 41.09311,
+                "lon": -8.64282
+            },
+            {
+                "codigo": "GJ1",
+                "nome": "Gomes Júnior",
+                "lat": 41.09142,
+                "lon": -8.64511
+            },
+            {
+                "codigo": "AGU1",
+                "nome": "Aguim",
+                "lat": 41.08983,
+                "lon": -8.64742
+            },
+            {
+                "codigo": "ISS1",
+                "nome": "Isolino Sousa",
+                "lat": 41.08812,
+                "lon": -8.64971
+            },
+            {
+                "codigo": "CAB3",
+                "nome": "Cabine",
+                "lat": 41.08641,
+                "lon": -8.65202
+            },
+            {
+                "codigo": "JSP",
+                "nome": "José Poças",
+                "lat": 41.08552,
+                "lon": -8.65351
+            },
+            {
+                "codigo": "TLR",
+                "nome": "Tv. Loureiro",
+                "lat": 41.08752,
+                "lon": -8.65502
+            },
+            {
+                "codigo": "TAN",
+                "nome": "Tv. Aldeia Nova",
+                "lat": 41.08951,
+                "lon": -8.65651
+            },
+            {
+                "codigo": "CVO",
+                "nome": "Carvalheiro",
+                "lat": 41.09152,
+                "lon": -8.65802
+            },
+            {
+                "codigo": "ALNV1",
+                "nome": "Aldeia Nova",
+                "lat": 41.09351,
+                "lon": -8.65951
+            },
+            {
+                "codigo": "NZ1",
+                "nome": "Nazarães",
+                "lat": 41.09552,
+                "lon": -8.66102
+            },
+            {
+                "codigo": "RMAR1",
+                "nome": "R.marinha",
+                "lat": 41.09751,
+                "lon": -8.66251
+            },
+            {
+                "codigo": "PMS1",
+                "nome": "Praia Madalena Sul",
+                "lat": 41.09952,
+                "lon": -8.66402
+            },
+            {
+                "codigo": "MVTO1",
+                "nome": "Moinho Vento",
+                "lat": 41.10151,
+                "lon": -8.66551
+            },
+            {
+                "codigo": "CERR1",
+                "nome": "Cerro",
+                "lat": 41.10352,
+                "lon": -8.66702
+            },
+            {
+                "codigo": "PRQC1",
+                "nome": "Parque Campismo",
+                "lat": 41.10551,
+                "lon": -8.66851
+            },
+            {
+                "codigo": "RCH1",
+                "nome": "R.chaquedas",
+                "lat": 41.10752,
+                "lon": -8.67002
+            },
+            {
+                "codigo": "ACH1",
+                "nome": "Alto Chaquedas",
+                "lat": 41.10951,
+                "lon": -8.67151
+            },
+            {
+                "codigo": "RZAM1",
+                "nome": "R. Zambueiras",
+                "lat": 41.11152,
+                "lon": -8.67302
+            },
+            {
+                "codigo": "RRDL1",
+                "nome": "R.rodelo",
+                "lat": 41.11351,
+                "lon": -8.67451
+            },
+            {
+                "codigo": "MDL1",
+                "nome": "Madalena (escolas)",
+                "lat": 41.10482,
+                "lon": -8.66102
+            },
+            {
+                "codigo": "MDLP",
+                "nome": "Madalena",
+                "lat": 41.10404,
+                "lon": -8.66251
+            }
+        ],
+        "volta": [
+            {
+                "codigo": "MDLP",
+                "nome": "Madalena",
+                "lat": 41.10404,
+                "lon": -8.66251
+            },
+            {
+                "codigo": "MDL2",
+                "nome": "Madalena (escolas)",
+                "lat": 41.10491,
+                "lon": -8.66112
+            },
+            {
+                "codigo": "RRDL2",
+                "nome": "R. Rodelo",
+                "lat": 41.11362,
+                "lon": -8.67462
+            },
+            {
+                "codigo": "RZAM2",
+                "nome": "R. Zambueiras",
+                "lat": 41.11161,
+                "lon": -8.67311
+            },
+            {
+                "codigo": "ACH2",
+                "nome": "Alto Chaquedas",
+                "lat": 41.10962,
+                "lon": -8.67162
+            },
+            {
+                "codigo": "RCH2",
+                "nome": "R. Chaquedas",
+                "lat": 41.10761,
+                "lon": -8.67011
+            },
+            {
+                "codigo": "PRQC2",
+                "nome": "Parque Campismo",
+                "lat": 41.10562,
+                "lon": -8.66862
+            },
+            {
+                "codigo": "CERR2",
+                "nome": "Cerro",
+                "lat": 41.10361,
+                "lon": -8.66711
+            },
+            {
+                "codigo": "RPR",
+                "nome": "R.praia",
+                "lat": 41.10252,
+                "lon": -8.66621
+            },
+            {
+                "codigo": "MVTO2",
+                "nome": "Moinho Vento",
+                "lat": 41.10162,
+                "lon": -8.66562
+            },
+            {
+                "codigo": "PMS2",
+                "nome": "Praia Madalena Sul",
+                "lat": 41.09961,
+                "lon": -8.66411
+            },
+            {
+                "codigo": "RMAR2",
+                "nome": "R.marinha",
+                "lat": 41.09762,
+                "lon": -8.66262
+            },
+            {
+                "codigo": "NZ2",
+                "nome": "Nazarães",
+                "lat": 41.09561,
+                "lon": -8.66111
+            },
+            {
+                "codigo": "ALNV2",
+                "nome": "Aldeia Nova",
+                "lat": 41.09362,
+                "lon": -8.65962
+            },
+            {
+                "codigo": "CVO2",
+                "nome": "Carvalheiro",
+                "lat": 41.09161,
+                "lon": -8.65811
+            },
+            {
+                "codigo": "MDLI2",
+                "nome": "Madalena (igreja)",
+                "lat": 41.10422,
+                "lon": -8.65152
+            },
+            {
+                "codigo": "SAN3",
+                "nome": "Sto. António",
+                "lat": 41.08481,
+                "lon": -8.65442
+            },
+            {
+                "codigo": "JSP2",
+                "nome": "José Poças",
+                "lat": 41.08562,
+                "lon": -8.65362
+            },
+            {
+                "codigo": "CAB4",
+                "nome": "Cabine",
+                "lat": 41.08652,
+                "lon": -8.65211
+            },
+            {
+                "codigo": "ISS2",
+                "nome": "Isolino Sousa",
+                "lat": 41.08821,
+                "lon": -8.64982
+            },
+            {
+                "codigo": "AGU2",
+                "nome": "Aguim",
+                "lat": 41.08992,
+                "lon": -8.64751
+            },
+            {
+                "codigo": "GJ2",
+                "nome": "Gomes Júnior",
+                "lat": 41.09151,
+                "lon": -8.64522
+            },
+            {
+                "codigo": "MNH2",
+                "nome": "Maninho",
+                "lat": 41.09322,
+                "lon": -8.64291
+            },
+            {
+                "codigo": "PCTO2",
+                "nome": "Praceta Oliveiras",
+                "lat": 41.09491,
+                "lon": -8.64062
+            },
+            {
+                "codigo": "NVL2",
+                "nome": "Nova Lisboa",
+                "lat": 41.09662,
+                "lon": -8.63831
+            },
+            {
+                "codigo": "PDI2",
+                "nome": "Pedreiras",
+                "lat": 41.09831,
+                "lon": -8.63592
+            },
+            {
+                "codigo": "RDA2",
+                "nome": "Rego D Água",
+                "lat": 41.09951,
+                "lon": -8.63472
+            },
+            {
+                "codigo": "PTD2",
+                "nome": "Pitada",
+                "lat": 41.10092,
+                "lon": -8.63361
+            },
+            {
+                "codigo": "GDR2",
+                "nome": "Gandara",
+                "lat": 41.10261,
+                "lon": -8.63132
+            },
+            {
+                "codigo": "QBV2",
+                "nome": "Quinta Bela Vista",
+                "lat": 41.10432,
+                "lon": -8.62921
+            },
+            {
+                "codigo": "RMT2",
+                "nome": "R. Das Matas",
+                "lat": 41.10661,
+                "lon": -8.62692
+            },
+            {
+                "codigo": "LGDM2",
+                "nome": "L. Domingos Matos",
+                "lat": 41.10852,
+                "lon": -8.62481
+            },
+            {
+                "codigo": "COB3",
+                "nome": "Coimbrões",
+                "lat": 41.10972,
+                "lon": -8.62331
+            },
+            {
+                "codigo": "LV2",
+                "nome": "Lavouras",
+                "lat": 41.11121,
+                "lon": -8.62232
+            },
+            {
+                "codigo": "PRMR2",
+                "nome": "Pr. M. Silva Reis",
+                "lat": 41.11292,
+                "lon": -8.62261
+            },
+            {
+                "codigo": "MJP2",
+                "nome": "Major Pála",
+                "lat": 41.11562,
+                "lon": -8.62331
+            },
+            {
+                "codigo": "LGM2",
+                "nome": "Lgo. Montinho",
+                "lat": 41.11821,
+                "lon": -8.62392
+            },
+            {
+                "codigo": "1DAG2",
+                "nome": "Dr.antónio Granjo",
+                "lat": 41.12442,
+                "lon": -8.62492
+            },
+            {
+                "codigo": "AGRO2",
+                "nome": "Agro",
+                "lat": 41.12181,
+                "lon": -8.62432
+            },
+            {
+                "codigo": "VTC2",
+                "nome": "Viterbo Campos",
+                "lat": 41.12652,
+                "lon": -8.62531
+            },
+            {
+                "codigo": "FTN2",
+                "nome": "Fonte Nova",
+                "lat": 41.12921,
+                "lon": -8.62352
+            },
+            {
+                "codigo": "CAVE4",
+                "nome": "Lgo. Da Cruz",
+                "lat": 41.13122,
+                "lon": -8.62121
+            },
+            {
+                "codigo": "LGAJ3",
+                "nome": "Lgo. Aljubarrota",
+                "lat": 41.13281,
+                "lon": -8.61892
+            },
+            {
+                "codigo": "SRP",
+                "nome": "Serpa Pinto",
+                "lat": 41.13342,
+                "lon": -8.61651
+            },
+            {
+                "codigo": "RMOT2",
+                "nome": "Rosa Mota",
+                "lat": 41.13182,
+                "lon": -8.61842
+            },
+            {
+                "codigo": "CHP2",
+                "nome": "Choupelo",
+                "lat": 41.13262,
+                "lon": -8.61471
+            },
+            {
+                "codigo": "GENT5",
+                "nome": "General Torres",
+                "lat": 41.12791,
+                "lon": -8.60751
+            },
+            {
+                "codigo": "GNR2",
+                "nome": "Gnr",
+                "lat": 41.13532,
+                "lon": -8.60852
+            },
+            {
+                "codigo": "PLU2",
+                "nome": "Ponte Luíz I",
+                "lat": 41.14022,
+                "lon": -8.60961
+            },
+            {
+                "codigo": "ELVG2",
+                "nome": "Elevador Guindais",
+                "lat": 41.14121,
+                "lon": -8.60962
+            },
+            {
+                "codigo": "RBR2",
+                "nome": "Ribeira",
+                "lat": 41.14073,
+                "lon": -8.61172
+            },
+            {
+                "codigo": "MS1",
+                "nome": "Mouzinho Silveira",
+                "lat": 41.14292,
+                "lon": -8.61361
+            },
+            {
+                "codigo": "SBNT3",
+                "nome": "Est. S.bento",
+                "lat": 41.14552,
+                "lon": -8.61031
+            },
+            {
+                "codigo": "PRDJ2",
+                "nome": "Pr.d.joão I",
+                "lat": 41.14751,
+                "lon": -8.61012
+            },
+            {
+                "codigo": "MCBL1",
+                "nome": "Mercado Do Bolhão",
+                "lat": 41.14922,
+                "lon": -8.60851
+            },
+            {
+                "codigo": "TRD4",
+                "nome": "Trindade",
+                "lat": 41.15024,
+                "lon": -8.61012
+            }
+        ]
+    },
+    "907": {
+        "ida": [
+            {
+                "codigo": "BS9",
+                "nome": "Boavista (bom Sucesso)",
+                "lat": 41.15612,
+                "lon": -8.63054
+            },
+            {
+                "codigo": "GONS1",
+                "nome": "Gonçalo Sampaio",
+                "lat": 41.15482,
+                "lon": -8.63221
+            },
+            {
+                "codigo": "GGT3",
+                "nome": "Gólgota",
+                "lat": 41.14853,
+                "lon": -8.63582
+            },
+            {
+                "codigo": "CHAS1",
+                "nome": "Chãs",
+                "lat": 41.14581,
+                "lon": -8.63642
+            },
+            {
+                "codigo": "NOC",
+                "nome": "Nó Candal",
+                "lat": 41.14382,
+                "lon": -8.63881
+            },
+            {
+                "codigo": "ARRB1",
+                "nome": "Arrábidashopping",
+                "lat": 41.14112,
+                "lon": -8.64052
+            },
+            {
+                "codigo": "CCB1",
+                "nome": "Camilo C. Branco",
+                "lat": 41.13921,
+                "lon": -8.64251
+            },
+            {
+                "codigo": "28J1",
+                "nome": "28 De Janeiro",
+                "lat": 41.13682,
+                "lon": -8.64412
+            },
+            {
+                "codigo": "EC",
+                "nome": "Electrocerâmica",
+                "lat": 41.13521,
+                "lon": -8.64621
+            },
+            {
+                "codigo": "1CAP1",
+                "nome": "Castro Portugal",
+                "lat": 41.11981,
+                "lon": -8.62383
+            },
+            {
+                "codigo": "1MST1",
+                "nome": "Machado Dos Santos",
+                "lat": 41.11722,
+                "lon": -8.62342
+            },
+            {
+                "codigo": "MJP1",
+                "nome": "Major Pála",
+                "lat": 41.11551,
+                "lon": -8.62321
+            },
+            {
+                "codigo": "PRMR1",
+                "nome": "Pr. M. Silva Reis",
+                "lat": 41.11283,
+                "lon": -8.62252
+            },
+            {
+                "codigo": "LV1",
+                "nome": "Lavouras",
+                "lat": 41.11112,
+                "lon": -8.62221
+            },
+            {
+                "codigo": "COB4",
+                "nome": "Coimbrões",
+                "lat": 41.10984,
+                "lon": -8.62342
+            },
+            {
+                "codigo": "AGOM1",
+                "nome": "Augusto Gomes",
+                "lat": 41.10821,
+                "lon": -8.62512
+            },
+            {
+                "codigo": "RMT1",
+                "nome": "R. Das Matas",
+                "lat": 41.10652,
+                "lon": -8.62681
+            },
+            {
+                "codigo": "TMTS1",
+                "nome": "Tv. Matas",
+                "lat": 41.10451,
+                "lon": -8.62212
+            },
+            {
+                "codigo": "RSMT1",
+                "nome": "R. Sr Matosinhos",
+                "lat": 41.10221,
+                "lon": -8.61852
+            },
+            {
+                "codigo": "MAKR5",
+                "nome": "Makro",
+                "lat": 41.09983,
+                "lon": -8.61052
+            },
+            {
+                "codigo": "GSHP1",
+                "nome": "Gaiashopping",
+                "lat": 41.11024,
+                "lon": -8.61652
+            },
+            {
+                "codigo": "TELH1",
+                "nome": "Telheira",
+                "lat": 41.10221,
+                "lon": -8.60522
+            },
+            {
+                "codigo": "INFH1",
+                "nome": "Infante D. Henrique",
+                "lat": 41.10523,
+                "lon": -8.60412
+            },
+            {
+                "codigo": "SRRS1",
+                "nome": "Soares Dos Reis",
+                "lat": 41.10852,
+                "lon": -8.60451
+            },
+            {
+                "codigo": "CSSR1",
+                "nome": "C. Saúde S. Reis",
+                "lat": 41.10542,
+                "lon": -8.60124
+            },
+            {
+                "codigo": "LGET1",
+                "nome": "L. Estevão Torres",
+                "lat": 41.10651,
+                "lon": -8.60053
+            },
+            {
+                "codigo": "SO1",
+                "nome": "Sto. Ovídio",
+                "lat": 41.10722,
+                "lon": -8.60181
+            },
+            {
+                "codigo": "CCC1",
+                "nome": "Clube Caçadores",
+                "lat": 41.10851,
+                "lon": -8.59821
+            },
+            {
+                "codigo": "ROSA1",
+                "nome": "Rosário",
+                "lat": 41.10982,
+                "lon": -8.59542
+            },
+            {
+                "codigo": "RTP1",
+                "nome": "Rtp",
+                "lat": 41.11121,
+                "lon": -8.59251
+            },
+            {
+                "codigo": "EBSR1",
+                "nome": "Esc. Eb 2/3 S Reis",
+                "lat": 41.11252,
+                "lon": -8.58981
+            },
+            {
+                "codigo": "SRD1",
+                "nome": "Sardoal",
+                "lat": 41.11382,
+                "lon": -8.58712
+            },
+            {
+                "codigo": "EMZ1",
+                "nome": "Egas Moniz",
+                "lat": 41.11511,
+                "lon": -8.58441
+            },
+            {
+                "codigo": "HSS1",
+                "nome": "Hosp. Santos Silva",
+                "lat": 41.11652,
+                "lon": -8.58152
+            },
+            {
+                "codigo": "MV3",
+                "nome": "Monte Da Virgem",
+                "lat": 41.11721,
+                "lon": -8.58021
+            },
+            {
+                "codigo": "SALM1",
+                "nome": "Salgueiro Maia",
+                "lat": 41.11552,
+                "lon": -8.57751
+            },
+            {
+                "codigo": "MIM1",
+                "nome": "Mimosas",
+                "lat": 41.11382,
+                "lon": -8.57521
+            },
+            {
+                "codigo": "UVDE1",
+                "nome": "Urb. Vila D Este",
+                "lat": 41.11151,
+                "lon": -8.57351
+            },
+            {
+                "codigo": "VDES",
+                "nome": "Vila D' Este (escolas)",
+                "lat": 41.10982,
+                "lon": -8.57212
+            },
+            {
+                "codigo": "VDE",
+                "nome": "Vila D Este",
+                "lat": 41.10852,
+                "lon": -8.57151
+            }
+        ],
+        "volta": [
+            {
+                "codigo": "VDE",
+                "nome": "Vila D Este",
+                "lat": 41.10852,
+                "lon": -8.57151
+            },
+            {
+                "codigo": "UVDE2",
+                "nome": "Urb. Vila D'este",
+                "lat": 41.11161,
+                "lon": -8.57362
+            },
+            {
+                "codigo": "MIM2",
+                "nome": "Mimosas",
+                "lat": 41.11392,
+                "lon": -8.57532
+            },
+            {
+                "codigo": "SALM2",
+                "nome": "Salgueiro Maia",
+                "lat": 41.11562,
+                "lon": -8.57762
+            },
+            {
+                "codigo": "MV2",
+                "nome": "Monte Da Virgem",
+                "lat": 41.11731,
+                "lon": -8.58032
+            },
+            {
+                "codigo": "HSS2",
+                "nome": "Hosp. Santos Silva",
+                "lat": 41.11661,
+                "lon": -8.58162
+            },
+            {
+                "codigo": "EMZ2",
+                "nome": "Egas Moniz",
+                "lat": 41.11522,
+                "lon": -8.58452
+            },
+            {
+                "codigo": "SRD2",
+                "nome": "Sardoal",
+                "lat": 41.11392,
+                "lon": -8.58721
+            },
+            {
+                "codigo": "EBSR2",
+                "nome": "Esc. Eb 2/3 S Reis",
+                "lat": 41.11261,
+                "lon": -8.58992
+            },
+            {
+                "codigo": "RTP2",
+                "nome": "Rtp",
+                "lat": 41.11132,
+                "lon": -8.59262
+            },
+            {
+                "codigo": "CRVL",
+                "nome": "Cravel",
+                "lat": 41.11021,
+                "lon": -8.59451
+            },
+            {
+                "codigo": "CCC2",
+                "nome": "Clube Caçadores",
+                "lat": 41.10862,
+                "lon": -8.59832
+            },
+            {
+                "codigo": "SO2",
+                "nome": "Sto. Ovídio",
+                "lat": 41.10752,
+                "lon": -8.60193
+            },
+            {
+                "codigo": "LGET2",
+                "nome": "L. Estevão Torres",
+                "lat": 41.10662,
+                "lon": -8.60061
+            },
+            {
+                "codigo": "CSSR2",
+                "nome": "C. Saúde S. Reis",
+                "lat": 41.10551,
+                "lon": -8.60132
+            },
+            {
+                "codigo": "SRRS2",
+                "nome": "Soares Dos Reis",
+                "lat": 41.10861,
+                "lon": -8.60461
+            },
+            {
+                "codigo": "BRRS",
+                "nome": "Barrosa",
+                "lat": 41.11921,
+                "lon": -8.61052
+            },
+            {
+                "codigo": "TCVC",
+                "nome": "Tv.conselheiro Veloso Da Cruz",
+                "lat": 41.11582,
+                "lon": -8.61181
+            },
+            {
+                "codigo": "ALPR1",
+                "nome": "Alféres Pereira",
+                "lat": 41.11251,
+                "lon": -8.61322
+            },
+            {
+                "codigo": "VDV2",
+                "nome": "Visconde Devesas",
+                "lat": 41.10921,
+                "lon": -8.61451
+            },
+            {
+                "codigo": "INFH2",
+                "nome": "Infante D.henrique",
+                "lat": 41.10532,
+                "lon": -8.60421
+            },
+            {
+                "codigo": "TELH2",
+                "nome": "Telheira",
+                "lat": 41.10231,
+                "lon": -8.60531
+            },
+            {
+                "codigo": "GSHP2",
+                "nome": "Gaiashopping",
+                "lat": 41.11032,
+                "lon": -8.61661
+            },
+            {
+                "codigo": "MAKR6",
+                "nome": "Makro",
+                "lat": 41.09992,
+                "lon": -8.61061
+            },
+            {
+                "codigo": "RSMT2",
+                "nome": "R. Sr Matosinhos",
+                "lat": 41.10231,
+                "lon": -8.61861
+            },
+            {
+                "codigo": "TMTS2",
+                "nome": "Tv. Matas",
+                "lat": 41.10462,
+                "lon": -8.62222
+            },
+            {
+                "codigo": "RMT3",
+                "nome": "R. Das Matas",
+                "lat": 41.10661,
+                "lon": -8.62692
+            },
+            {
+                "codigo": "LGDM2",
+                "nome": "L. Domingos Matos",
+                "lat": 41.10852,
+                "lon": -8.62481
+            },
+            {
+                "codigo": "COB3",
+                "nome": "Coimbrões",
+                "lat": 41.10972,
+                "lon": -8.62331
+            },
+            {
+                "codigo": "LV2",
+                "nome": "Lavouras",
+                "lat": 41.11121,
+                "lon": -8.62232
+            },
+            {
+                "codigo": "PRMR2",
+                "nome": "Pr. M. Silva Reis",
+                "lat": 41.11292,
+                "lon": -8.62261
+            },
+            {
+                "codigo": "MJP2",
+                "nome": "Major Pála",
+                "lat": 41.11562,
+                "lon": -8.62331
+            },
+            {
+                "codigo": "LGM2",
+                "nome": "Lgo. Montinho",
+                "lat": 41.11821,
+                "lon": -8.62392
+            },
+            {
+                "codigo": "AH",
+                "nome": "Alex. Herculano",
+                "lat": 41.13512,
+                "lon": -8.64812
+            },
+            {
+                "codigo": "28J2",
+                "nome": "28 De Janeiro",
+                "lat": 41.13691,
+                "lon": -8.64421
+            },
+            {
+                "codigo": "CCB2",
+                "nome": "Camilo C. Branco",
+                "lat": 41.13932,
+                "lon": -8.64262
+            },
+            {
+                "codigo": "ARRB2",
+                "nome": "Arrábidashopping",
+                "lat": 41.14121,
+                "lon": -8.64061
+            },
+            {
+                "codigo": "JA2",
+                "nome": "Jardins Da Arrábida",
+                "lat": 41.14422,
+                "lon": -8.63951
+            },
+            {
+                "codigo": "CHAS2",
+                "nome": "Chãs",
+                "lat": 41.14591,
+                "lon": -8.63652
+            },
+            {
+                "codigo": "NOC",
+                "nome": "Nó Candal",
+                "lat": 41.14382,
+                "lon": -8.63881
+            },
+            {
+                "codigo": "GONS2",
+                "nome": "Gonçalo Sampaio",
+                "lat": 41.15521,
+                "lon": -8.63352
+            },
+            {
+                "codigo": "BS9",
+                "nome": "Boavista (bom Sucesso)",
+                "lat": 41.15612,
+                "lon": -8.63054
+            }
+        ]
+    }
+}

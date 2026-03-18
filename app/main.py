@@ -26,14 +26,17 @@ app.add_middleware(
 )
 
 
-# haalth
+# health
 @app.get("/api/health")
 async def health():
+    import os
+    url_configurada = bool(os.getenv("STCP_API_URL"))
     return {
         "estado": "online",
         "autocarros_ativos": len(stcp_realtime.autocarros_processados),
         "linhas_carregadas": len(stcp_paragens.todas_paragens),
         "ultima_atualizacao": stcp_realtime.ultima_atualizacao,
+        "api_stcp_configurada": url_configurada,
     }
 
 

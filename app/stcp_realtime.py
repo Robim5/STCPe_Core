@@ -83,18 +83,33 @@ async def atualizar_autocarros():
         print("Erro: STCP_API_URL nao definido no .env")
         return
 
-    async with httpx.AsyncClient() as client:
+    print(f"Polling STCP em: {url[:40]}...")
+
+    async with httpx.AsyncClient(timeout=10.0) as client:
         while True:
             try:
                 resposta = await client.get(url, headers={"Accept": "application/json"})
 
                 if resposta.status_code == 200:
-                    memoria_autocarros = resposta.json()
-                    autocarros_processados, autocarros_por_linha = processar_dados(memoria_autocarros)
-                    ultima_atualizacao = datetime.now(timezone.utc).isoformat()
-                    print(f"Sucesso: {len(autocarros_processados)} autocarros processados.")
+                    dados = resposta.json()
+
+                    # se a resposta vier dentro de um objeto, extrair a lista
+                    if isinstance(dados, dict):
+                        # tentar chaves comuns de APIs NGSI-LD
+                        for chave in ("results", "data", "entities", "value"):
+                            if chave in dados and isinstance(dados[chave], list):
+                                dados = dados[chave]
+                                break
+
+                    if isinstance(dados, list):
+                        memoria_autocarros = dados
+                        autocarros_processados, autocarros_por_linha = processar_dados(dados)
+                        ultima_atualizacao = datetime.now(timezone.utc).isoformat()
+                        print(f"Sucesso: {len(autocarros_processados)} autocarros processados de {len(dados)} entidades.")
+                    else:
+                        print(f"Aviso: Resposta inesperada (tipo: {type(dados).__name__}). Primeiros 200 chars: {str(dados)[:200]}")
                 else:
-                    print(f"Aviso: STCP respondeu com erro {resposta.status_code}.")
+                    print(f"Aviso: STCP respondeu com erro {resposta.status_code}. Body: {resposta.text[:200]}")
 
             except Exception as e:
                 print(f"Erro: Falha ao obter dados da STCP - {e}")

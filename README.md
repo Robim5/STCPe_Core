@@ -62,6 +62,7 @@ STCPe_Core/
 │   ├── stcp_paragens.py       # Gestão de paragens e pesquisa
 │   └── calculadora.py         # Cálculos de distância (Haversine) e ETA
 ├── dados/
+│   ├── municipios_linhas.json # Mapa linha -> municipio
 │   └── paragens/              # Ficheiros JSON com dados de todas as paragens
 │       ├── 200tos.json
 │       ├── 300tos.json
@@ -95,8 +96,14 @@ STCPe_Core/
 
 | Método | Endpoint | Descrição |
 |---|---|---|
-| `GET` | `/api/linhas` | Lista de todas as linhas com origem e destino |
+| `GET` | `/api/linhas` | Lista de todas as linhas com `cor`, `municipio`, origem e destino |
 | `GET` | `/api/linhas/{linha}/paragens` | Paragens de uma linha (filtrável por sentido) |
+
+`GET /api/linhas` inclui por linha:
+- `linha`
+- `cor` (`azul`, `amarelo`, `verde`, `vermelho`, `roxo`, `laranja`, `preto`)
+- `municipio`
+- `sentidos` (`ida`/`volta` com `origem`, `destino`, `total_paragens`)
 
 ### Paragens
 

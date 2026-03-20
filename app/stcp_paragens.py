@@ -5,10 +5,62 @@ from app import calculadora
 todas_paragens = {}
 
 _PASTA_PARAGENS = Path(__file__).resolve().parent.parent / "dados" / "paragens"
+_FICHEIRO_MUNICIPIOS = Path(__file__).resolve().parent.parent / "dados" / "municipios_linhas.json"
+_MUNICIPIOS_POR_LINHA = {}
+
+
+def carregar_municipios_linhas():
+    global _MUNICIPIOS_POR_LINHA
+
+    if not _FICHEIRO_MUNICIPIOS.exists():
+        print(f"Aviso: O ficheiro '{_FICHEIRO_MUNICIPIOS}' nao existe.")
+        _MUNICIPIOS_POR_LINHA = {}
+        return
+
+    try:
+        with open(_FICHEIRO_MUNICIPIOS, "r", encoding="utf-8") as f:
+            dados = json.load(f)
+            _MUNICIPIOS_POR_LINHA = {str(k).upper(): v for k, v in dados.items()}
+    except Exception as e:
+        print(f"Erro ao carregar municipios por linha: {e}")
+        _MUNICIPIOS_POR_LINHA = {}
+
+
+def obter_cor_linha(linha: str):
+    linha_upper = linha.upper()
+
+    if linha_upper.endswith("M"):
+        return "preto"
+
+    if linha_upper == "ZC":
+        return "azul"
+
+    if linha_upper.isdigit():
+        numero = int(linha_upper)
+        if 200 <= numero <= 404:
+            return "azul"
+        if 500 <= numero <= 508:
+            return "amarelo"
+        if 600 <= numero <= 604:
+            return "verde"
+        if 700 <= numero <= 707:
+            return "vermelho"
+        if 800 <= numero <= 806:
+            return "roxo"
+        if 900 <= numero <= 907:
+            return "laranja"
+
+    return None
+
+
+def obter_municipio_linha(linha: str):
+    return _MUNICIPIOS_POR_LINHA.get(linha.upper())
 
 
 def carregar_paragens():
     global todas_paragens
+
+    carregar_municipios_linhas()
 
     if not _PASTA_PARAGENS.exists():
         print(f"Erro: A pasta '{_PASTA_PARAGENS}' nao existe.")
@@ -166,7 +218,12 @@ def obter_info_linhas():
     info = []
     for linha in sorted(todas_paragens.keys()):
         sentidos = todas_paragens[linha]
-        dados_linha = {"linha": linha, "sentidos": {}}
+        dados_linha = {
+            "linha": linha,
+            "cor": obter_cor_linha(linha),
+            "municipio": obter_municipio_linha(linha),
+            "sentidos": {},
+        }
         for sentido, paragens in sentidos.items():
             if paragens:
                 dados_linha["sentidos"][sentido] = {

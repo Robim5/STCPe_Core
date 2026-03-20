@@ -9,11 +9,11 @@
 </p>
 
 <p align="center">
-  <a href="https://web-production-60c4d.up.railway.app/docs#/"><img src="https://img.shields.io/badge/API%20Docs-Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black" alt="API Docs"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/Licença-AGPL--3.0-blue?style=for-the-badge" alt="License"></a>
   <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
   <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI">
   <img src="https://img.shields.io/badge/Deploy-Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white" alt="Railway">
+  <img src="https://img.shields.io/badge/Acesso-Privado%20🔒-red?style=for-the-badge" alt="Privado">
 </p>
 
 ---
@@ -178,7 +178,7 @@ source .venv/bin/activate
 # instalar dependências
 pip install -r requirements.txt
 
-# configurar variável de ambiente
+# configurar variáveis de ambiente
 # criar ficheiro .env na raiz com:
 # STCP_API_URL=<url_da_api_stcp>
 
@@ -209,6 +209,15 @@ O projeto está configurado para deploy no [Railway](https://railway.app/) atrav
 - O cálculo de ETA usa a **distância pela rota** (soma dos segmentos entre paragens) e não a distância em linha reta
 - Quando um autocarro está parado, é usada uma velocidade mínima de **12 km/h** para a estimativa
 - O campo `sentido` mapeia: `0 → ida`, `1 → volta`
+
+---
+
+## Segurança
+
+Esta API é de **acesso privado**. O repositório e o URL de produção não são públicos.
+
+- **Repositório**: Privado no GitHub
+- **Docs**: Swagger UI e ReDoc desativados em produção (disponíveis apenas localmente em `http://localhost:8000/docs`)
 
 ---
 

@@ -2,6 +2,7 @@ from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import asyncio
+import os
 from app import stcp_realtime
 from app import stcp_paragens
 from app import calculadora
@@ -16,7 +17,16 @@ async def lifespan(app: FastAPI):
     print("A encerrar nucleo...")
 
 
-app = FastAPI(title="STCPe Core API", lifespan=lifespan)
+# esconder docs em produção (só disponíveis localmente)
+_is_production = bool(os.getenv("RAILWAY_ENVIRONMENT") or os.getenv("PORT"))
+
+app = FastAPI(
+    title="STCPe Core API",
+    lifespan=lifespan,
+    docs_url=None if _is_production else "/docs",
+    redoc_url=None if _is_production else "/redoc",
+    openapi_url=None if _is_production else "/openapi.json",
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -29,7 +39,6 @@ app.add_middleware(
 # health
 @app.get("/api/health")
 async def health():
-    import os
     url_configurada = bool(os.getenv("STCP_API_URL"))
     return {
         "estado": "online",

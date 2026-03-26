@@ -3,6 +3,7 @@ import asyncio
 import os
 from datetime import datetime, timezone
 from dotenv import load_dotenv
+from app.database import obter_pool
 
 # carrega os segredos obscuros
 load_dotenv()
@@ -75,6 +76,59 @@ def processar_dados(dados_raw: list) -> tuple:
     return processados, por_linha
 
 
+async def inicializar_tabela_veiculos():
+    """cria a tabela veiculos se nao existir"""
+    pool = obter_pool()
+    if not pool:
+        return
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute("""
+                CREATE TABLE IF NOT EXISTS veiculos (
+                    id_veiculo VARCHAR(100) PRIMARY KEY,
+                    linha VARCHAR(10) NOT NULL,
+                    sentido VARCHAR(20) NOT NULL,
+                    latitude DOUBLE NOT NULL,
+                    longitude DOUBLE NOT NULL,
+                    velocidade DOUBLE DEFAULT 0,
+                    bearing DOUBLE DEFAULT 0,
+                    timestamp VARCHAR(50),
+                    INDEX idx_linha (linha)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+            """)
+    print("Tabela 'veiculos' pronta.")
+
+
+async def gravar_veiculos_db(processados: list):
+    """grava os veiculos processados na base de dados"""
+    pool = obter_pool()
+    if not pool:
+        return
+    try:
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                await conn.begin()
+                await cur.execute("DELETE FROM veiculos")
+                if processados:
+                    sql = """
+                        INSERT INTO veiculos
+                            (id_veiculo, linha, sentido, latitude, longitude, velocidade, bearing, timestamp)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                    """
+                    dados = [
+                        (
+                            b["veiculo_id"], b["linha"], b["sentido"],
+                            b["lat"], b["lon"], b["velocidade"],
+                            b["bearing"], b["ultima_atualizacao"],
+                        )
+                        for b in processados
+                    ]
+                    await cur.executemany(sql, dados)
+                await conn.commit()
+    except Exception as e:
+        print(f"Erro ao gravar veiculos na DB: {e}")
+
+
 async def atualizar_autocarros():
     global memoria_autocarros, autocarros_processados, autocarros_por_linha, ultima_atualizacao
     url = os.getenv("STCP_API_URL")
@@ -105,6 +159,7 @@ async def atualizar_autocarros():
                         memoria_autocarros = dados
                         autocarros_processados, autocarros_por_linha = processar_dados(dados)
                         ultima_atualizacao = datetime.now(timezone.utc).isoformat()
+                        await gravar_veiculos_db(autocarros_processados)
                         print(f"Sucesso: {len(autocarros_processados)} autocarros processados de {len(dados)} entidades.")
                     else:
                         print(f"Aviso: Resposta inesperada (tipo: {type(dados).__name__}). Primeiros 200 chars: {str(dados)[:200]}")

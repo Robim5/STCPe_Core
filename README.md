@@ -30,12 +30,17 @@ Fornece dados de localização, estimativas de tempo de chegada e informações 
 
 ## Funcionalidades
 
-- **Localização em tempo real** -> sabe onde está cada autocarro, agora
+- **Localização em tempo real** -> sabe onde está cada autocarro, agora, com destino final e cor da linha
 - **Tempo de chegada (ETA)** -> estimativas com base na rota real, não em linha reta
+- **Desenho da rota** -> shape geográfico das linhas para desenhar num mapa
+- **Todas as paragens** -> lista completa de paragens da STCP via base de dados
+- **Paragens por linha** -> consulta as paragens de qualquer linha e sentido
 - **Paragens próximas** -> encontra paragens à tua volta por GPS
 - **Pesquisa por nome** -> procura qualquer paragem pelo nome
 - **Info completa** -> todas as linhas que passam numa paragem, com sentidos e terminais
-- **Dados de linhas** -> origem, destino e percurso de cada linha
+- **Dados de linhas** -> número, cor, município, origem e destino de cada linha
+- **Estatísticas** -> resumo da rede (linhas, paragens, autocarros ativos)
+- **Proteção por API Key** -> acesso controlado via header `X-API-Key`
 
 ---
 
@@ -45,6 +50,7 @@ Fornece dados de localização, estimativas de tempo de chegada e informações 
 |---|---|
 | Framework | [FastAPI](https://fastapi.tiangolo.com/) |
 | Servidor | [Uvicorn](https://www.uvicorn.org/) |
+| Base de Dados | MySQL (via [aiomysql](https://github.com/aio-libs/aiomysql)) |
 | HTTP Client | [httpx](https://www.python-httpx.org/) |
 | Configuração | [python-dotenv](https://pypi.org/project/python-dotenv/) |
 | Deploy | [Railway](https://railway.app/) |
@@ -58,6 +64,7 @@ STCPe_Core/
 ├── app/
 │   ├── __init__.py            # Package Python
 │   ├── main.py                # Endpoints da API (FastAPI)
+│   ├── database.py            # Pool assíncrono de conexões MySQL
 │   ├── stcp_realtime.py       # Polling e processamento de dados em tempo real
 │   ├── stcp_paragens.py       # Gestão de paragens e pesquisa
 │   └── calculadora.py         # Cálculos de distância (Haversine) e ETA
@@ -68,6 +75,7 @@ STCPe_Core/
 │       ├── 300tos.json
 │       ├── ...
 │       └── Zc.json
+├── .env                       # Variáveis de ambiente (não vai para o Git)
 ├── Procfile                   # Configuração de deploy (Railway)
 ├── requirements.txt           # Dependências Python
 └── README.md
@@ -82,15 +90,21 @@ STCPe_Core/
 | Método | Endpoint | Descrição |
 |---|---|---|
 | `GET` | `/api/health` | Estado do serviço, autocarros ativos e linhas carregadas |
+| `GET` | `/api/estatisticas` | Resumo geral da rede (totais de linhas, paragens, autocarros) |
 
 ### Autocarros
 
 | Método | Endpoint | Descrição |
 |---|---|---|
-| `GET` | `/api/autocarros/todos` | Todos os autocarros ativos com posição e velocidade |
-| `GET` | `/api/autocarro/{linha}/posicao` | Posição dos autocarros de uma linha específica |
+| `GET` | `/api/autocarros` | Todos os autocarros ativos com posição, velocidade, cor da linha e destino final |
+| `GET` | `/api/autocarros/{linha}` | Autocarros de uma linha específica (ex: `/api/autocarros/600`) |
 
 **Parâmetros opcionais:** `sentido` -> filtrar por `ida` ou `volta`
+
+Cada autocarro inclui dados enriquecidos via base de dados:
+- `nome_rota` -> nome completo da rota (ex: "Cordoaria - Castêlo da Maia")
+- `cor_linha` -> cor hex da linha (ex: "#00FF00")
+- `destino` -> destino final (trip_headsign, ex: "Castêlo da Maia")
 
 ### Linhas e Paragens
 
@@ -98,6 +112,7 @@ STCPe_Core/
 |---|---|---|
 | `GET` | `/api/linhas` | Lista de todas as linhas com `cor`, `municipio`, origem e destino |
 | `GET` | `/api/linhas/{linha}/paragens` | Paragens de uma linha (filtrável por sentido) |
+| `GET` | `/api/linhas/{linha}/shape` | Desenho geográfico da rota (coordenadas para mapa) |
 
 `GET /api/linhas` inclui por linha:
 - `linha`
@@ -109,6 +124,7 @@ STCPe_Core/
 
 | Método | Endpoint | Descrição |
 |---|---|---|
+| `GET` | `/api/paragens` | Todas as paragens da STCP (da base de dados) |
 | `GET` | `/api/paragens/proximas` | Paragens próximas a um ponto GPS |
 | `GET` | `/api/paragens/pesquisa` | Pesquisa de paragens por nome |
 | `GET` | `/api/paragem/{codigo}/info` | Informação de uma paragem e linhas que passam |
@@ -150,6 +166,18 @@ GET /api/tempo/600/TRD1?sentido=ida
 GET /api/paragem/FOR1/tempos
 ```
 
+### Shape da linha 600 (ida) para desenhar num mapa
+
+```
+GET /api/linhas/600/shape?sentido=ida
+```
+
+### Estatísticas gerais da rede
+
+```
+GET /api/estatisticas
+```
+
 ---
 
 ## Instalação Local
@@ -181,6 +209,11 @@ pip install -r requirements.txt
 # configurar variáveis de ambiente
 # criar ficheiro .env na raiz com:
 # STCP_API_URL=<url_da_api_stcp>
+# DB_HOST=localhost
+# DB_PORT=3306
+# DB_USER=root
+# DB_PASSWORD=<password>
+# DB_NAME=real_time_data
 
 # iniciar o servidor
 uvicorn app.main:app --reload
@@ -197,18 +230,35 @@ A documentação interativa (Swagger UI) fica acessível em `http://localhost:80
 O projeto está configurado para deploy no [Railway](https://railway.app/) através do `Procfile`.
 
 1. Ligar o repositório GitHub ao Railway
-2. Adicionar a variável de ambiente `STCP_API_URL` nas definições do projeto
-3. O deploy é feito automaticamente a cada push
+2. Adicionar um serviço MySQL no Railway
+3. Adicionar as variáveis de ambiente nas definições do projeto:
+   - `STCP_API_URL` -> URL da API da STCP
+   - `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` -> credenciais do MySQL
+   - `API_KEY` -> chave secreta para proteger os endpoints (opcional mas recomendado)
+4. O deploy é feito automaticamente a cada push
 
 ---
 
 ## Notas Técnicas
 
 - Os dados de autocarros são atualizados a cada **5 segundos** via polling à API da STCP
+- A cada ciclo, os dados em tempo real são gravados na tabela `veiculos` (MySQL) e cruzados com as tabelas GTFS (`routes`, `trips`) para enriquecer a resposta com destino e cor da linha
 - As coordenadas seguem o formato **GeoJSON** (`[longitude, latitude]`)
 - O cálculo de ETA usa a **distância pela rota** (soma dos segmentos entre paragens) e não a distância em linha reta
 - Quando um autocarro está parado, é usada uma velocidade mínima de **12 km/h** para a estimativa
 - O campo `sentido` mapeia: `0 → ida`, `1 → volta`
+
+### Base de Dados
+
+Tabelas GTFS estáticas (importadas uma vez):
+- `routes` -> linhas (id, nome, cor)
+- `stops` -> paragens (id, nome, coordenadas)
+- `trips` -> viagens (destino final por sentido)
+- `stop_times` -> horários por paragem
+- `shapes` -> desenho geográfico das rotas
+
+Tabela dinâmica (atualizada a cada 5s):
+- `veiculos` -> posição em tempo real dos autocarros
 
 ---
 
@@ -216,8 +266,11 @@ O projeto está configurado para deploy no [Railway](https://railway.app/) atrav
 
 Esta API é de **acesso privado**. O repositório e o URL de produção não são públicos.
 
+- **API Key**: Se a variável `API_KEY` estiver definida, todos os endpoints `/api/*` exigem o header `X-API-Key` (ou query param `?api_key=`). Sem chave válida -> `401 Unauthorized`
 - **Repositório**: Privado no GitHub
 - **Docs**: Swagger UI e ReDoc desativados em produção (disponíveis apenas localmente em `http://localhost:8000/docs`)
+- **Apenas leitura**: A API só aceita `GET` -- não expõe nenhuma operação de escrita
+- **Sem dados sensíveis**: Credenciais da DB e URL da STCP ficam no `.env` (excluído do Git)
 
 ---
 

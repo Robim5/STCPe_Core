@@ -1,20 +1,55 @@
-from fastapi import FastAPI, Query, HTTPException
+from fastapi import FastAPI, Query, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 import asyncio
 import os
+import aiomysql
+from app import database
 from app import stcp_realtime
 from app import stcp_paragens
 from app import calculadora
+
+# query principal que cruza veiculos em tempo real com rotas e destinos GTFS
+QUERY_AUTOCARROS = """
+    SELECT
+        v.id_veiculo,
+        v.linha,
+        v.sentido,
+        v.latitude,
+        v.longitude,
+        v.velocidade,
+        v.bearing,
+        v.timestamp,
+        r.route_long_name  AS nome_rota,
+        CONCAT('#', COALESCE(r.route_color, '808080')) AS cor_linha,
+        t.trip_headsign    AS destino
+    FROM veiculos v
+    LEFT JOIN routes r
+        ON r.route_short_name = v.linha
+    LEFT JOIN (
+        SELECT route_id, direction_id, trip_headsign
+        FROM trips
+        GROUP BY route_id, direction_id
+    ) t ON t.route_id = r.route_id
+        AND t.direction_id = CASE v.sentido
+            WHEN 'ida'   THEN 0
+            WHEN 'volta' THEN 1
+            ELSE -1
+        END
+"""
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("A iniciar nucleo...")
+    await database.criar_pool()
+    await stcp_realtime.inicializar_tabela_veiculos()
     stcp_paragens.carregar_paragens()
     asyncio.create_task(stcp_realtime.atualizar_autocarros())
     yield
     print("A encerrar nucleo...")
+    await database.fechar_pool()
 
 
 # esconder docs em produção (só disponíveis localmente)
@@ -35,6 +70,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# protecao por API Key (se API_KEY estiver definida no .env)
+_API_KEY = os.getenv("API_KEY")
+
+@app.middleware("http")
+async def verificar_api_key(request: Request, call_next):
+    if _API_KEY and request.url.path.startswith("/api/"):
+        chave = request.headers.get("X-API-Key") or request.query_params.get("api_key")
+        if chave != _API_KEY:
+            return JSONResponse(status_code=401, content={"detail": "API Key invalida ou em falta."})
+    return await call_next(request)
+
 
 # health
 @app.get("/api/health")
@@ -49,13 +95,74 @@ async def health():
     }
 
 
-# autocarros
-@app.get("/api/autocarros/todos")
-async def obter_autocarros():
+# estatisticas gerais da rede
+@app.get("/api/estatisticas")
+async def estatisticas():
+    pool = database.obter_pool()
+    totais_db = {}
+    if pool:
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute("SELECT COUNT(*) FROM stops")
+                totais_db["total_paragens_db"] = (await cur.fetchone())[0]
+                await cur.execute("SELECT COUNT(DISTINCT route_id) FROM routes")
+                totais_db["total_rotas"] = (await cur.fetchone())[0]
+                await cur.execute("SELECT COUNT(*) FROM veiculos")
+                totais_db["autocarros_na_db"] = (await cur.fetchone())[0]
     return {
-        "total_ativos": len(stcp_realtime.autocarros_processados),
+        "autocarros_ativos": len(stcp_realtime.autocarros_processados),
+        "linhas_com_autocarros": len(stcp_realtime.autocarros_por_linha),
+        "linhas_carregadas": len(stcp_paragens.todas_paragens),
         "ultima_atualizacao": stcp_realtime.ultima_atualizacao,
-        "dados": stcp_realtime.autocarros_processados,
+        **totais_db,
+    }
+
+
+# autocarros em tempo real (dados enriquecidos via DB)
+@app.get("/api/autocarros")
+async def obter_autocarros():
+    pool = database.obter_pool()
+    if not pool:
+        raise HTTPException(503, detail="Base de dados indisponivel.")
+    async with pool.acquire() as conn:
+        async with conn.cursor(aiomysql.DictCursor) as cur:
+            await cur.execute(QUERY_AUTOCARROS)
+            rows = await cur.fetchall()
+    return {
+        "total": len(rows),
+        "ultima_atualizacao": stcp_realtime.ultima_atualizacao,
+        "dados": rows,
+    }
+
+
+@app.get("/api/autocarros/{linha}")
+async def obter_autocarros_linha(linha: str, sentido: str = Query(None)):
+    if sentido and sentido not in ("ida", "volta"):
+        raise HTTPException(400, detail="Sentido deve ser 'ida' ou 'volta'.")
+    pool = database.obter_pool()
+    if not pool:
+        raise HTTPException(503, detail="Base de dados indisponivel.")
+    linha_upper = linha.upper()
+    async with pool.acquire() as conn:
+        async with conn.cursor(aiomysql.DictCursor) as cur:
+            if sentido:
+                await cur.execute(
+                    QUERY_AUTOCARROS + " WHERE v.linha = %s AND v.sentido = %s",
+                    (linha_upper, sentido),
+                )
+            else:
+                await cur.execute(
+                    QUERY_AUTOCARROS + " WHERE v.linha = %s",
+                    (linha_upper,),
+                )
+            rows = await cur.fetchall()
+    if not rows:
+        raise HTTPException(404, detail=f"Nenhum autocarro ativo na linha '{linha_upper}'.")
+    return {
+        "linha": linha_upper,
+        "total": len(rows),
+        "ultima_atualizacao": stcp_realtime.ultima_atualizacao,
+        "dados": rows,
     }
 
 
@@ -76,25 +183,62 @@ async def paragens_da_linha(linha: str, sentido: str = Query(None)):
     return {"linha": linha.upper(), "paragens": resultado}
 
 
-# posição dos autocarros por linha
-@app.get("/api/autocarro/{linha}/posicao")
-async def posicao_autocarro(linha: str, sentido: str = Query(None)):
+# shape / desenho geografico da rota (para mapas)
+@app.get("/api/linhas/{linha}/shape")
+async def shape_da_linha(linha: str, sentido: str = Query(None)):
     if sentido and sentido not in ("ida", "volta"):
         raise HTTPException(400, detail="Sentido deve ser 'ida' ou 'volta'.")
-
+    pool = database.obter_pool()
+    if not pool:
+        raise HTTPException(503, detail="Base de dados indisponivel.")
     linha_upper = linha.upper()
-    autocarros = stcp_realtime.autocarros_por_linha.get(linha_upper, [])
+    async with pool.acquire() as conn:
+        async with conn.cursor(aiomysql.DictCursor) as cur:
+            if sentido:
+                direction = 0 if sentido == "ida" else 1
+                await cur.execute("""
+                    SELECT DISTINCT s.shape_id, s.shape_pt_lat, s.shape_pt_lon, s.shape_pt_sequence
+                    FROM shapes s
+                    JOIN trips t ON t.shape_id = s.shape_id
+                    JOIN routes r ON r.route_id = t.route_id
+                    WHERE r.route_short_name = %s AND t.direction_id = %s
+                    ORDER BY s.shape_id, s.shape_pt_sequence
+                """, (linha_upper, direction))
+            else:
+                await cur.execute("""
+                    SELECT DISTINCT s.shape_id, s.shape_pt_lat, s.shape_pt_lon, s.shape_pt_sequence
+                    FROM shapes s
+                    JOIN trips t ON t.shape_id = s.shape_id
+                    JOIN routes r ON r.route_id = t.route_id
+                    WHERE r.route_short_name = %s
+                    ORDER BY s.shape_id, s.shape_pt_sequence
+                """, (linha_upper,))
+            rows = await cur.fetchall()
+    if not rows:
+        raise HTTPException(404, detail=f"Shape da linha '{linha_upper}' nao encontrado.")
+    # agrupar por shape_id
+    shapes = {}
+    for r in rows:
+        sid = r["shape_id"]
+        if sid not in shapes:
+            shapes[sid] = []
+        shapes[sid].append({"lat": r["shape_pt_lat"], "lon": r["shape_pt_lon"]})
+    return {"linha": linha_upper, "shapes": shapes}
 
-    if sentido:
-        autocarros = [b for b in autocarros if b["sentido"] == sentido]
 
-    if not autocarros:
-        raise HTTPException(404, detail=f"Nenhum autocarro ativo na linha '{linha_upper}'.")
-    return {
-        "linha": linha_upper,
-        "total": len(autocarros),
-        "autocarros": autocarros,
-    }
+# todas as paragens da STCP (da base de dados)
+@app.get("/api/paragens")
+async def listar_todas_paragens():
+    pool = database.obter_pool()
+    if not pool:
+        raise HTTPException(503, detail="Base de dados indisponivel.")
+    async with pool.acquire() as conn:
+        async with conn.cursor(aiomysql.DictCursor) as cur:
+            await cur.execute(
+                "SELECT stop_id, stop_name, stop_lat, stop_lon FROM stops ORDER BY stop_name"
+            )
+            rows = await cur.fetchall()
+    return {"total": len(rows), "paragens": rows}
 
 
 # paragens proximas

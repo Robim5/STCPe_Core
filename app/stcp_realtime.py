@@ -94,7 +94,7 @@ async def inicializar_tabela_veiculos():
                     bearing DOUBLE DEFAULT 0,
                     timestamp VARCHAR(50),
                     INDEX idx_linha (linha)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             """)
     print("Tabela 'veiculos' pronta.")
 

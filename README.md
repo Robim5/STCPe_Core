@@ -62,22 +62,34 @@ Fornece dados de localização, estimativas de tempo de chegada e informações 
 ```
 STCPe_Core/
 ├── app/
-│   ├── __init__.py            # Package Python
-│   ├── main.py                # Endpoints da API (FastAPI)
-│   ├── database.py            # Pool assíncrono de conexões MySQL
-│   ├── stcp_realtime.py       # Polling e processamento de dados em tempo real
-│   ├── stcp_paragens.py       # Gestão de paragens e pesquisa
-│   └── calculadora.py         # Cálculos de distância (Haversine) e ETA
+│   ├── __init__.py                # Package Python
+│   ├── main.py                    # App FastAPI, middleware e lifespan
+│   ├── config.py                  # Configurações e variáveis de ambiente
+│   ├── database.py                # Pool assíncrono de conexões MySQL
+│   ├── routers/                   # Endpoints organizados por domínio
+│   │   ├── __init__.py
+│   │   ├── health.py              # /api/health, /api/estatisticas
+│   │   ├── autocarros.py          # /api/autocarros
+│   │   ├── linhas.py              # /api/linhas, paragens de linha, shapes
+│   │   ├── paragens.py            # /api/paragens, pesquisa, info, tempos
+│   │   └── tempo.py               # /api/tempo (ETA)
+│   └── services/                  # Lógica de negócio
+│       ├── __init__.py
+│       ├── calculadora.py         # Cálculos de distância (Haversine) e ETA
+│       ├── stcp_paragens.py       # Gestão de paragens e pesquisa
+│       └── stcp_realtime.py       # Polling e processamento em tempo real
 ├── dados/
-│   ├── municipios_linhas.json # Mapa linha -> municipio
-│   └── paragens/              # Ficheiros JSON com dados de todas as paragens
+│   ├── municipios_linhas.json     # Mapa linha -> municipio
+│   └── paragens/                  # Ficheiros JSON com dados de todas as paragens
 │       ├── 200tos.json
 │       ├── 300tos.json
 │       ├── ...
 │       └── Zc.json
-├── .env                       # Variáveis de ambiente (não vai para o Git)
-├── Procfile                   # Configuração de deploy (Railway)
-├── requirements.txt           # Dependências Python
+├── tests/
+│   └── test_api.py                # Testes automatizados dos endpoints
+├── .env                           # Variáveis de ambiente (não vai para o Git)
+├── Procfile                       # Configuração de deploy (Railway)
+├── requirements.txt               # Dependências Python
 └── README.md
 ```
 

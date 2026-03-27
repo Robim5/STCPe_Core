@@ -75,11 +75,17 @@ STCPe_Core/
 │   │   └── tempo.py               # /api/tempo (ETA)
 │   └── services/                  # Lógica de negócio
 │       ├── __init__.py
-│       ├── calculadora.py         # Cálculos de distância (Haversine) e ETA
+│       ├── calculadora.py         # Cálculos de distância (Haversine) e ETA (GTFS)
 │       ├── stcp_paragens.py       # Gestão de paragens e pesquisa
 │       └── stcp_realtime.py       # Polling e processamento em tempo real
 ├── dados/
 │   ├── municipios_linhas.json     # Mapa linha -> municipio
+│   ├── infoCVS/                   # Dados GTFS estáticos da STCP
+│   │   ├── routes.csv
+│   │   ├── shapes.csv
+│   │   ├── stop_times.csv
+│   │   ├── stops.csv
+│   │   └── trips.csv
 │   └── paragens/                  # Ficheiros JSON com dados de todas as paragens
 │       ├── 200tos.json
 │       ├── 300tos.json
@@ -256,8 +262,8 @@ O projeto está configurado para deploy no [Railway](https://railway.app/) atrav
 - Os dados de autocarros são atualizados a cada **5 segundos** via polling à API da STCP
 - A cada ciclo, os dados em tempo real são gravados na tabela `veiculos` (MySQL) e cruzados com as tabelas GTFS (`routes`, `trips`) para enriquecer a resposta com destino e cor da linha
 - As coordenadas seguem o formato **GeoJSON** (`[longitude, latitude]`)
-- O cálculo de ETA usa a **distância pela rota** (soma dos segmentos entre paragens) e não a distância em linha reta
-- Quando um autocarro está parado, é usada uma velocidade mínima de **12 km/h** para a estimativa
+- O cálculo de ETA usa **tempos programados GTFS** (mediana dos horários oficiais da STCP entre paragens), com fallback para distância corrigida (×1.35 fator estrada) + 25s/paragem + velocidade média urbana de 15 km/h
+- A resposta do endpoint `/api/tempo` inclui o campo `metodo_calculo` (`gtfs` ou `calculo`) para indicar qual método foi usado
 - O campo `sentido` mapeia: `0 → ida`, `1 → volta`
 
 ### Base de Dados

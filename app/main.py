@@ -6,7 +6,7 @@ import asyncio
 
 from app.config import IS_PRODUCTION, API_KEY
 from app import database
-from app.services import stcp_realtime, stcp_paragens
+from app.services import stcp_realtime, stcp_paragens, calculadora
 from app.routers import health, autocarros, linhas, paragens, tempo
 
 
@@ -16,6 +16,7 @@ async def lifespan(app: FastAPI):
     await database.criar_pool()
     await stcp_realtime.inicializar_tabela_veiculos()
     stcp_paragens.carregar_paragens()
+    calculadora.carregar_tempos_gtfs()
     asyncio.create_task(stcp_realtime.atualizar_autocarros())
     yield
     print("A encerrar nucleo...")

@@ -3,6 +3,10 @@ from app.services import stcp_paragens, stcp_realtime, calculadora
 
 router = APIRouter(prefix="/api", tags=["Tempo"])
 
+# distancia maxima (metros) do autocarro a paragem mais proxima da rota
+# se estiver mais longe que isto, provavelmente nao esta nesta rota (depot, dead head, etc.)
+_MAX_DISTANCIA_ROTA_M = 500
+
 
 @router.get("/tempo/{linha}/{codigo_paragem}")
 async def tempo_chegada(
@@ -50,9 +54,13 @@ async def tempo_chegada(
 
     for bus in autocarros_sentido:
         # encontrar em que ponto da rota o autocarro esta
-        indice_bus, _ = calculadora.encontrar_paragem_mais_proxima(
+        indice_bus, dist_rota = calculadora.encontrar_paragem_mais_proxima(
             bus["lat"], bus["lon"], paragens_rota
         )
+
+        # FILTRO: autocarro longe demais da rota (provavel fantasma - depot, fora de rota)
+        if dist_rota > _MAX_DISTANCIA_ROTA_M:
+            continue
 
         # so interessa se ele estiver antes da paragem destino
         if indice_bus >= indice_destino:

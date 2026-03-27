@@ -17,14 +17,36 @@ ultima_atualizacao = None
 # mapeamento sentido STCP onde 0 = ida e 1 = volta
 SENTIDO_MAP = {0: "ida", 1: "volta"}
 
+# tempo maximo (segundos) desde a ultima atualizacao GPS para considerar o autocarro ativo
+# autocarros com dados mais antigos que isto sao considerados fantasmas (fora de servico)
+_MAX_IDADE_DADOS_S = 180  # 3 minutos
+
+
+def _parse_obs_datetime(dt_str: str):
+    """tenta converter string ISO 8601 para datetime UTC"""
+    if not dt_str:
+        return None
+    try:
+        # suporta formatos comuns: "2024-01-15T10:30:00Z", "2024-01-15T10:30:00+00:00"
+        return datetime.fromisoformat(dt_str.replace("Z", "+00:00"))
+    except (ValueError, TypeError):
+        return None
+
 
 def processar_dados(dados_raw: list) -> tuple:
     """
     processa dados brutos da API STCP
-    extrai info relevante e indexa por linha
+    extrai info relevante, filtra fantasmas e indexa por linha
+
+    filtros anti-fantasma:
+    1. timestamp - rejeita autocarros com GPS desatualizado (>3 min)
+    2. deduplicacao - mantem apenas a entrada mais recente por veiculo
     """
-    processados = []
-    por_linha = {}
+    agora = datetime.now(timezone.utc)
+    veiculos_por_id = {}  # veiculo_id -> bus (deduplicacao)
+    sem_id = []  # autocarros sem ID (raros, manter por seguranca)
+    filtrados_stale = 0
+    filtrados_sem_linha = 0
 
     for veiculo in dados_raw:
         try:
@@ -43,12 +65,22 @@ def processar_dados(dados_raw: list) -> tuple:
                         pass
 
             if not linha:
+                filtrados_sem_linha += 1
                 continue
 
-            # coodenadas geojson é [longitude, latitude]
+            # coodenadas geojson e [longitude, latitude]
             coords = veiculo.get("location", {}).get("value", {}).get("coordinates", [])
             if len(coords) < 2:
                 continue
+
+            # FILTRO 1: rejeitar dados GPS obsoletos (autocarro fantasma)
+            obs_dt_str = veiculo.get("observationDateTime", {}).get("value", "")
+            obs_dt = _parse_obs_datetime(obs_dt_str)
+            if obs_dt is not None:
+                idade_s = (agora - obs_dt).total_seconds()
+                if idade_s > _MAX_IDADE_DADOS_S:
+                    filtrados_stale += 1
+                    continue
 
             lon, lat = coords[0], coords[1]
             sentido = SENTIDO_MAP.get(sentido_num, "desconhecido")
@@ -62,17 +94,33 @@ def processar_dados(dados_raw: list) -> tuple:
                 "lon": lon,
                 "velocidade": veiculo.get("speed", {}).get("value", 0),
                 "bearing": veiculo.get("bearing", {}).get("value", 0),
-                "ultima_atualizacao": veiculo.get("observationDateTime", {}).get("value", ""),
+                "ultima_atualizacao": obs_dt_str,
             }
 
-            processados.append(bus)
-
-            if linha not in por_linha:
-                por_linha[linha] = []
-            por_linha[linha].append(bus)
+            # FILTRO 2: deduplicacao por ID de veiculo (manter o mais recente)
+            vid = bus["veiculo_id"]
+            if vid:
+                existente = veiculos_por_id.get(vid)
+                if existente is None or bus["ultima_atualizacao"] > existente["ultima_atualizacao"]:
+                    veiculos_por_id[vid] = bus
+            else:
+                sem_id.append(bus)
 
         except Exception:
             continue
+
+    # construir lista final a partir dos dados deduplicados
+    processados = list(veiculos_por_id.values()) + sem_id
+
+    por_linha = {}
+    for bus in processados:
+        linha = bus["linha"]
+        if linha not in por_linha:
+            por_linha[linha] = []
+        por_linha[linha].append(bus)
+
+    if filtrados_stale > 0:
+        print(f"Filtro fantasma: {filtrados_stale} autocarros removidos (GPS >3min obsoleto)")
 
     return processados, por_linha
 

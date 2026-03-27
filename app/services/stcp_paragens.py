@@ -1,11 +1,11 @@
 import json
 from pathlib import Path
-from app import calculadora
+from app.services import calculadora
 
 todas_paragens = {}
 
-_PASTA_PARAGENS = Path(__file__).resolve().parent.parent / "dados" / "paragens"
-_FICHEIRO_MUNICIPIOS = Path(__file__).resolve().parent.parent / "dados" / "municipios_linhas.json"
+_PASTA_PARAGENS = Path(__file__).resolve().parent.parent.parent / "dados" / "paragens"
+_FICHEIRO_MUNICIPIOS = Path(__file__).resolve().parent.parent.parent / "dados" / "municipios_linhas.json"
 _MUNICIPIOS_POR_LINHA = {}
 
 
@@ -104,7 +104,7 @@ def obter_paragens_linha(linha: str, sentido: str = None):
 
 def encontrar_paragem_por_codigo(linha: str, sentido: str, codigo: str):
     """
-    encontra paragem pelo codigo numa linha e sentido 
+    encontra paragem pelo codigo numa linha e sentido
     retorna indice e paragem ou None
     """
     dados_linha = todas_paragens.get(linha)

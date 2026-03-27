@@ -9,13 +9,14 @@ from app.database import obter_pool
 load_dotenv()
 
 # dados na ram
-memoria_autocarros = [] # dados brutos da STCP
-autocarros_processados = [] # dados limpos e organizados
-autocarros_por_linha = {} # indexados por linha (ex: {"600": [...], "200": [...]})
+memoria_autocarros = []  # dados brutos da STCP
+autocarros_processados = []  # dados limpos e organizados
+autocarros_por_linha = {}  # indexados por linha (ex: {"600": [...], "200": [...]})
 ultima_atualizacao = None
 
 # mapeamento sentido STCP onde 0 = ida e 1 = volta
 SENTIDO_MAP = {0: "ida", 1: "volta"}
+
 
 def processar_dados(dados_raw: list) -> tuple:
     """

@@ -2,13 +2,17 @@ import csv
 import math
 from pathlib import Path
 from collections import defaultdict
+from datetime import datetime
 from statistics import median
 
 # pasta dos ficheiros GTFS
 _PASTA_CSV = Path(__file__).resolve().parent.parent.parent / "dados" / "infoCVS"
 
-# tempos programados do GTFS: (route_id, direction) -> {stop_code: cumulative_median_seconds}
-_tempos_gtfs = {}
+# tempos programados do GTFS separados por periodo do dia
+# (route_id, direction, periodo) -> {stop_code: median_cumulative_seconds}
+_tempos_gtfs_periodo = {}
+# fallback global (todas as viagens): (route_id, direction) -> {stop_code: median_cumulative_seconds}
+_tempos_gtfs_global = {}
 
 # fator de correcao estrada vs linha reta (urbano Porto)
 _FATOR_ESTRADA = 1.35
@@ -20,6 +24,21 @@ _TEMPO_PARAGEM_S = 25
 _VELOCIDADE_MEDIA_URBANA = 15.0
 
 
+def _periodo_de_segundos(seg: int) -> str:
+    """determina o periodo do dia com base em segundos desde meia-noite"""
+    s = seg % 86400
+    if s < 23400:       # 00:00 - 06:30
+        return "madrugada"
+    elif s < 34200:     # 06:30 - 09:30
+        return "ponta_manha"
+    elif s < 59400:     # 09:30 - 16:30
+        return "dia"
+    elif s < 70200:     # 16:30 - 19:30
+        return "ponta_tarde"
+    else:               # 19:30 - 24:00
+        return "noite"
+
+
 def _parse_time(t: str) -> int:
     """converte HH:MM:SS para total de segundos"""
     parts = t.split(":")
@@ -29,9 +48,10 @@ def _parse_time(t: str) -> int:
 def carregar_tempos_gtfs():
     """
     carrega os tempos programados do GTFS (stop_times.csv + trips.csv)
-    para cada (rota, sentido) guarda {codigo_paragem: mediana_segundos_acumulados}
+    separa viagens por periodo do dia (madrugada, ponta manha, dia, ponta tarde, noite)
+    para que as estimativas reflitam o transito real de cada periodo
     """
-    global _tempos_gtfs
+    global _tempos_gtfs_periodo, _tempos_gtfs_global
 
     trips_file = _PASTA_CSV / "trips.csv"
     stop_times_file = _PASTA_CSV / "stop_times.csv"
@@ -52,8 +72,9 @@ def carregar_tempos_gtfs():
         for row in csv.DictReader(f):
             trip_stops[row["trip_id"]].append(row)
 
-    # para cada (rota, sentido), colecionar tempos acumulados por paragem
-    acumulados = defaultdict(lambda: defaultdict(list))
+    # colecionar tempos acumulados por (rota, sentido, periodo) e globalmente
+    acum_periodo = defaultdict(lambda: defaultdict(list))
+    acum_global = defaultdict(lambda: defaultdict(list))
 
     for tid, stops in trip_stops.items():
         if tid not in trip_route:
@@ -66,21 +87,32 @@ def carregar_tempos_gtfs():
             continue
 
         base_time = _parse_time(stops[0]["departure_time"])
+        periodo = _periodo_de_segundos(base_time)
 
         for s in stops:
             arr = _parse_time(s["arrival_time"])
             cumulativo = arr - base_time
             # filtrar anomalias (tempos negativos ou superiores a 3h)
             if 0 <= cumulativo <= 10800:
-                acumulados[(route, direction)][s["stop_id"]].append(cumulativo)
+                acum_periodo[(route, direction, periodo)][s["stop_id"]].append(cumulativo)
+                acum_global[(route, direction)][s["stop_id"]].append(cumulativo)
 
-    # calcular a mediana para cada paragem
-    for key, stops_dict in acumulados.items():
-        _tempos_gtfs[key] = {}
+    # mediana por periodo (min 3 viagens para ser representativo)
+    for key, stops_dict in acum_periodo.items():
+        _tempos_gtfs_periodo[key] = {}
         for stop_code, times in stops_dict.items():
-            _tempos_gtfs[key][stop_code] = median(times)
+            if len(times) >= 3:
+                _tempos_gtfs_periodo[key][stop_code] = median(times)
 
-    print(f"GTFS: {len(_tempos_gtfs)} rotas com tempos programados carregados.")
+    # mediana global (fallback)
+    for key, stops_dict in acum_global.items():
+        _tempos_gtfs_global[key] = {}
+        for stop_code, times in stops_dict.items():
+            _tempos_gtfs_global[key][stop_code] = median(times)
+
+    n_periodo = len(_tempos_gtfs_periodo)
+    n_global = len(_tempos_gtfs_global)
+    print(f"GTFS: {n_global} rotas globais + {n_periodo} rotas por periodo carregadas.")
 
 
 def _procurar_codigo_gtfs(tempos: dict, codigo: str):
@@ -190,31 +222,47 @@ def estimar_tempo_chegada_v2(
     estima o tempo de chegada usando tempos programados do GTFS quando disponiveis
     com fallback para calculo melhorado por distancia
 
+    usa tempos especificos do periodo do dia (ponta manha/tarde, dia, noite, madrugada)
+    para estimativas mais realistas conforme o transito tipico
+
     retorna (tempo_minutos, distancia_metros, metodo)
     metodo: 'gtfs' se usou tempos programados, 'calculo' se usou fallback
     """
     direction = 0 if sentido == "ida" else 1
-    key = (linha, direction)
 
     # distancia para incluir na resposta (corrigida com fator estrada)
     dist_reta = calcular_distancia_rota(paragens_rota, indice_bus, indice_destino)
     dist_estimada = round(dist_reta * _FATOR_ESTRADA, 1)
 
-    # tentar metodo GTFS
-    if key in _tempos_gtfs:
-        tempos = _tempos_gtfs[key]
+    code_bus = paragens_rota[indice_bus]["codigo"]
+    code_dest = paragens_rota[indice_destino]["codigo"]
 
-        code_bus = paragens_rota[indice_bus]["codigo"]
-        code_dest = paragens_rota[indice_destino]["codigo"]
+    # determinar periodo atual do dia
+    agora = datetime.now()
+    seg_dia = agora.hour * 3600 + agora.minute * 60 + agora.second
+    periodo = _periodo_de_segundos(seg_dia)
 
+    # tentar GTFS com tempos especificos do periodo
+    key_periodo = (linha, direction, periodo)
+    tempos = _tempos_gtfs_periodo.get(key_periodo)
+    if tempos:
         t_bus = _procurar_codigo_gtfs(tempos, code_bus)
         t_dest = _procurar_codigo_gtfs(tempos, code_dest)
-
         if t_bus is not None and t_dest is not None:
-            tempo_programado_s = t_dest - t_bus
-            if tempo_programado_s > 0:
-                tempo_min = round(tempo_programado_s / 60.0, 1)
-                return tempo_min, dist_estimada, "gtfs"
+            delta = t_dest - t_bus
+            if delta > 0:
+                return round(delta / 60.0, 1), dist_estimada, "gtfs"
+
+    # fallback: GTFS global (todas as viagens)
+    key_global = (linha, direction)
+    tempos = _tempos_gtfs_global.get(key_global)
+    if tempos:
+        t_bus = _procurar_codigo_gtfs(tempos, code_bus)
+        t_dest = _procurar_codigo_gtfs(tempos, code_dest)
+        if t_bus is not None and t_dest is not None:
+            delta = t_dest - t_bus
+            if delta > 0:
+                return round(delta / 60.0, 1), dist_estimada, "gtfs"
 
     # fallback: calculo melhorado por distancia
     num_paragens_entre = max(0, indice_destino - indice_bus - 1)

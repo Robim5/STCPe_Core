@@ -262,7 +262,7 @@ O projeto está configurado para deploy no [Railway](https://railway.app/) atrav
 - Os dados de autocarros são atualizados a cada **5 segundos** via polling à API da STCP
 - A cada ciclo, os dados em tempo real são gravados na tabela `veiculos` (MySQL) e cruzados com as tabelas GTFS (`routes`, `trips`) para enriquecer a resposta com destino e cor da linha
 - As coordenadas seguem o formato **GeoJSON** (`[longitude, latitude]`)
-- O cálculo de ETA usa **tempos programados GTFS** (mediana dos horários oficiais da STCP entre paragens), com fallback para distância corrigida (×1.35 fator estrada) + 25s/paragem + velocidade média urbana de 15 km/h
+- O cálculo de ETA usa **tempos programados GTFS por período do dia** (madrugada, ponta manhã, dia, ponta tarde, noite) — a mediana dos horários oficiais da STCP entre paragens é calculada separadamente para cada período, refletindo o trânsito típico de cada altura do dia. Fallback: mediana global de todos os horários, depois distância corrigida (×1.35 fator estrada) + 25s/paragem + velocidade média urbana de 15 km/h
 - A resposta do endpoint `/api/tempo` inclui o campo `metodo_calculo` (`gtfs` ou `calculo`) para indicar qual método foi usado
 - O campo `sentido` mapeia: `0 → ida`, `1 → volta`
 

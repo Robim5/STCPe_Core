@@ -23,7 +23,7 @@ QUERY_AUTOCARROS = """
     LEFT JOIN routes r
         ON r.route_short_name = v.linha
     LEFT JOIN (
-        SELECT route_id, direction_id, trip_headsign
+        SELECT route_id, direction_id, MIN(trip_headsign) AS trip_headsign
         FROM trips
         GROUP BY route_id, direction_id
     ) t ON t.route_id = r.route_id

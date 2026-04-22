@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Query, HTTPException
-import aiomysql
 from app.database import obter_pool
 from app.services import stcp_realtime
 
@@ -37,17 +36,20 @@ QUERY_AUTOCARROS = """
 
 @router.get("/autocarros")
 async def obter_autocarros():
+    await stcp_realtime.garantir_dados_recentes()
+
     pool = obter_pool()
     if not pool:
         raise HTTPException(503, detail="Base de dados indisponivel.")
+
     async with pool.acquire() as conn:
-        async with conn.cursor(aiomysql.DictCursor) as cur:
-            await cur.execute(QUERY_AUTOCARROS)
-            rows = await cur.fetchall()
+        rows = await conn.fetch(QUERY_AUTOCARROS)
+
+    dados = [dict(r) for r in rows]
     return {
-        "total": len(rows),
+        "total": len(dados),
         "ultima_atualizacao": stcp_realtime.ultima_atualizacao,
-        "dados": rows,
+        "dados": dados,
     }
 
 
@@ -55,28 +57,34 @@ async def obter_autocarros():
 async def obter_autocarros_linha(linha: str, sentido: str = Query(None)):
     if sentido and sentido not in ("ida", "volta"):
         raise HTTPException(400, detail="Sentido deve ser 'ida' ou 'volta'.")
+
+    await stcp_realtime.garantir_dados_recentes()
+
     pool = obter_pool()
     if not pool:
         raise HTTPException(503, detail="Base de dados indisponivel.")
+
     linha_upper = linha.upper()
     async with pool.acquire() as conn:
-        async with conn.cursor(aiomysql.DictCursor) as cur:
-            if sentido:
-                await cur.execute(
-                    QUERY_AUTOCARROS + " WHERE v.linha = %s AND v.sentido = %s",
-                    (linha_upper, sentido),
-                )
-            else:
-                await cur.execute(
-                    QUERY_AUTOCARROS + " WHERE v.linha = %s",
-                    (linha_upper,),
-                )
-            rows = await cur.fetchall()
-    if not rows:
+        if sentido:
+            rows = await conn.fetch(
+                QUERY_AUTOCARROS + " WHERE v.linha = $1 AND v.sentido = $2",
+                linha_upper,
+                sentido,
+            )
+        else:
+            rows = await conn.fetch(
+                QUERY_AUTOCARROS + " WHERE v.linha = $1",
+                linha_upper,
+            )
+
+    dados = [dict(r) for r in rows]
+    if not dados:
         raise HTTPException(404, detail=f"Nenhum autocarro ativo na linha '{linha_upper}'.")
+
     return {
         "linha": linha_upper,
-        "total": len(rows),
+        "total": len(dados),
         "ultima_atualizacao": stcp_realtime.ultima_atualizacao,
-        "dados": rows,
+        "dados": dados,
     }

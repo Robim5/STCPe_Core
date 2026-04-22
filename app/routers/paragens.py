@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Query, HTTPException
-import aiomysql
 from app.database import obter_pool
 from app.services import stcp_paragens, stcp_realtime, calculadora
 
@@ -11,13 +10,14 @@ async def listar_todas_paragens():
     pool = obter_pool()
     if not pool:
         raise HTTPException(503, detail="Base de dados indisponivel.")
+
     async with pool.acquire() as conn:
-        async with conn.cursor(aiomysql.DictCursor) as cur:
-            await cur.execute(
-                "SELECT stop_id, stop_name, stop_lat, stop_lon FROM stops ORDER BY stop_name"
-            )
-            rows = await cur.fetchall()
-    return {"total": len(rows), "paragens": rows}
+        rows = await conn.fetch(
+            "SELECT stop_id, stop_name, stop_lat, stop_lon FROM stops ORDER BY stop_name"
+        )
+
+    paragens = [dict(r) for r in rows]
+    return {"total": len(paragens), "paragens": paragens}
 
 
 @router.get("/paragens/proximas")
@@ -50,6 +50,8 @@ async def info_paragem(codigo: str):
 
 @router.get("/paragem/{codigo}/tempos")
 async def tempos_paragem(codigo: str):
+    await stcp_realtime.garantir_dados_recentes()
+
     paragem_info, linhas_na_paragem = stcp_paragens.obter_linhas_na_paragem(codigo)
     if paragem_info is None:
         raise HTTPException(404, detail=f"Paragem '{codigo}' nao encontrada.")

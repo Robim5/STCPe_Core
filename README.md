@@ -12,7 +12,8 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/Licença-AGPL--3.0-blue?style=for-the-badge" alt="License"></a>
   <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
   <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI">
-  <img src="https://img.shields.io/badge/Deploy-Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white" alt="Railway">
+  <img src="https://img.shields.io/badge/Deploy-Vercel-black?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel">
+  <img src="https://img.shields.io/badge/DB-Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase">
   <img src="https://img.shields.io/badge/Acesso-Privado%20🔒-red?style=for-the-badge" alt="Privado">
 </p>
 
@@ -50,10 +51,10 @@ Fornece dados de localização, estimativas de tempo de chegada e informações 
 |---|---|
 | Framework | [FastAPI](https://fastapi.tiangolo.com/) |
 | Servidor | [Uvicorn](https://www.uvicorn.org/) |
-| Base de Dados | MySQL (via [aiomysql](https://github.com/aio-libs/aiomysql)) |
+| Base de Dados | PostgreSQL ([Supabase](https://supabase.com/), via [asyncpg](https://github.com/MagicStack/asyncpg)) |
 | HTTP Client | [httpx](https://www.python-httpx.org/) |
 | Configuração | [python-dotenv](https://pypi.org/project/python-dotenv/) |
-| Deploy | [Railway](https://railway.app/) |
+| Deploy | [Vercel](https://vercel.com/) |
 
 ---
 
@@ -227,11 +228,18 @@ pip install -r requirements.txt
 # configurar variáveis de ambiente
 # criar ficheiro .env na raiz com:
 # STCP_API_URL=<url_da_api_stcp>
-# DB_HOST=localhost
-# DB_PORT=3306
-# DB_USER=root
-# DB_PASSWORD=<password>
-# DB_NAME=real_time_data
+# DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/<db>
+# DB_SSL=true
+# DB_POOL_MIN_SIZE=1
+# DB_POOL_MAX_SIZE=5
+# API_KEY=<chave_opcional>
+# CRON_SECRET=<segredo_para_cron_vercel>
+# REQUIRE_API_KEY_IN_PRODUCTION=true
+# ALLOW_API_KEY_QUERY_PARAM=false
+# CORS_ALLOW_ORIGINS=https://teu-frontend.com
+# RATE_LIMIT_ENABLED=true
+# RATE_LIMIT_REQUESTS=120
+# RATE_LIMIT_WINDOW_SECONDS=60
 
 # iniciar o servidor
 uvicorn app.main:app --reload
@@ -245,22 +253,42 @@ A documentação interativa (Swagger UI) fica acessível em `http://localhost:80
 
 ## Deploy
 
-O projeto está configurado para deploy no [Railway](https://railway.app/) através do `Procfile`.
+O projeto está configurado para deploy no [Vercel](https://vercel.com/) + [Supabase](https://supabase.com/).
 
-1. Ligar o repositório GitHub ao Railway
-2. Adicionar um serviço MySQL no Railway
-3. Adicionar as variáveis de ambiente nas definições do projeto:
+Ficheiros principais de deploy/migração:
+
+- `vercel.json` -> rotas e cron job (`/api/internal/refresh`)
+- `api/index.py` -> entrypoint ASGI para Vercel
+- `supabase/schema.sql` -> schema PostgreSQL
+- `scripts/load_supabase_data.py` -> carga dos CSV GTFS para a base de dados
+
+Resumo rápido:
+
+1. Criar projeto no Supabase
+2. Executar `supabase/schema.sql`
+3. (Opcional) Validar CSV: `python scripts/load_supabase_data.py --dry-run`
+4. Correr `python scripts/load_supabase_data.py` com `DATABASE_URL`
+5. Ligar o repositório ao Vercel
+6. Adicionar variáveis de ambiente:
    - `STCP_API_URL` -> URL da API da STCP
-   - `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` -> credenciais do MySQL
+  - `DATABASE_URL` -> ligação PostgreSQL da Supabase
+  - `DB_SSL=true`
+  - `DB_POOL_MIN_SIZE=1`
+  - `DB_POOL_MAX_SIZE=5`
    - `API_KEY` -> chave secreta para proteger os endpoints (opcional mas recomendado)
-4. O deploy é feito automaticamente a cada push
+  - `CRON_SECRET` -> protege chamadas do Vercel Cron (recomendado)
+  - `REQUIRE_API_KEY_IN_PRODUCTION=true`
+  - `ALLOW_API_KEY_QUERY_PARAM=false`
+  - `RATE_LIMIT_ENABLED=true`
+7. O deploy é feito automaticamente a cada push
 
 ---
 
 ## Notas Técnicas
 
-- Os dados de autocarros são atualizados a cada **5 segundos** via polling à API da STCP
-- A cada ciclo, os dados em tempo real são gravados na tabela `veiculos` (MySQL) e cruzados com as tabelas GTFS (`routes`, `trips`) para enriquecer a resposta com destino e cor da linha
+- Em ambiente local (com `ENABLE_BACKGROUND_POLLING=true`), os dados de autocarros podem ser atualizados em polling contínuo
+- O intervalo do polling contínuo local é configurável por `STCP_BACKGROUND_INTERVAL_SECONDS` (default: 10s)
+- Em produção serverless, os dados são atualizados sob procura + cron e gravados na tabela `veiculos` (PostgreSQL), cruzando com tabelas GTFS (`routes`, `trips`) para enriquecer a resposta com destino e cor da linha
 - As coordenadas seguem o formato **GeoJSON** (`[longitude, latitude]`)
 - O cálculo de ETA usa **tempos programados GTFS por período do dia** (madrugada, ponta manhã, dia, ponta tarde, noite) — a mediana dos horários oficiais da STCP entre paragens é calculada separadamente para cada período, refletindo o trânsito típico de cada altura do dia. Fallback: mediana global de todos os horários, depois distância corrigida (×1.35 fator estrada) + 25s/paragem + velocidade média urbana de 15 km/h
 - A resposta do endpoint `/api/tempo` inclui o campo `metodo_calculo` (`gtfs` ou `calculo`) para indicar qual método foi usado
@@ -275,7 +303,7 @@ Tabelas GTFS estáticas (importadas uma vez):
 - `stop_times` -> horários por paragem
 - `shapes` -> desenho geográfico das rotas
 
-Tabela dinâmica (atualizada a cada 5s):
+Tabela dinâmica (atualização contínua local configurável; default 10s):
 - `veiculos` -> posição em tempo real dos autocarros
 
 ---
@@ -284,7 +312,11 @@ Tabela dinâmica (atualizada a cada 5s):
 
 Esta API é de **acesso privado**. O repositório e o URL de produção não são públicos.
 
-- **API Key**: Se a variável `API_KEY` estiver definida, todos os endpoints `/api/*` exigem o header `X-API-Key` (ou query param `?api_key=`). Sem chave válida -> `401 Unauthorized`
+- **API Key**: Em produção, com `REQUIRE_API_KEY_IN_PRODUCTION=true`, os endpoints `/api/*` exigem `API_KEY`; sem configuração, respondem `503` (fail-closed)
+- **Header preferido**: autenticação por `X-API-Key`; query param `?api_key=` está desativado por default (`ALLOW_API_KEY_QUERY_PARAM=false`)
+- **Cron protegido**: `/api/internal/refresh` exige `CRON_SECRET` por Bearer token; sem segredo o endpoint interno é bloqueado
+- **Rate limiting**: limite básico por IP (`RATE_LIMIT_*`) para mitigar brute force e abuso de consumo
+- **Headers de segurança**: `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` e `HSTS` em produção
 - **Repositório**: Privado no GitHub
 - **Docs**: Swagger UI e ReDoc desativados em produção (disponíveis apenas localmente em `http://localhost:8000/docs`)
 - **Apenas leitura**: A API só aceita `GET` -- não expõe nenhuma operação de escrita

@@ -14,6 +14,8 @@ async def tempo_chegada(
     codigo_paragem: str,
     sentido: str = Query(...),
 ):
+    await stcp_realtime.garantir_dados_recentes()
+
     if sentido not in ("ida", "volta"):
         raise HTTPException(400, detail="Sentido deve ser 'ida' ou 'volta'.")
 

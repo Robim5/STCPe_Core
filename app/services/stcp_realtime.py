@@ -1,221 +1,156 @@
-import httpx
 import asyncio
+import httpx
 import os
 from datetime import datetime, timezone
 from dotenv import load_dotenv
-from app.database import obter_pool
 
-# carrega os segredos obscuros
+from app.config import STCP_REFRESH_INTERVAL_SECONDS, STCP_BACKGROUND_INTERVAL_SECONDS
+from app.database import obter_pool
+from app.services.realtime.parsing import parse_iso_datetime, processar_dados
+from app.services.realtime.storage import (
+    carregar_snapshot_veiculos,
+    gravar_veiculos_db as gravar_veiculos_db_pool,
+    inicializar_tabela_veiculos as inicializar_tabela_veiculos_pool,
+)
+
+# carrega env para este servico
 load_dotenv()
 
-# dados na ram
-memoria_autocarros = []  # dados brutos da STCP
-autocarros_processados = []  # dados limpos e organizados
-autocarros_por_linha = {}  # indexados por linha (ex: {"600": [...], "200": [...]})
+# estado em memoria para respostas
+memoria_autocarros = []  # bruto vindo do feed
+autocarros_processados = []  # pronto para os endpoints
+autocarros_por_linha = {}  # agrupado por linha
 ultima_atualizacao = None
 
-# mapeamento sentido STCP onde 0 = ida e 1 = volta
-SENTIDO_MAP = {0: "ida", 1: "volta"}
+# intervalo minimo para refresh sob pedido
+_INTERVALO_REFRESH_S = STCP_REFRESH_INTERVAL_SECONDS
 
-# tempo maximo (segundos) desde a ultima atualizacao GPS para considerar o autocarro ativo
-# autocarros com dados mais antigos que isto sao considerados fantasmas (fora de servico)
-_MAX_IDADE_DADOS_S = 180  # 3 minutos
+# intervalo do loop local continuo
+_INTERVALO_BACKGROUND_S = STCP_BACKGROUND_INTERVAL_SECONDS
 
-
-def _parse_obs_datetime(dt_str: str):
-    """tenta converter string ISO 8601 para datetime UTC"""
-    if not dt_str:
-        return None
-    try:
-        # suporta formatos comuns: "2024-01-15T10:30:00Z", "2024-01-15T10:30:00+00:00"
-        return datetime.fromisoformat(dt_str.replace("Z", "+00:00"))
-    except (ValueError, TypeError):
-        return None
+# lock evita refresh paralelo duplicado
+_refresh_lock = asyncio.Lock()
 
 
-def processar_dados(dados_raw: list) -> tuple:
-    """
-    processa dados brutos da API STCP
-    extrai info relevante, filtra fantasmas e indexa por linha
-
-    filtros anti-fantasma:
-    1. timestamp - rejeita autocarros com GPS desatualizado (>3 min)
-    2. deduplicacao - mantem apenas a entrada mais recente por veiculo
-    """
-    agora = datetime.now(timezone.utc)
-    veiculos_por_id = {}  # veiculo_id -> bus (deduplicacao)
-    sem_id = []  # autocarros sem ID (raros, manter por seguranca)
-    filtrados_stale = 0
-    filtrados_sem_linha = 0
-
-    for veiculo in dados_raw:
-        try:
-            anotacoes = veiculo.get("annotations", {}).get("value", [])
-
-            linha = None
-            sentido_num = None
-
-            for a in anotacoes:
-                if a.startswith("stcp:route:"):
-                    linha = a.replace("stcp:route:", "").upper()
-                elif a.startswith("stcp:sentido:"):
-                    try:
-                        sentido_num = int(a.replace("stcp:sentido:", ""))
-                    except ValueError:
-                        pass
-
-            if not linha:
-                filtrados_sem_linha += 1
-                continue
-
-            # coodenadas geojson e [longitude, latitude]
-            coords = veiculo.get("location", {}).get("value", {}).get("coordinates", [])
-            if len(coords) < 2:
-                continue
-
-            # FILTRO 1: rejeitar dados GPS obsoletos (autocarro fantasma)
-            obs_dt_str = veiculo.get("observationDateTime", {}).get("value", "")
-            obs_dt = _parse_obs_datetime(obs_dt_str)
-            if obs_dt is not None:
-                idade_s = (agora - obs_dt).total_seconds()
-                if idade_s > _MAX_IDADE_DADOS_S:
-                    filtrados_stale += 1
-                    continue
-
-            lon, lat = coords[0], coords[1]
-            sentido = SENTIDO_MAP.get(sentido_num, "desconhecido")
-
-            bus = {
-                "veiculo_id": veiculo.get("fleetVehicleId", {}).get("value", ""),
-                "linha": linha,
-                "sentido": sentido,
-                "sentido_num": sentido_num,
-                "lat": lat,
-                "lon": lon,
-                "velocidade": veiculo.get("speed", {}).get("value", 0),
-                "bearing": veiculo.get("bearing", {}).get("value", 0),
-                "ultima_atualizacao": obs_dt_str,
-            }
-
-            # FILTRO 2: deduplicacao por ID de veiculo (manter o mais recente)
-            vid = bus["veiculo_id"]
-            if vid:
-                existente = veiculos_por_id.get(vid)
-                if existente is None or bus["ultima_atualizacao"] > existente["ultima_atualizacao"]:
-                    veiculos_por_id[vid] = bus
-            else:
-                sem_id.append(bus)
-
-        except Exception:
-            continue
-
-    # construir lista final a partir dos dados deduplicados
-    processados = list(veiculos_por_id.values()) + sem_id
-
-    por_linha = {}
-    for bus in processados:
-        linha = bus["linha"]
-        if linha not in por_linha:
-            por_linha[linha] = []
-        por_linha[linha].append(bus)
-
-    if filtrados_stale > 0:
-        print(f"Filtro fantasma: {filtrados_stale} autocarros removidos (GPS >3min obsoleto)")
-
-    return processados, por_linha
-
-
+# cria tabela de snapshot se faltar
 async def inicializar_tabela_veiculos():
-    """cria a tabela veiculos se nao existir"""
     pool = obter_pool()
     if not pool:
         return
-    async with pool.acquire() as conn:
-        async with conn.cursor() as cur:
-            await cur.execute("""
-                CREATE TABLE IF NOT EXISTS veiculos (
-                    id_veiculo VARCHAR(100) PRIMARY KEY,
-                    linha VARCHAR(10) NOT NULL,
-                    sentido VARCHAR(20) NOT NULL,
-                    latitude DOUBLE NOT NULL,
-                    longitude DOUBLE NOT NULL,
-                    velocidade DOUBLE DEFAULT 0,
-                    bearing DOUBLE DEFAULT 0,
-                    timestamp VARCHAR(50),
-                    INDEX idx_linha (linha)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-            """)
-    print("Tabela 'veiculos' pronta.")
+    await inicializar_tabela_veiculos_pool(pool)
 
 
+# grava snapshot atual na db
 async def gravar_veiculos_db(processados: list):
-    """grava os veiculos processados na base de dados"""
     pool = obter_pool()
     if not pool:
         return
-    try:
-        async with pool.acquire() as conn:
-            async with conn.cursor() as cur:
-                await conn.begin()
-                await cur.execute("DELETE FROM veiculos")
-                if processados:
-                    sql = """
-                        INSERT INTO veiculos
-                            (id_veiculo, linha, sentido, latitude, longitude, velocidade, bearing, timestamp)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                    """
-                    dados = [
-                        (
-                            b["veiculo_id"], b["linha"], b["sentido"],
-                            b["lat"], b["lon"], b["velocidade"],
-                            b["bearing"], b["ultima_atualizacao"],
-                        )
-                        for b in processados
-                    ]
-                    await cur.executemany(sql, dados)
-                await conn.commit()
-    except Exception as e:
-        print(f"Erro ao gravar veiculos na DB: {e}")
+    await gravar_veiculos_db_pool(pool, processados)
 
 
-async def atualizar_autocarros():
+# restaura cache da db para memoria
+async def carregar_autocarros_da_db():
+    global autocarros_processados, autocarros_por_linha, ultima_atualizacao
+
+    pool = obter_pool()
+    if not pool:
+        return
+
+    processados, por_linha, ultima_db = await carregar_snapshot_veiculos(pool)
+    autocarros_processados = processados
+    autocarros_por_linha = por_linha
+    if ultima_db is not None:
+        ultima_atualizacao = ultima_db
+
+
+# verifica se cache ainda esta fresca
+def _dados_em_memoria_recentes() -> bool:
+    if not autocarros_processados or not ultima_atualizacao:
+        return False
+
+    ultima = parse_iso_datetime(ultima_atualizacao)
+    if ultima is None:
+        return False
+
+    agora = datetime.now(timezone.utc)
+    return (agora - ultima).total_seconds() <= _INTERVALO_REFRESH_S
+
+
+# puxa feed stcp e atualiza cache
+async def atualizar_autocarros_uma_vez() -> bool:
+    """faz um refresh unico a partir da API STCP e persiste na DB"""
     global memoria_autocarros, autocarros_processados, autocarros_por_linha, ultima_atualizacao
+
     url = os.getenv("STCP_API_URL")
 
     if not url:
-        print("Erro: STCP_API_URL nao definido no .env")
+        print("Aviso: STCP_API_URL nao definido no ambiente")
+        return False
+
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resposta = await client.get(url, headers={"Accept": "application/json"})
+
+        if resposta.status_code != 200:
+            print(f"Aviso: STCP respondeu com erro {resposta.status_code}. Body: {resposta.text[:200]}")
+            return False
+
+        dados = resposta.json()
+
+        # tenta extrair lista do envelope
+        if isinstance(dados, dict):
+            for chave in ("results", "data", "entities", "value"):
+                if chave in dados and isinstance(dados[chave], list):
+                    dados = dados[chave]
+                    break
+
+        if not isinstance(dados, list):
+            print(f"Aviso: Resposta inesperada (tipo: {type(dados).__name__}). Primeiros 200 chars: {str(dados)[:200]}")
+            return False
+
+        memoria_autocarros = dados
+        autocarros_processados, autocarros_por_linha = processar_dados(dados)
+        ultima_atualizacao = datetime.now(timezone.utc).isoformat()
+        await gravar_veiculos_db(autocarros_processados)
+        print(f"Sucesso: {len(autocarros_processados)} autocarros processados de {len(dados)} entidades.")
+        return True
+
+    except Exception as e:
+        print(f"Erro: Falha ao obter dados da STCP - {e}")
+        return False
+
+
+# evita refresh repetido em concorrencia
+async def garantir_dados_recentes(force: bool = False):
+    """garante dados frescos em memoria; em falha usa fallback do snapshot na DB"""
+    if not force and _dados_em_memoria_recentes():
         return
 
-    print(f"Polling STCP em: {url[:40]}...")
+    async with _refresh_lock:
+        if not force and _dados_em_memoria_recentes():
+            return
 
-    async with httpx.AsyncClient(timeout=10.0) as client:
-        while True:
-            try:
-                resposta = await client.get(url, headers={"Accept": "application/json"})
+        sucesso = await atualizar_autocarros_uma_vez()
+        if not sucesso:
+            await carregar_autocarros_da_db()
 
-                if resposta.status_code == 200:
-                    dados = resposta.json()
 
-                    # se a resposta vier dentro de um objeto, extrair a lista
-                    if isinstance(dados, dict):
-                        # tentar chaves comuns de APIs NGSI-LD
-                        for chave in ("results", "data", "entities", "value"):
-                            if chave in dados and isinstance(dados[chave], list):
-                                dados = dados[chave]
-                                break
+# loop continuo so em ambiente local
+async def loop_atualizacao_continua():
+    """modo antigo de polling continuo (apenas para ambientes nao serverless)"""
+    url = os.getenv("STCP_API_URL")
+    if url:
+        print(f"Polling STCP continuo em: {url[:40]}...")
 
-                    if isinstance(dados, list):
-                        memoria_autocarros = dados
-                        autocarros_processados, autocarros_por_linha = processar_dados(dados)
-                        ultima_atualizacao = datetime.now(timezone.utc).isoformat()
-                        await gravar_veiculos_db(autocarros_processados)
-                        print(f"Sucesso: {len(autocarros_processados)} autocarros processados de {len(dados)} entidades.")
-                    else:
-                        print(f"Aviso: Resposta inesperada (tipo: {type(dados).__name__}). Primeiros 200 chars: {str(dados)[:200]}")
-                else:
-                    print(f"Aviso: STCP respondeu com erro {resposta.status_code}. Body: {resposta.text[:200]}")
+    while True:
+        try:
+            await garantir_dados_recentes(force=True)
+        except Exception as e:
+            print(f"Erro no ciclo de atualizacao continua: {e}")
+        await asyncio.sleep(_INTERVALO_BACKGROUND_S)
 
-            except Exception as e:
-                print(f"Erro: Falha ao obter dados da STCP - {e}")
 
-            await asyncio.sleep(5)
+# alias antigo para manter compatibilidade
+async def atualizar_autocarros():
+    """compatibilidade retroativa com codigo legado"""
+    await loop_atualizacao_continua()

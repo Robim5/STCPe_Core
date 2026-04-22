@@ -1,6 +1,5 @@
-fastapi
-uvicorn
-httpx
-python-dotenv
-aiomysql
-cryptography
+fastapi==0.136.0
+uvicorn==0.42.0
+httpx==0.28.1
+python-dotenv==1.2.2
+asyncpg==0.31.0

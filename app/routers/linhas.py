@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Query, HTTPException
-import aiomysql
 from app.database import obter_pool
 from app.services import stcp_paragens
 
@@ -29,31 +28,39 @@ async def shape_da_linha(linha: str, sentido: str = Query(None)):
     pool = obter_pool()
     if not pool:
         raise HTTPException(503, detail="Base de dados indisponivel.")
+
     linha_upper = linha.upper()
     async with pool.acquire() as conn:
-        async with conn.cursor(aiomysql.DictCursor) as cur:
-            if sentido:
-                direction = 0 if sentido == "ida" else 1
-                await cur.execute("""
-                    SELECT DISTINCT s.shape_id, s.shape_pt_lat, s.shape_pt_lon, s.shape_pt_sequence
-                    FROM shapes s
-                    JOIN trips t ON t.shape_id = s.shape_id
-                    JOIN routes r ON r.route_id = t.route_id
-                    WHERE r.route_short_name = %s AND t.direction_id = %s
-                    ORDER BY s.shape_id, s.shape_pt_sequence
-                """, (linha_upper, direction))
-            else:
-                await cur.execute("""
-                    SELECT DISTINCT s.shape_id, s.shape_pt_lat, s.shape_pt_lon, s.shape_pt_sequence
-                    FROM shapes s
-                    JOIN trips t ON t.shape_id = s.shape_id
-                    JOIN routes r ON r.route_id = t.route_id
-                    WHERE r.route_short_name = %s
-                    ORDER BY s.shape_id, s.shape_pt_sequence
-                """, (linha_upper,))
-            rows = await cur.fetchall()
+        if sentido:
+            direction = 0 if sentido == "ida" else 1
+            rows = await conn.fetch(
+                """
+                SELECT DISTINCT s.shape_id, s.shape_pt_lat, s.shape_pt_lon, s.shape_pt_sequence
+                FROM shapes s
+                JOIN trips t ON t.shape_id = s.shape_id
+                JOIN routes r ON r.route_id = t.route_id
+                WHERE r.route_short_name = $1 AND t.direction_id = $2
+                ORDER BY s.shape_id, s.shape_pt_sequence
+                """,
+                linha_upper,
+                direction,
+            )
+        else:
+            rows = await conn.fetch(
+                """
+                SELECT DISTINCT s.shape_id, s.shape_pt_lat, s.shape_pt_lon, s.shape_pt_sequence
+                FROM shapes s
+                JOIN trips t ON t.shape_id = s.shape_id
+                JOIN routes r ON r.route_id = t.route_id
+                WHERE r.route_short_name = $1
+                ORDER BY s.shape_id, s.shape_pt_sequence
+                """,
+                linha_upper,
+            )
+
     if not rows:
         raise HTTPException(404, detail=f"Shape da linha '{linha_upper}' nao encontrado.")
+
     # agrupar por shape_id
     shapes = {}
     for r in rows:

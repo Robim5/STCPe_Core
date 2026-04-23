@@ -1,4 +1,9 @@
 import os
+from dotenv import load_dotenv
+
+
+# carrega .env local sem sobrescrever variaveis ja definidas no ambiente
+load_dotenv(override=False)
 
 
 def _bool_env(nome: str, default: bool) -> bool:
@@ -30,12 +35,20 @@ def _list_env(nome: str, default: list[str]) -> list[str]:
 	return itens or default
 
 
-# detecao de ambiente de producao/serverless
-IS_VERCEL = bool(os.getenv("VERCEL"))
-IS_PRODUCTION = bool(IS_VERCEL or os.getenv("RAILWAY_ENVIRONMENT") or os.getenv("PORT"))
+# detecao de ambiente
+IS_RAILWAY = bool(
+	os.getenv("RAILWAY_ENVIRONMENT")
+	or os.getenv("RAILWAY_ENVIRONMENT_NAME")
+	or os.getenv("RAILWAY_PROJECT_ID")
+)
+IS_SERVERLESS = _bool_env("IS_SERVERLESS", False)
 
-# em serverless nao se deve manter loops infinitos ativos
-ENABLE_BACKGROUND_POLLING = _bool_env("ENABLE_BACKGROUND_POLLING", False)
+# permite override por variavel de ambiente
+IS_PRODUCTION = _bool_env("IS_PRODUCTION", IS_RAILWAY or IS_SERVERLESS)
+
+# no railway polling continuo e um default util e em serverless fica desativado para n ter loops infinitos
+_default_background_polling = IS_RAILWAY and not IS_SERVERLESS
+ENABLE_BACKGROUND_POLLING = _bool_env("ENABLE_BACKGROUND_POLLING", _default_background_polling)
 
 # protecao por API Key
 API_KEY = (os.getenv("API_KEY") or "").strip() or None
@@ -43,10 +56,10 @@ API_KEY = (os.getenv("API_KEY") or "").strip() or None
 # por defeito, em producao exige API_KEY para endpoints /api/* (exceto fluxo interno com CRON_SECRET)
 REQUIRE_API_KEY_IN_PRODUCTION = _bool_env("REQUIRE_API_KEY_IN_PRODUCTION", True)
 
-# opcionalmente permitir query param ?api_key=... (menos seguro, porque pode aparecer em logs)
+# opcionalmente permitir query param ?api_key=... (é menos seguro, porque pode aparecer em logs)
 ALLOW_API_KEY_QUERY_PARAM = _bool_env("ALLOW_API_KEY_QUERY_PARAM", False)
 
-# autenticacao opcional para Vercel Cron (Authorization: Bearer <CRON_SECRET>)
+# autenticacao opcional para scheduler externo (Authorization: Bearer <CRON_SECRET>)
 CRON_SECRET = (os.getenv("CRON_SECRET") or "").strip() or None
 
 # CORS: em producao, negar por omissao e exigir configuracao explicita

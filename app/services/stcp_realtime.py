@@ -2,7 +2,6 @@ import asyncio
 import httpx
 import os
 from datetime import datetime, timezone
-from dotenv import load_dotenv
 
 from app.config import STCP_REFRESH_INTERVAL_SECONDS, STCP_BACKGROUND_INTERVAL_SECONDS
 from app.database import obter_pool
@@ -12,9 +11,6 @@ from app.services.realtime.storage import (
     gravar_veiculos_db as gravar_veiculos_db_pool,
     inicializar_tabela_veiculos as inicializar_tabela_veiculos_pool,
 )
-
-# carrega env para este servico
-load_dotenv()
 
 # estado em memoria para respostas
 memoria_autocarros = []  # bruto vindo do feed
@@ -135,9 +131,9 @@ async def garantir_dados_recentes(force: bool = False):
             await carregar_autocarros_da_db()
 
 
-# loop continuo so em ambiente local
+# loop continuo para ambientes com worker persistente
 async def loop_atualizacao_continua():
-    """modo antigo de polling continuo (apenas para ambientes nao serverless)"""
+    """polling continuo apenas quando ENABLE_BACKGROUND_POLLING=true"""
     url = os.getenv("STCP_API_URL")
     if url:
         print(f"Polling STCP continuo em: {url[:40]}...")
@@ -150,7 +146,3 @@ async def loop_atualizacao_continua():
         await asyncio.sleep(_INTERVALO_BACKGROUND_S)
 
 
-# alias antigo para manter compatibilidade
-async def atualizar_autocarros():
-    """compatibilidade retroativa com codigo legado"""
-    await loop_atualizacao_continua()

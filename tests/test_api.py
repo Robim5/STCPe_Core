@@ -221,13 +221,10 @@ def main():
         r = httpx.get(f"{BASE}/api/health", timeout=10.0)
         if r.status_code == 401:
             print(f"  [OK] API protegida - acesso sem chave retorna 401")
-            PASS_HACK = True
         else:
             print(f"  [INFO] API acessivel sem chave (status {r.status_code})")
-            PASS_HACK = False
     except Exception as e:
         print(f"  [WARN] Nao foi possivel testar sem chave: {e}")
-        PASS_HACK = False
 
     # resumo
     print("\n" + "=" * 60)

@@ -10,7 +10,7 @@ from time import monotonic
 from app.config import (
     IS_PRODUCTION,
     API_KEY,
-    IS_VERCEL,
+    IS_SERVERLESS,
     ENABLE_BACKGROUND_POLLING,
     CRON_SECRET,
     CORS_ALLOW_ORIGINS,
@@ -89,10 +89,10 @@ async def lifespan(app: FastAPI):
     calculadora.carregar_tempos_gtfs()
 
     tarefa_realtime = None
-    if ENABLE_BACKGROUND_POLLING and not IS_VERCEL:
+    if ENABLE_BACKGROUND_POLLING and not IS_SERVERLESS:
         tarefa_realtime = asyncio.create_task(stcp_realtime.loop_atualizacao_continua())
     else:
-        # serverless sem loop infinito ativo
+        # sem loop infinito ativo: atualiza sob pedido ou em arranque
         await stcp_realtime.garantir_dados_recentes(force=True)
 
     app.state.realtime_task = tarefa_realtime
@@ -120,6 +120,12 @@ app = FastAPI(
     redoc_url=None if IS_PRODUCTION else "/redoc",
     openapi_url=None if IS_PRODUCTION else "/openapi.json",
 )
+
+
+# healthcheck tecnico para a plataforma (sem auth)
+@app.get("/healthz", include_in_schema=False)
+async def healthz():
+    return {"ok": True}
 
 # cors para chamadas de browser
 app.add_middleware(

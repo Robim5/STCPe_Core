@@ -42,7 +42,7 @@ async def estatisticas():
 
 @router.get("/internal/refresh")
 async def refresh_manual():
-    """endpoint interno para forcar refresh (ideal para Vercel Cron)"""
+    """endpoint interno para forcar refresh (ideal para scheduler externo)"""
     await stcp_realtime.garantir_dados_recentes(force=True)
     return {
         "ok": True,

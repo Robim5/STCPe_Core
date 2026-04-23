@@ -14,6 +14,13 @@ _ultimo_erro_pool = None
 _RETRY_POOL_SEGUNDOS = 15
 
 
+def _bool_env(nome: str, default: bool) -> bool:
+    valor = os.getenv(nome)
+    if valor is None:
+        return default
+    return valor.strip().lower() in ("1", "true", "yes", "on")
+
+
 # corrige prefixo antigo do dsn
 def _normalizar_dsn(dsn: str) -> str:
     """normaliza variantes antigas de DSN para formato PostgreSQL"""
@@ -71,13 +78,24 @@ async def criar_pool():
             return
 
         # em producao ssl fica sempre ligado
-        usar_ssl = os.getenv("DB_SSL", "true").strip().lower() in ("1", "true", "yes", "on")
+        usar_ssl = _bool_env("DB_SSL", True)
+        verificar_ssl = _bool_env("DB_SSL_VERIFY", True)
         if IS_PRODUCTION and not usar_ssl:
             print("Aviso: DB_SSL=false em producao nao e permitido. A forcar SSL=true.")
             usar_ssl = True
+
         ssl_ctx = None
         if usar_ssl:
-            ssl_ctx = ssl.create_default_context()
+            ca_ficheiro = (os.getenv("DB_SSL_CA_FILE") or "").strip()
+            if ca_ficheiro:
+                ssl_ctx = ssl.create_default_context(cafile=ca_ficheiro)
+            else:
+                ssl_ctx = ssl.create_default_context()
+
+            if not verificar_ssl:
+                ssl_ctx.check_hostname = False
+                ssl_ctx.verify_mode = ssl.CERT_NONE
+                print("Aviso: DB_SSL_VERIFY=false. Validacao do certificado SSL desativada.")
 
         try:
             _pool = await asyncpg.create_pool(

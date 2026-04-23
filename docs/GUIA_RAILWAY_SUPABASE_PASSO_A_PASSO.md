@@ -92,6 +92,7 @@ Configurar no painel Variables:
 - STCP_API_URL
 - DATABASE_URL
 - DB_SSL=true
+- DB_SSL_CA_FILE=certs/prod-ca-2021.crt (recomendado, mantem validacao SSL completa do certificado Supabase)
 - DB_POOL_MIN_SIZE=1
 - DB_POOL_MAX_SIZE=5
 - ENABLE_BACKGROUND_POLLING=true
@@ -161,6 +162,11 @@ python tests/test_api.py https://TEU-DOMINIO TUA_CHAVE
 - confirmar string de ligacao
 - confirmar SSL ativo
 - confirmar schema aplicado
+
+Se o log mostrar `[SSL: CERTIFICATE_VERIFY_FAILED] self-signed certificate in certificate chain`:
+
+- definir `DB_SSL_CA_FILE=certs/prod-ca-2021.crt` (o ficheiro ja vem no repo, em `certs/`)
+- alternativa menos segura: `DB_SSL_VERIFY=false` (mantem encriptacao mas nao valida o certificado)
 
 ### 7.3 401 nos endpoints
 

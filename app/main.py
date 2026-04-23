@@ -71,7 +71,11 @@ def _api_key_valida(request: Request) -> bool:
 
     chave = request.headers.get("X-API-Key")
     if ALLOW_API_KEY_QUERY_PARAM:
-        chave = chave or request.query_params.get("api_key")
+        if not chave:
+            for nome, valor in request.query_params.items():
+                if nome.lower() == "api_key":
+                    chave = valor
+                    break
 
     if not chave:
         return False

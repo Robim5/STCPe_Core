@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Query, HTTPException
-from app.database import obter_pool
+from app.database import garantir_pool
 from app.services import stcp_paragens, stcp_realtime, calculadora
 
 router = APIRouter(prefix="/api", tags=["Paragens"])
@@ -7,7 +7,7 @@ router = APIRouter(prefix="/api", tags=["Paragens"])
 
 @router.get("/paragens")
 async def listar_todas_paragens():
-    pool = obter_pool()
+    pool = await garantir_pool()
     if not pool:
         raise HTTPException(503, detail="Base de dados indisponivel.")
 

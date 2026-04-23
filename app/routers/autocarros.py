@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Query, HTTPException
-from app.database import obter_pool
+from app.database import garantir_pool
 from app.services import stcp_realtime
 
 router = APIRouter(prefix="/api", tags=["Autocarros"])
@@ -38,7 +38,7 @@ QUERY_AUTOCARROS = """
 async def obter_autocarros():
     await stcp_realtime.garantir_dados_recentes()
 
-    pool = obter_pool()
+    pool = await garantir_pool()
     if not pool:
         raise HTTPException(503, detail="Base de dados indisponivel.")
 
@@ -60,7 +60,7 @@ async def obter_autocarros_linha(linha: str, sentido: str = Query(None)):
 
     await stcp_realtime.garantir_dados_recentes()
 
-    pool = obter_pool()
+    pool = await garantir_pool()
     if not pool:
         raise HTTPException(503, detail="Base de dados indisponivel.")
 

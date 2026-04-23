@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Query, HTTPException
-from app.database import obter_pool
+from app.database import garantir_pool
 from app.services import stcp_paragens
 
 router = APIRouter(prefix="/api", tags=["Linhas"])
@@ -25,7 +25,7 @@ async def paragens_da_linha(linha: str, sentido: str = Query(None)):
 async def shape_da_linha(linha: str, sentido: str = Query(None)):
     if sentido and sentido not in ("ida", "volta"):
         raise HTTPException(400, detail="Sentido deve ser 'ida' ou 'volta'.")
-    pool = obter_pool()
+    pool = await garantir_pool()
     if not pool:
         raise HTTPException(503, detail="Base de dados indisponivel.")
 

@@ -1,7 +1,7 @@
 import os
 from fastapi import APIRouter
 from app.services import stcp_realtime, stcp_paragens
-from app.database import obter_pool
+from app.database import garantir_pool
 
 router = APIRouter(prefix="/api", tags=["Health"])
 
@@ -9,6 +9,7 @@ router = APIRouter(prefix="/api", tags=["Health"])
 @router.get("/health")
 async def health():
     await stcp_realtime.garantir_dados_recentes()
+    pool = await garantir_pool()
 
     url_configurada = bool(os.getenv("STCP_API_URL"))
     return {
@@ -17,6 +18,7 @@ async def health():
         "linhas_carregadas": len(stcp_paragens.todas_paragens),
         "ultima_atualizacao": stcp_realtime.ultima_atualizacao,
         "api_stcp_configurada": url_configurada,
+        "db_disponivel": bool(pool),
     }
 
 
@@ -24,7 +26,7 @@ async def health():
 async def estatisticas():
     await stcp_realtime.garantir_dados_recentes()
 
-    pool = obter_pool()
+    pool = await garantir_pool()
     totais_db = {}
     if pool:
         async with pool.acquire() as conn:
@@ -36,6 +38,7 @@ async def estatisticas():
         "linhas_com_autocarros": len(stcp_realtime.autocarros_por_linha),
         "linhas_carregadas": len(stcp_paragens.todas_paragens),
         "ultima_atualizacao": stcp_realtime.ultima_atualizacao,
+        "db_disponivel": bool(pool),
         **totais_db,
     }
 

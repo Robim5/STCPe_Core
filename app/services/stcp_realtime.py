@@ -4,7 +4,7 @@ import os
 from datetime import datetime, timezone
 
 from app.config import STCP_REFRESH_INTERVAL_SECONDS, STCP_BACKGROUND_INTERVAL_SECONDS
-from app.database import obter_pool
+from app.database import garantir_pool
 from app.services.realtime.parsing import parse_iso_datetime, processar_dados
 from app.services.realtime.storage import (
     carregar_snapshot_veiculos,
@@ -30,7 +30,7 @@ _refresh_lock = asyncio.Lock()
 
 # cria tabela de snapshot se faltar
 async def inicializar_tabela_veiculos():
-    pool = obter_pool()
+    pool = await garantir_pool()
     if not pool:
         return
     await inicializar_tabela_veiculos_pool(pool)
@@ -38,7 +38,7 @@ async def inicializar_tabela_veiculos():
 
 # grava snapshot atual na db
 async def gravar_veiculos_db(processados: list):
-    pool = obter_pool()
+    pool = await garantir_pool()
     if not pool:
         return
     await gravar_veiculos_db_pool(pool, processados)
@@ -48,7 +48,7 @@ async def gravar_veiculos_db(processados: list):
 async def carregar_autocarros_da_db():
     global autocarros_processados, autocarros_por_linha, ultima_atualizacao
 
-    pool = obter_pool()
+    pool = await garantir_pool()
     if not pool:
         return
 

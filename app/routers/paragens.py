@@ -4,6 +4,9 @@ from app.services import stcp_paragens, stcp_realtime, calculadora
 
 router = APIRouter(prefix="/api", tags=["Paragens"])
 
+# distancia maxima do autocarro a rota (evita veiculos fora de servico)
+_MAX_DISTANCIA_ROTA_M = 500
+
 
 @router.get("/paragens")
 async def listar_todas_paragens():
@@ -73,15 +76,24 @@ async def tempos_paragem(codigo: str):
         autocarros_sentido = [b for b in autocarros_linha if b["sentido"] == sentido]
 
         for bus in autocarros_sentido:
-            indice_bus, _ = calculadora.encontrar_paragem_mais_proxima(
+            indice_bus, dist_rota = calculadora.encontrar_paragem_mais_proxima(
                 bus["lat"], bus["lon"], paragens_rota
             )
+
+            if dist_rota > _MAX_DISTANCIA_ROTA_M:
+                continue
 
             if indice_bus >= indice_destino:
                 continue
 
-            dist_rota = calculadora.calcular_distancia_rota(paragens_rota, indice_bus, indice_destino)
-            tempo_min = calculadora.estimar_tempo_chegada(dist_rota, bus["velocidade"])
+            eta = calculadora.estimar_tempo_chegada_v2(
+                linha,
+                sentido,
+                paragens_rota,
+                indice_bus,
+                indice_destino,
+                bus["velocidade"],
+            )
 
             todos_tempos.append({
                 "linha": linha,
@@ -89,9 +101,14 @@ async def tempos_paragem(codigo: str):
                 "origem": entrada["origem"],
                 "destino": entrada["destino"],
                 "veiculo_id": bus["veiculo_id"],
-                "tempo_estimado_min": tempo_min,
-                "distancia_metros": dist_rota,
+                "tempo_estimado_min": eta["tempo_estimado_min"],
+                "tempo_base_min": eta["tempo_base_min"],
+                "margem_atraso_min": eta["margem_min"],
+                "periodo": eta["periodo"],
+                "ponta_estrita": eta.get("ponta_estrita", False),
+                "distancia_metros": eta["distancia_metros"],
                 "velocidade_atual": bus["velocidade"],
+                "metodo_calculo": eta["metodo_calculo"],
                 "lat": bus["lat"],
                 "lon": bus["lon"],
             })

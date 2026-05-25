@@ -7,3 +7,4 @@ __pycache__/
 .ruff_cache/
 importar_railway.py
 stcp_real_time.md
+dados/gtfs/*.txt

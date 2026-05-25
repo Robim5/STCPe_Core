@@ -99,7 +99,7 @@ Guia detalhado completo:
 
 ## Atualizar GTFS
 
-Quando os CSV GTFS mudarem, usa:
+Quando os ficheiros GTFS (`.txt`) mudarem, usa:
 
 ```bash
 python scripts/refresh_supabase_gtfs.py --database-url "postgresql://..."
@@ -113,8 +113,25 @@ python scripts/refresh_supabase_gtfs.py --database-url "postgresql://..." --dry-
 
 Importante:
 
-- atualiza os CSV em `dados/infoCVS`
-- faz commit/push dos novos CSV para manter o runtime sincronizado com a base
+- coloca os ficheiros GTFS em `dados/gtfs` com os nomes standard (`routes.txt`, `trips.txt`, `stops.txt`, `stop_times.txt`, `shapes.txt`)
+- corre o script para recarregar a base de dados
+- o runtime passa a depender apenas de STCP realtime + GTFS carregado
+
+---
+
+## Frontend de Testes
+
+Depois de arrancar a API, abre:
+
+- `http://localhost:8000/`
+- `http://localhost:8000/frontend`
+
+No frontend consegues:
+
+- inserir Base URL e API Key
+- testar endpoints individualmente
+- testar em lote por categoria
+- usar exemplos prontos como "Ver o próximo autocarro no Fórum Maia"
 
 ---
 

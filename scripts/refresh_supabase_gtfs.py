@@ -40,12 +40,12 @@ def parse_args():
     parser.add_argument(
         "--skip-dry-run",
         action="store_true",
-        help="Salta validacao previa dos CSV.",
+        help="Salta validacao previa dos ficheiros GTFS.",
     )
     parser.add_argument(
         "--dry-run-only",
         action="store_true",
-        help="Valida os CSV e termina sem escrever na base de dados.",
+        help="Valida os ficheiros GTFS e termina sem escrever na base de dados.",
     )
     return parser.parse_args()
 

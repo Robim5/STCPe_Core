@@ -131,6 +131,91 @@ async def garantir_dados_recentes(force: bool = False):
             await carregar_autocarros_da_db()
 
 
+def _bus_para_resposta_api(bus: dict) -> dict:
+    # formato igual ao que a api devolve via sql
+    return {
+        "id_veiculo": bus["veiculo_id"],
+        "linha": bus["linha"],
+        "sentido": bus["sentido"],
+        "latitude": bus["lat"],
+        "longitude": bus["lon"],
+        "velocidade": bus.get("velocidade", 0),
+        "bearing": bus.get("bearing", 0),
+        "timestamp": bus.get("ultima_atualizacao"),
+        "nome_rota": None,
+        "cor_linha": None,
+        "destino": None,
+    }
+
+
+def _filtrar_autocarros_memoria(linha: str | None = None, sentido: str | None = None) -> list[dict]:
+    lista = autocarros_processados
+    if linha:
+        linha_upper = linha.upper()
+        lista = [b for b in lista if b["linha"] == linha_upper]
+    if sentido:
+        lista = [b for b in lista if b["sentido"] == sentido]
+    return [_bus_para_resposta_api(b) for b in lista]
+
+
+async def _enriquecer_metadados_gtfs(pool, dados: list[dict]) -> list[dict]:
+    if not dados or not pool:
+        return dados
+
+    linhas = list({d["linha"] for d in dados})
+    sentido_map = {"ida": 0, "volta": 1}
+
+    try:
+        async with pool.acquire() as conn:
+            rows = await conn.fetch(
+                """
+                SELECT
+                    r.route_short_name AS linha,
+                    r.route_long_name AS nome_rota,
+                    r.route_color AS route_color,
+                    t.direction_id,
+                    MIN(t.trip_headsign) AS destino
+                FROM routes r
+                LEFT JOIN trips t ON t.route_id = r.route_id
+                WHERE r.route_short_name = ANY($1::text[])
+                GROUP BY r.route_short_name, r.route_long_name, r.route_color, t.direction_id
+                """,
+                linhas,
+            )
+    except Exception as e:
+        print(f"Aviso: nao foi possivel enriquecer autocarros com GTFS - {e}")
+        return dados
+
+    meta = {}
+    for row in rows:
+        chave = (row["linha"], row["direction_id"])
+        cor = row["route_color"]
+        meta[chave] = {
+            "nome_rota": row["nome_rota"],
+            "cor_linha": f"#{cor}" if cor else None,
+            "destino": row["destino"],
+        }
+
+    for item in dados:
+        direction = sentido_map.get(item["sentido"])
+        extra = meta.get((item["linha"], direction))
+        if extra:
+            item["nome_rota"] = extra["nome_rota"]
+            item["cor_linha"] = extra["cor_linha"]
+            item["destino"] = extra["destino"]
+
+    return dados
+
+
+async def listar_autocarros_api(linha: str | None = None, sentido: str | None = None) -> list[dict]:
+    # memoria primeiro a db so enriquece metadados
+    dados = _filtrar_autocarros_memoria(linha, sentido)
+    pool = await garantir_pool()
+    if pool:
+        dados = await _enriquecer_metadados_gtfs(pool, dados)
+    return dados
+
+
 # loop continuo para ambientes com worker persistente
 async def loop_atualizacao_continua():
     """polling continuo apenas quando ENABLE_BACKGROUND_POLLING=true"""

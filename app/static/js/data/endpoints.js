@@ -1,0 +1,17 @@
+export const ENDPOINTS = [
+  { id: "healthz", categoria: "sistema", metodo: "GET", path: "/healthz", hint: "health check simples sem auth", params: {} },
+  { id: "health", categoria: "sistema", metodo: "GET", path: "/api/health", hint: "estado da api e dados carregados", params: {} },
+  { id: "stats", categoria: "sistema", metodo: "GET", path: "/api/estatisticas", hint: "contagens de dados e db", params: {} },
+  { id: "autos_all", categoria: "autocarros", metodo: "GET", path: "/api/autocarros", hint: "todos os autocarros em tempo real", params: {} },
+  { id: "autos_linha", categoria: "autocarros", metodo: "GET", path: "/api/autocarros/{linha}", hint: "autocarros de uma linha", params: { linha: "600", sentido: "" } },
+  { id: "linhas_all", categoria: "linhas", metodo: "GET", path: "/api/linhas", hint: "lista linhas com sentidos", params: {} },
+  { id: "linha_paragens", categoria: "linhas", metodo: "GET", path: "/api/linhas/{linha}/paragens", hint: "paragens por linha", params: { linha: "600", sentido: "" } },
+  { id: "linha_shape", categoria: "linhas", metodo: "GET", path: "/api/linhas/{linha}/shape", hint: "shape da linha", params: { linha: "600", sentido: "" } },
+  { id: "paragens_all", categoria: "paragens", metodo: "GET", path: "/api/paragens", hint: "todas as paragens da db", params: {} },
+  { id: "paragens_proximas", categoria: "paragens", metodo: "GET", path: "/api/paragens/proximas", hint: "paragens por coordenadas", params: { lat: "41.2408", lon: "-8.6248", raio: "500" } },
+  { id: "paragens_pesquisa", categoria: "paragens", metodo: "GET", path: "/api/paragens/pesquisa", hint: "pesquisa por nome", params: { nome: "forum maia" } },
+  { id: "paragem_info", categoria: "paragens", metodo: "GET", path: "/api/paragem/{codigo}/info", hint: "info de uma paragem", params: { codigo: "MIA1" } },
+  { id: "paragem_tempos", categoria: "paragens", metodo: "GET", path: "/api/paragem/{codigo}/tempos", hint: "linhas e tempos por paragem", params: { codigo: "MIA1" } },
+  { id: "tempo", categoria: "tempo", metodo: "GET", path: "/api/tempo/{linha}/{codigo_paragem}", hint: "eta de uma linha numa paragem", params: { linha: "600", codigo_paragem: "MIA1", sentido: "ida" } },
+  { id: "refresh", categoria: "sistema", metodo: "GET", path: "/api/internal/refresh", hint: "refresh interno protegido", params: {} },
+];

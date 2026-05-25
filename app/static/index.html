@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>STCPe Teste de API</title>
+    <style>
+      /* fallback se o css externo falhar */
+      body { margin: 0; font-family: "Segoe UI", sans-serif; background: #eef4fc; color: #0c1222; }
+      .page { max-width: 880px; margin: 0 auto; padding: 24px 16px; }
+      .panel, .hero { background: #fff; border: 1px solid #c5d9f5; border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+      .hidden { display: none !important; }
+      input { width: 100%; padding: 10px; border: 2px solid #c5d9f5; border-radius: 8px; box-sizing: border-box; }
+      label { display: block; font-weight: 700; margin-bottom: 6px; color: #0f2744; }
+      .connect-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+      @media (max-width: 640px) { .connect-grid { grid-template-columns: 1fr; } }
+    </style>
+    <link rel="stylesheet" href="/static/css/styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="hero">
+        <div class="hero-badge">STCPe Core</div>
+        <h1>Testar a API</h1>
+        <p>Cola o URL e a API Key. Escolhe um exemplo e carrega em <strong>Testar</strong>.</p>
+      </header>
+
+      <div id="bootError" class="boot-error hidden" role="alert"></div>
+
+      <section class="panel panel-connect">
+        <h2>Ligação</h2>
+        <div class="connect-grid">
+          <div class="field">
+            <label for="baseUrl">URL da API</label>
+            <input id="baseUrl" type="url" placeholder="http://127.0.0.1:8000" />
+          </div>
+          <div class="field">
+            <label for="apiKey">API Key</label>
+            <input id="apiKey" type="password" placeholder="X-API-Key" autocomplete="off" />
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Exemplos</h2>
+          <div id="tabs" class="tabs"></div>
+        </div>
+        <div id="examples" class="example-grid">
+          <p class="empty-msg">A carregar exemplos…</p>
+        </div>
+      </section>
+
+      <section id="resultPanel" class="panel panel-result hidden">
+        <div class="result-head">
+          <div>
+            <p class="result-label">Último teste</p>
+            <h3 id="resultTitle">—</h3>
+            <code id="resultUrl" class="result-url"></code>
+          </div>
+          <span id="resultBadge" class="badge">—</span>
+        </div>
+        <pre id="resultBody" class="result-body"></pre>
+      </section>
+    </div>
+
+    <script type="module" src="/static/js/app.js"></script>
+  </body>
+</html>

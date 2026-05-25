@@ -1,11 +1,14 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from contextlib import asynccontextmanager
 import asyncio
 import hmac
 from collections import deque
 from time import monotonic
+from pathlib import Path
 
 from app.config import (
     IS_PRODUCTION,
@@ -89,7 +92,7 @@ async def lifespan(app: FastAPI):
     print("A iniciar nucleo...")
     await database.criar_pool()
     await stcp_realtime.inicializar_tabela_veiculos()
-    stcp_paragens.carregar_paragens()
+    await stcp_paragens.carregar_paragens()
     calculadora.carregar_tempos_gtfs()
 
     tarefa_realtime = None
@@ -124,6 +127,22 @@ app = FastAPI(
     redoc_url=None if IS_PRODUCTION else "/redoc",
     openapi_url=None if IS_PRODUCTION else "/openapi.json",
 )
+
+_STATIC_DIR = Path(__file__).resolve().parent / "static"
+app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
+app.mount("/frontend/static", StaticFiles(directory=str(_STATIC_DIR)), name="frontend_static_legacy")
+
+
+@app.get("/", include_in_schema=False)
+async def frontend_home():
+    # aqui deixamos o front sempre a mao
+    return FileResponse(_STATIC_DIR / "index.html")
+
+
+@app.get("/frontend", include_in_schema=False)
+async def frontend_alias():
+    # rota alternativa para partilhar facil
+    return FileResponse(_STATIC_DIR / "index.html")
 
 
 # healthcheck tecnico para a plataforma (sem auth)

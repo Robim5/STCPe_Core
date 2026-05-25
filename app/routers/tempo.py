@@ -68,8 +68,7 @@ async def tempo_chegada(
         if indice_bus >= indice_destino:
             continue
 
-        # estimar tempo usando GTFS + fallback melhorado
-        tempo_min, dist_estimada, metodo = calculadora.estimar_tempo_chegada_v2(
+        eta = calculadora.estimar_tempo_chegada_v2(
             linha_upper,
             sentido,
             paragens_rota,
@@ -80,10 +79,14 @@ async def tempo_chegada(
 
         estimativas.append({
             "veiculo_id": bus["veiculo_id"],
-            "tempo_estimado_min": tempo_min,
-            "distancia_metros": dist_estimada,
+            "tempo_estimado_min": eta["tempo_estimado_min"],
+            "tempo_base_min": eta["tempo_base_min"],
+            "margem_atraso_min": eta["margem_min"],
+            "periodo": eta["periodo"],
+            "ponta_estrita": eta.get("ponta_estrita", False),
+            "distancia_metros": eta["distancia_metros"],
             "velocidade_atual": bus["velocidade"],
-            "metodo_calculo": metodo,
+            "metodo_calculo": eta["metodo_calculo"],
             "lat": bus["lat"],
             "lon": bus["lon"],
             "ultima_atualizacao": bus["ultima_atualizacao"],

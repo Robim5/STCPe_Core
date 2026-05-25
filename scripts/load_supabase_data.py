@@ -5,8 +5,18 @@ import os
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
-GTFS_DIR = ROOT_DIR / "dados" / "infoCVS"
+GTFS_DIR = ROOT_DIR / "dados" / "gtfs"
 SCHEMA_FILE = ROOT_DIR / "supabase" / "schema.sql"
+
+
+def _resolver_gtfs(nome_base: str) -> Path:
+    txt = GTFS_DIR / f"{nome_base}.txt"
+    if txt.exists():
+        return txt
+    csv_file = GTFS_DIR / f"{nome_base}.csv"
+    if csv_file.exists():
+        return csv_file
+    return txt
 
 
 def parse_int(value: str):
@@ -152,11 +162,11 @@ def inspect_csv_file(file_path: Path, transform):
 
 def run_dry_run():
     required_files = {
-        "routes": (GTFS_DIR / "routes.csv", transform_route),
-        "trips": (GTFS_DIR / "trips.csv", transform_trip),
-        "stops": (GTFS_DIR / "stops.csv", transform_stop),
-        "shapes": (GTFS_DIR / "shapes.csv", transform_shape),
-        "stop_times": (GTFS_DIR / "stop_times.csv", transform_stop_time),
+        "routes": (_resolver_gtfs("routes"), transform_route),
+        "trips": (_resolver_gtfs("trips"), transform_trip),
+        "stops": (_resolver_gtfs("stops"), transform_stop),
+        "shapes": (_resolver_gtfs("shapes"), transform_shape),
+        "stop_times": (_resolver_gtfs("stop_times"), transform_stop_time),
     }
 
     for table_name, (file_path, transform) in required_files.items():
@@ -207,11 +217,11 @@ async def run(database_url: str):
         raise FileNotFoundError(f"Schema SQL nao encontrado: {SCHEMA_FILE}")
 
     required_files = [
-        GTFS_DIR / "routes.csv",
-        GTFS_DIR / "trips.csv",
-        GTFS_DIR / "stops.csv",
-        GTFS_DIR / "stop_times.csv",
-        GTFS_DIR / "shapes.csv",
+        _resolver_gtfs("routes"),
+        _resolver_gtfs("trips"),
+        _resolver_gtfs("stops"),
+        _resolver_gtfs("stop_times"),
+        _resolver_gtfs("shapes"),
     ]
     for file in required_files:
         if not file.exists():
@@ -228,7 +238,7 @@ async def run(database_url: str):
 
                 await copy_csv_to_table(
                     conn,
-                    GTFS_DIR / "routes.csv",
+                    _resolver_gtfs("routes"),
                     "routes",
                     (
                         "agency_id",
@@ -246,7 +256,7 @@ async def run(database_url: str):
 
                 await copy_csv_to_table(
                     conn,
-                    GTFS_DIR / "trips.csv",
+                    _resolver_gtfs("trips"),
                     "trips",
                     (
                         "route_id",
@@ -263,7 +273,7 @@ async def run(database_url: str):
 
                 await copy_csv_to_table(
                     conn,
-                    GTFS_DIR / "stops.csv",
+                    _resolver_gtfs("stops"),
                     "stops",
                     (
                         "stop_id",
@@ -279,7 +289,7 @@ async def run(database_url: str):
 
                 await copy_csv_to_table(
                     conn,
-                    GTFS_DIR / "shapes.csv",
+                    _resolver_gtfs("shapes"),
                     "shapes",
                     (
                         "shape_id",
@@ -293,7 +303,7 @@ async def run(database_url: str):
 
                 await copy_csv_to_table(
                     conn,
-                    GTFS_DIR / "stop_times.csv",
+                    _resolver_gtfs("stop_times"),
                     "stop_times",
                     (
                         "trip_id",

@@ -1,0 +1,21 @@
+:root {
+  --ink: #0c1222;
+  --ink-soft: #3d4f6f;
+  --navy: #0f2744;
+  --blue: #1a5fb4;
+  --blue-bright: #3b8beb;
+  --sky: #7ec8ff;
+  --mint: #14b8a6;
+  --violet: #7c5cff;
+  --amber: #f59e0b;
+  --coral: #f97316;
+  --rose: #f43f5e;
+  --lime: #84cc16;
+  --surface: #f4f8ff;
+  --card: #ffffff;
+  --line: #c8daf5;
+  --shadow: 0 12px 40px rgba(15, 39, 68, 0.12);
+  --radius: 14px;
+  --font: "Segoe UI", system-ui, sans-serif;
+  --mono: Consolas, "Cascadia Mono", monospace;
+}

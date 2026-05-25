@@ -1,12 +1,25 @@
+import csv
 import json
 from pathlib import Path
+from app.database import garantir_pool
 from app.services import calculadora
 
-todas_paragens = {}
-
-_PASTA_PARAGENS = Path(__file__).resolve().parent.parent.parent / "dados" / "paragens"
+_RAIZ = Path(__file__).resolve().parent.parent.parent
+_GTFS_DIR = _RAIZ / "dados" / "gtfs"
 _FICHEIRO_MUNICIPIOS = Path(__file__).resolve().parent.parent.parent / "dados" / "municipios_linhas.json"
 _MUNICIPIOS_POR_LINHA = {}
+todas_paragens = {}
+
+
+def _sentido_txt(direction_id: int | None) -> str:
+    return "ida" if direction_id == 0 else "volta"
+
+
+def _ler_tsv(caminho: Path) -> list[dict]:
+    if not caminho.exists():
+        return []
+    with caminho.open("r", encoding="utf-8-sig", newline="") as ficheiro:
+        return list(csv.DictReader(ficheiro))
 
 
 def carregar_municipios_linhas():
@@ -57,23 +70,158 @@ def obter_municipio_linha(linha: str):
     return _MUNICIPIOS_POR_LINHA.get(linha.upper())
 
 
-def carregar_paragens():
+async def _carregar_paragens_da_db() -> dict:
+    pool = await garantir_pool()
+    if not pool:
+        return {}
+
+    async with pool.acquire() as conn:
+        rows = await conn.fetch(
+            """
+            WITH trips_rank AS (
+                SELECT
+                    r.route_short_name AS linha,
+                    t.direction_id AS direction_id,
+                    t.trip_id AS trip_id,
+                    COUNT(*) AS total_paragens,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY r.route_short_name, t.direction_id
+                        ORDER BY COUNT(*) DESC, t.trip_id
+                    ) AS rn
+                FROM routes r
+                JOIN trips t ON t.route_id = r.route_id
+                JOIN stop_times st ON st.trip_id = t.trip_id
+                WHERE r.route_short_name IS NOT NULL
+                    AND t.direction_id IN (0, 1)
+                GROUP BY r.route_short_name, t.direction_id, t.trip_id
+            )
+            SELECT
+                tr.linha,
+                tr.direction_id,
+                st.stop_sequence,
+                COALESCE(s.stop_code, s.stop_id) AS codigo,
+                s.stop_name,
+                s.stop_lat,
+                s.stop_lon
+            FROM trips_rank tr
+            JOIN stop_times st ON st.trip_id = tr.trip_id
+            JOIN stops s ON s.stop_id = st.stop_id
+            WHERE tr.rn = 1
+            ORDER BY tr.linha, tr.direction_id, st.stop_sequence
+            """
+        )
+
+    por_linha = {}
+    for row in rows:
+        linha = (row["linha"] or "").upper().strip()
+        if not linha:
+            continue
+        sentido = _sentido_txt(row["direction_id"])
+        por_linha.setdefault(linha, {"ida": [], "volta": []})[sentido].append(
+            {
+                "codigo": str(row["codigo"]).upper(),
+                "nome": row["stop_name"],
+                "lat": float(row["stop_lat"]),
+                "lon": float(row["stop_lon"]),
+            }
+        )
+    return {linha: sentidos for linha, sentidos in por_linha.items() if sentidos["ida"] or sentidos["volta"]}
+
+
+def _carregar_paragens_de_gtfs_local() -> dict:
+    routes = _ler_tsv(_GTFS_DIR / "routes.txt")
+    trips = _ler_tsv(_GTFS_DIR / "trips.txt")
+    stop_times = _ler_tsv(_GTFS_DIR / "stop_times.txt")
+    stops = _ler_tsv(_GTFS_DIR / "stops.txt")
+
+    if not (routes and trips and stop_times and stops):
+        return {}
+
+    route_short_by_id = {}
+    for rota in routes:
+        route_id = (rota.get("route_id") or "").strip()
+        short_name = (rota.get("route_short_name") or "").strip().upper()
+        if route_id and short_name:
+            route_short_by_id[route_id] = short_name
+
+    stop_by_id = {}
+    for stop in stops:
+        stop_id = (stop.get("stop_id") or "").strip()
+        if not stop_id:
+            continue
+        try:
+            lat = float(stop.get("stop_lat") or "")
+            lon = float(stop.get("stop_lon") or "")
+        except ValueError:
+            continue
+        stop_by_id[stop_id] = {
+            "codigo": ((stop.get("stop_code") or "").strip() or stop_id).upper(),
+            "nome": (stop.get("stop_name") or "").strip() or stop_id,
+            "lat": lat,
+            "lon": lon,
+        }
+
+    trip_meta = {}
+    for trip in trips:
+        trip_id = (trip.get("trip_id") or "").strip()
+        route_id = (trip.get("route_id") or "").strip()
+        if not trip_id or route_id not in route_short_by_id:
+            continue
+        try:
+            direction_id = int((trip.get("direction_id") or "0").strip())
+        except ValueError:
+            direction_id = 0
+        trip_meta[trip_id] = (route_short_by_id[route_id], _sentido_txt(direction_id))
+
+    stops_by_trip = {}
+    for row in stop_times:
+        trip_id = (row.get("trip_id") or "").strip()
+        stop_id = (row.get("stop_id") or "").strip()
+        if trip_id not in trip_meta or stop_id not in stop_by_id:
+            continue
+        try:
+            sequence = int((row.get("stop_sequence") or "").strip())
+        except ValueError:
+            continue
+        stops_by_trip.setdefault(trip_id, []).append((sequence, stop_id))
+
+    melhores = {}
+    for trip_id, paragens_trip in stops_by_trip.items():
+        linha, sentido = trip_meta[trip_id]
+        chave = (linha, sentido)
+        ordenadas = [stop_by_id[stop_id] for _, stop_id in sorted(paragens_trip)]
+        if not ordenadas:
+            continue
+        atual = melhores.get(chave)
+        if atual is None or len(ordenadas) > len(atual):
+            melhores[chave] = ordenadas
+
+    por_linha = {}
+    for (linha, sentido), paragens in melhores.items():
+        por_linha.setdefault(linha, {"ida": [], "volta": []})[sentido] = paragens
+    return {linha: sentidos for linha, sentidos in por_linha.items() if sentidos["ida"] or sentidos["volta"]}
+
+
+async def carregar_paragens():
     global todas_paragens
 
     carregar_municipios_linhas()
-
-    if not _PASTA_PARAGENS.exists():
-        print(f"Erro: A pasta '{_PASTA_PARAGENS}' nao existe.")
+    # primeiro tenta o que ja foi carregado na db
+    dados_db = await _carregar_paragens_da_db()
+    if dados_db:
+        todas_paragens = dados_db
+        print(f"Paragens carregadas da DB para {len(todas_paragens)} linhas")
         return
 
-    for ficheiro in sorted(_PASTA_PARAGENS.glob("*.json")):
-        try:
-            with open(ficheiro, "r", encoding="utf-8") as f:
-                dados = json.load(f)
-                todas_paragens.update(dados)
-            print(f"Lido: {ficheiro.name}")
-        except Exception as e:
-            print(f"Erro ao carregar {ficheiro}: {e}")
+    # fallback local para desenvolvimento sem db
+    dados_local = _carregar_paragens_de_gtfs_local()
+    if dados_local:
+        todas_paragens = dados_local
+        print(f"Paragens carregadas de GTFS local para {len(todas_paragens)} linhas")
+        return
+
+    todas_paragens = {}
+    print("Aviso: sem dados de paragens na DB e sem GTFS local")
 
 
 def obter_linhas():

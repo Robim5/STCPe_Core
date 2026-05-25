@@ -6,7 +6,7 @@ from datetime import datetime
 from statistics import median
 
 # pasta dos ficheiros GTFS
-_PASTA_CSV = Path(__file__).resolve().parent.parent.parent / "dados" / "infoCVS"
+_PASTA_GTFS = Path(__file__).resolve().parent.parent.parent / "dados" / "gtfs"
 
 # tempos programados do GTFS separados por periodo do dia
 # (route_id, direction, periodo) -> {stop_code: median_cumulative_seconds}
@@ -22,6 +22,53 @@ _TEMPO_PARAGEM_S = 25
 
 # velocidade media efetiva de autocarro urbano (km/h) - inclui paragens, semaforos, transito
 _VELOCIDADE_MEDIA_URBANA = 15.0
+
+# margem leve sempre (gps e variacao operacional)
+_BUFFER_BASE_MIN = 0.8
+# extra so em ponta ESTRITA e so no fallback por gps
+_BUFFER_PONTA_CALCULO_MIN = 1.0
+# extra minimo em ponta estrita quando ja vem do gtfs (horario ja e lento)
+_BUFFER_PONTA_GTFS_MIN = 0.4
+# teto da margem: no maximo 30% do tempo base ou 2.5 min
+_MARGEM_MAX_RATIO = 0.30
+_MARGEM_MAX_MIN = 2.5
+# fator leve no fallback gps em ponta estrita
+_FATOR_PONTA_CALCULO = 1.06
+# ajuste fino para alinhar com horario oficial stcp (+1 min)
+_BUFFER_ALINHAMENTO_MIN = 1.0
+
+
+def _segundos_agora() -> int:
+    agora = datetime.now()
+    return agora.hour * 3600 + agora.minute * 60 + agora.second
+
+
+def periodo_para_eta() -> dict:
+    """
+    periodo para estimativa em tempo real (diferente do bucket ao carregar gtfs)
+
+    ponta estrita manha: 08:20-09:30 (como referiste)
+    fora disso de manha usa horarios 'dia' para nao inflacionar
+    """
+    s = _segundos_agora()
+
+    if s < 6 * 3600 + 30 * 60:
+        return {"periodo": "madrugada", "periodo_gtfs": "madrugada", "ponta_estrita": False}
+    if s < 8 * 3600 + 20 * 60:
+        return {"periodo": "manha", "periodo_gtfs": "dia", "ponta_estrita": False}
+    if s < 9 * 3600 + 30 * 60:
+        return {"periodo": "ponta_manha", "periodo_gtfs": "ponta_manha", "ponta_estrita": True}
+    if s < 16 * 3600 + 30 * 60:
+        return {"periodo": "dia", "periodo_gtfs": "dia", "ponta_estrita": False}
+    if s < 17 * 3600 + 15 * 60:
+        return {"periodo": "tarde", "periodo_gtfs": "dia", "ponta_estrita": False}
+    if s < 19 * 3600:
+        return {"periodo": "ponta_tarde", "periodo_gtfs": "ponta_tarde", "ponta_estrita": True}
+    return {"periodo": "noite", "periodo_gtfs": "noite", "ponta_estrita": False}
+
+
+def periodo_atual() -> str:
+    return periodo_para_eta()["periodo"]
 
 
 def _periodo_de_segundos(seg: int) -> str:
@@ -47,14 +94,14 @@ def _parse_time(t: str) -> int:
 
 def carregar_tempos_gtfs():
     """
-    carrega os tempos programados do GTFS (stop_times.csv + trips.csv)
+    carrega os tempos programados do GTFS (stop_times.txt + trips.txt)
     separa viagens por periodo do dia (madrugada, ponta manha, dia, ponta tarde, noite)
     para que as estimativas reflitam o transito real de cada periodo
     """
     global _tempos_gtfs_periodo, _tempos_gtfs_global
 
-    trips_file = _PASTA_CSV / "trips.csv"
-    stop_times_file = _PASTA_CSV / "stop_times.csv"
+    trips_file = _PASTA_GTFS / "trips.txt"
+    stop_times_file = _PASTA_GTFS / "stop_times.txt"
 
     if not trips_file.exists() or not stop_times_file.exists():
         print("Aviso: Ficheiros GTFS nao encontrados. ETA usara calculo por distancia.")
@@ -137,6 +184,48 @@ def _procurar_codigo_gtfs(tempos: dict, codigo: str):
     return None
 
 
+def _calcular_margem_chegada(tempo_base_min: float, metodo: str, ponta_estrita: bool, periodo: str) -> dict:
+    # evita dupla contagem: gtfs em ponta ja traz viagens lentas da janela 8:20-9:30
+    buffer_base = _BUFFER_BASE_MIN
+    buffer_ponta = 0.0
+    if ponta_estrita:
+        if metodo == "gtfs":
+            buffer_ponta = _BUFFER_PONTA_GTFS_MIN
+        else:
+            buffer_ponta = _BUFFER_PONTA_CALCULO_MIN
+
+    buffer_bruto = buffer_base + buffer_ponta
+    teto = min(max(tempo_base_min, 0.5) * _MARGEM_MAX_RATIO, _MARGEM_MAX_MIN)
+    buffer_total = round(min(buffer_bruto, teto), 1)
+
+    return {
+        "periodo": periodo,
+        "ponta_estrita": ponta_estrita,
+        "buffer_base_min": buffer_base,
+        "buffer_ponta_min": buffer_ponta,
+        "margem_min": buffer_total,
+    }
+
+
+def _finalizar_estimativa(tempo_base_min: float, info_periodo: dict, metodo: str) -> dict:
+    margem = _calcular_margem_chegada(
+        tempo_base_min,
+        metodo,
+        info_periodo["ponta_estrita"],
+        info_periodo["periodo"],
+    )
+    tempo_base = round(max(0.0, tempo_base_min), 1)
+    margem_total = round(margem["margem_min"] + _BUFFER_ALINHAMENTO_MIN, 1)
+    tempo_final = round(tempo_base + margem_total, 1)
+    return {
+        "tempo_estimado_min": tempo_final,
+        "tempo_base_min": tempo_base,
+        "buffer_alinhamento_min": _BUFFER_ALINHAMENTO_MIN,
+        **margem,
+        "margem_min": margem_total,
+    }
+
+
 def calcular_distancia(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     """
     calcula a distancia entre dois pontos geograficos usando a formula de Haversine
@@ -200,14 +289,15 @@ def encontrar_paragem_mais_proxima(lat: float, lon: float, paragens: list) -> tu
 
 
 def estimar_tempo_chegada(distancia_metros: float, velocidade_kmh: float) -> float:
-    """
-    LEGADO - calculo simples por distancia/velocidade
-    mantido para compatibilidade mas nao deve ser usado diretamente
-    """
+    """calculo simples por distancia/velocidade + margem de atraso """
     velocidade = max(velocidade_kmh, 12.0)
     velocidade_ms = velocidade * 1000 / 3600
     tempo_segundos = distancia_metros / velocidade_ms
-    return round(tempo_segundos / 60, 1)
+    tempo_base = tempo_segundos / 60.0
+    info = periodo_para_eta()
+    if info["ponta_estrita"]:
+        tempo_base *= _FATOR_PONTA_CALCULO
+    return _finalizar_estimativa(tempo_base, info, "calculo")["tempo_estimado_min"]
 
 
 def estimar_tempo_chegada_v2(
@@ -217,33 +307,32 @@ def estimar_tempo_chegada_v2(
     indice_bus: int,
     indice_destino: int,
     velocidade_atual: float,
-) -> tuple:
+) -> dict:
     """
-    estima o tempo de chegada usando tempos programados do GTFS quando disponiveis
-    com fallback para calculo melhorado por distancia
-
-    usa tempos especificos do periodo do dia (ponta manha/tarde, dia, noite, madrugada)
-    para estimativas mais realistas conforme o transito tipico
-
-    retorna (tempo_minutos, distancia_metros, metodo)
-    metodo: 'gtfs' se usou tempos programados, 'calculo' se usou fallback
+    estima chegada a uma paragem
+    1) gtfs do periodo certo (ponta estrita so 8:20-9:30 e 17:15-19:00)
+    2) fallback gtfs global
+    3) fallback gps
+    margem pequena sem duplicar atraso ja presente no gtfs de ponta
     """
     direction = 0 if sentido == "ida" else 1
+    info = periodo_para_eta()
+    periodo_gtfs = info["periodo_gtfs"]
 
-    # distancia para incluir na resposta (corrigida com fator estrada)
     dist_reta = calcular_distancia_rota(paragens_rota, indice_bus, indice_destino)
     dist_estimada = round(dist_reta * _FATOR_ESTRADA, 1)
 
     code_bus = paragens_rota[indice_bus]["codigo"]
     code_dest = paragens_rota[indice_destino]["codigo"]
 
-    # determinar periodo atual do dia
-    agora = datetime.now()
-    seg_dia = agora.hour * 3600 + agora.minute * 60 + agora.second
-    periodo = _periodo_de_segundos(seg_dia)
+    def _resultado_gtfs(delta_segundos: float) -> dict:
+        tempo_base = delta_segundos / 60.0
+        out = _finalizar_estimativa(tempo_base, info, "gtfs")
+        out["distancia_metros"] = dist_estimada
+        out["metodo_calculo"] = "gtfs"
+        return out
 
-    # tentar GTFS com tempos especificos do periodo
-    key_periodo = (linha, direction, periodo)
+    key_periodo = (linha, direction, periodo_gtfs)
     tempos = _tempos_gtfs_periodo.get(key_periodo)
     if tempos:
         t_bus = _procurar_codigo_gtfs(tempos, code_bus)
@@ -251,9 +340,8 @@ def estimar_tempo_chegada_v2(
         if t_bus is not None and t_dest is not None:
             delta = t_dest - t_bus
             if delta > 0:
-                return round(delta / 60.0, 1), dist_estimada, "gtfs"
+                return _resultado_gtfs(delta)
 
-    # fallback: GTFS global (todas as viagens)
     key_global = (linha, direction)
     tempos = _tempos_gtfs_global.get(key_global)
     if tempos:
@@ -262,16 +350,23 @@ def estimar_tempo_chegada_v2(
         if t_bus is not None and t_dest is not None:
             delta = t_dest - t_bus
             if delta > 0:
-                return round(delta / 60.0, 1), dist_estimada, "gtfs"
+                return _resultado_gtfs(delta)
 
-    # fallback: calculo melhorado por distancia
     num_paragens_entre = max(0, indice_destino - indice_bus - 1)
     tempo_paragens_s = num_paragens_entre * _TEMPO_PARAGEM_S
 
-    velocidade_ms = _VELOCIDADE_MEDIA_URBANA * 1000 / 3600
+    velocidade = max(velocidade_atual or 0, _VELOCIDADE_MEDIA_URBANA * 0.8)
+    velocidade = min(velocidade, 45.0)
+    if info["ponta_estrita"]:
+        velocidade *= 0.94
+
+    velocidade_ms = velocidade * 1000 / 3600
     tempo_viagem_s = dist_estimada / velocidade_ms
-
     tempo_total_s = tempo_viagem_s + tempo_paragens_s
-    tempo_min = round(tempo_total_s / 60.0, 1)
+    if info["ponta_estrita"]:
+        tempo_total_s *= _FATOR_PONTA_CALCULO
 
-    return tempo_min, dist_estimada, "calculo"
+    out = _finalizar_estimativa(tempo_total_s / 60.0, info, "calculo")
+    out["distancia_metros"] = dist_estimada
+    out["metodo_calculo"] = "calculo"
+    return out

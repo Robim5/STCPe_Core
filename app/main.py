@@ -94,6 +94,7 @@ async def lifespan(app: FastAPI):
     await stcp_realtime.inicializar_tabela_veiculos()
     await stcp_paragens.carregar_paragens()
     calculadora.carregar_tempos_gtfs()
+    calculadora.carregar_horarios_programados()
 
     tarefa_realtime = None
     if ENABLE_BACKGROUND_POLLING and not IS_SERVERLESS:

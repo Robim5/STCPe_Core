@@ -14,7 +14,7 @@ export const EXEMPLOS = [
     accent: "chegadas",
     pergunta: "Ver quando o próximo 605 chega à Barca",
     endpointId: "tempo",
-    params: { linha: "605", codigo_paragem: "BARC1", sentido: "ida" },
+    params: { linha: "605", codigo_paragem: "BVIS1", sentido: "ida" },
     editaveis: ["linha", "codigo_paragem", "sentido"],
   },
   {

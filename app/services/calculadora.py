@@ -13,6 +13,8 @@ _PASTA_GTFS = Path(__file__).resolve().parent.parent.parent / "dados" / "gtfs"
 _tempos_gtfs_periodo = {}
 # fallback global (todas as viagens): (route_id, direction) -> {stop_code: median_cumulative_seconds}
 _tempos_gtfs_global = {}
+# horarios de passagem por paragem: (linha, direction, stop_id)
+_horarios_programados = {}
 
 # fator de correcao estrada vs linha reta (urbano Porto)
 _FATOR_ESTRADA = 1.35
@@ -92,6 +94,22 @@ def _parse_time(t: str) -> int:
     return int(parts[0]) * 3600 + int(parts[1]) * 60 + int(parts[2])
 
 
+def _formatar_hora(segundos: int) -> str:
+    """formata segundos (mod 24h) para HH:MM"""
+    s = segundos % 86400
+    h = s // 3600
+    m = (s % 3600) // 60
+    return f"{h:02d}:{m:02d}"
+
+
+def _codigos_correspondem(codigo_a: str, codigo_b: str) -> bool:
+    if codigo_a == codigo_b:
+        return True
+    base_a = codigo_a.rstrip("0123456789")
+    base_b = codigo_b.rstrip("0123456789")
+    return bool(base_a and base_a == base_b)
+
+
 def carregar_tempos_gtfs():
     """
     carrega os tempos programados do GTFS (stop_times.txt + trips.txt)
@@ -160,6 +178,132 @@ def carregar_tempos_gtfs():
     n_periodo = len(_tempos_gtfs_periodo)
     n_global = len(_tempos_gtfs_global)
     print(f"GTFS: {n_global} rotas globais + {n_periodo} rotas por periodo carregadas.")
+
+
+def carregar_horarios_programados():
+    """ carrega horarios de passagem (stop_times) para o proximo autocarro programado na paragem, mesmo sem veiculo GPS a caminho """
+    global _horarios_programados
+
+    routes_file = _PASTA_GTFS / "routes.txt"
+    trips_file = _PASTA_GTFS / "trips.txt"
+    stops_file = _PASTA_GTFS / "stops.txt"
+    stop_times_file = _PASTA_GTFS / "stop_times.txt"
+
+    if not all(f.exists() for f in (routes_file, trips_file, stops_file, stop_times_file)):
+        print("Aviso: Ficheiros GTFS incompletos. Horarios programados indisponiveis.")
+        _horarios_programados = {}
+        return
+
+    route_short = {}
+    with open(routes_file, "r", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            route_id = (row.get("route_id") or "").strip()
+            short = (row.get("route_short_name") or "").strip().upper()
+            if route_id and short:
+                route_short[route_id] = short
+
+    stop_codigo = {}
+    with open(stops_file, "r", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            stop_id = (row.get("stop_id") or "").strip()
+            if not stop_id:
+                continue
+            code = (row.get("stop_code") or "").strip().upper() or stop_id.upper()
+            stop_codigo[stop_id] = code
+
+    trip_meta = {}
+    with open(trips_file, "r", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            trip_id = (row.get("trip_id") or "").strip()
+            route_id = (row.get("route_id") or "").strip()
+            if not trip_id or route_id not in route_short:
+                continue
+            try:
+                direction = int((row.get("direction_id") or "0").strip())
+            except ValueError:
+                direction = 0
+            trip_meta[trip_id] = (route_short[route_id], direction)
+
+    horarios = defaultdict(list)
+    with open(stop_times_file, "r", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            trip_id = (row.get("trip_id") or "").strip()
+            stop_id = (row.get("stop_id") or "").strip()
+            arrival = (row.get("arrival_time") or row.get("departure_time") or "").strip()
+            if trip_id not in trip_meta or not stop_id or not arrival:
+                continue
+            linha, direction = trip_meta[trip_id]
+            codigo = stop_codigo.get(stop_id, stop_id.upper())
+            horarios[(linha, direction, codigo)].append(_parse_time(arrival))
+
+    _horarios_programados = {k: sorted(set(v)) for k, v in horarios.items() if v}
+    print(f"GTFS: horarios programados para {len(_horarios_programados)} paragens.")
+
+
+def _horarios_para_codigo(linha: str, direction: int, codigo: str) -> list[int]:
+    codigo_u = codigo.upper()
+    candidatos = []
+    for (l, d, stop_code), horas in _horarios_programados.items():
+        if l != linha or d != direction:
+            continue
+        if _codigos_correspondem(stop_code, codigo_u):
+            candidatos.extend(horas)
+    return candidatos
+
+
+def _segundos_ate_proximo_horario(horarios: list[int], agora: int) -> tuple[int, int] | None:
+    if not horarios:
+        return None
+
+    melhor_delta = None
+    melhor_hora = None
+
+    for h in horarios:
+        opcoes = [h]
+        if h < 86400:
+            opcoes.append(h + 86400)
+
+        for t in opcoes:
+            delta = (t - agora) if t >= agora else (t + 86400) - agora
+            if melhor_delta is None or delta < melhor_delta:
+                melhor_delta = delta
+                melhor_hora = t % 86400
+
+    if melhor_delta is None:
+        return None
+    return melhor_delta, melhor_hora
+
+
+def proximo_horario_programado(linha: str, sentido: str, codigo: str) -> dict | None:
+    """proxima passagem programada GTFS na paragem (independente de GPS ativo)"""
+    if not _horarios_programados:
+        return None
+
+    direction = 0 if sentido == "ida" else 1
+    horarios = _horarios_para_codigo(linha.upper(), direction, codigo)
+    if not horarios:
+        return None
+
+    resultado = _segundos_ate_proximo_horario(horarios, _segundos_agora())
+    if resultado is None:
+        return None
+
+    delta_s, hora_s = resultado
+    info = periodo_para_eta()
+    minutos = round(delta_s / 60.0, 1)
+
+    return {
+        "tipo": "programado",
+        "horario_chegada": _formatar_hora(hora_s),
+        "tempo_estimado_min": minutos,
+        "tempo_base_min": minutos,
+        "margem_atraso_min": 0.0,
+        "periodo": info["periodo"],
+        "ponta_estrita": info["ponta_estrita"],
+        "metodo_calculo": "gtfs_horario",
+        "distancia_metros": None,
+        "velocidade_atual": None,
+    }
 
 
 def _procurar_codigo_gtfs(tempos: dict, codigo: str):

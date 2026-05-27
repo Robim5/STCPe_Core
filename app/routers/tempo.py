@@ -37,7 +37,26 @@ async def tempo_chegada(
     autocarros_linha = stcp_realtime.autocarros_por_linha.get(linha_upper, [])
     autocarros_sentido = [b for b in autocarros_linha if b["sentido"] == sentido]
 
+    horario_programado = None
     if not autocarros_sentido:
+        horario_programado = calculadora.proximo_horario_programado(
+            linha_upper, sentido, codigo_upper
+        )
+        if horario_programado:
+            return {
+                "linha": linha_upper,
+                "sentido": sentido,
+                "paragem": {
+                    "codigo": paragem_destino["codigo"],
+                    "nome": paragem_destino["nome"],
+                    "lat": paragem_destino["lat"],
+                    "lon": paragem_destino["lon"],
+                },
+                "estimativas": [],
+                "horario_programado": horario_programado,
+                "total_autocarros": 0,
+                "mensagem": "Sem autocarro em tempo real; horario programado GTFS disponivel.",
+            }
         return {
             "linha": linha_upper,
             "sentido": sentido,
@@ -48,6 +67,7 @@ async def tempo_chegada(
                 "lon": paragem_destino["lon"],
             },
             "estimativas": [],
+            "horario_programado": None,
             "total_autocarros": 0,
             "mensagem": "Nenhum autocarro ativo nesta linha/sentido neste momento.",
         }
@@ -78,7 +98,9 @@ async def tempo_chegada(
         )
 
         estimativas.append({
+            "tipo": "tempo_real",
             "veiculo_id": bus["veiculo_id"],
+            "horario_chegada": None,
             "tempo_estimado_min": eta["tempo_estimado_min"],
             "tempo_base_min": eta["tempo_base_min"],
             "margem_atraso_min": eta["margem_min"],
@@ -95,6 +117,12 @@ async def tempo_chegada(
     # ordenar por tempo
     estimativas.sort(key=lambda x: x["tempo_estimado_min"])
 
+    horario_programado = None
+    if not estimativas:
+        horario_programado = calculadora.proximo_horario_programado(
+            linha_upper, sentido, codigo_upper
+        )
+
     return {
         "linha": linha_upper,
         "sentido": sentido,
@@ -105,5 +133,6 @@ async def tempo_chegada(
             "lon": paragem_destino["lon"],
         },
         "estimativas": estimativas,
+        "horario_programado": horario_programado,
         "total_autocarros": len(estimativas),
     }

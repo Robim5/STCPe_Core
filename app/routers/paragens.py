@@ -60,6 +60,7 @@ async def tempos_paragem(codigo: str):
         raise HTTPException(404, detail=f"Paragem '{codigo}' nao encontrada.")
 
     todos_tempos = []
+    linhas_com_tempo_real = set()
 
     for entrada in linhas_na_paragem:
         linha = entrada["linha"]
@@ -95,11 +96,13 @@ async def tempos_paragem(codigo: str):
                 bus["velocidade"],
             )
 
+            linhas_com_tempo_real.add((linha, sentido))
             todos_tempos.append({
                 "linha": linha,
                 "sentido": sentido,
                 "origem": entrada["origem"],
                 "destino": entrada["destino"],
+                "tipo": "tempo_real",
                 "veiculo_id": bus["veiculo_id"],
                 "tempo_estimado_min": eta["tempo_estimado_min"],
                 "tempo_base_min": eta["tempo_base_min"],
@@ -109,9 +112,34 @@ async def tempos_paragem(codigo: str):
                 "distancia_metros": eta["distancia_metros"],
                 "velocidade_atual": bus["velocidade"],
                 "metodo_calculo": eta["metodo_calculo"],
+                "horario_chegada": None,
                 "lat": bus["lat"],
                 "lon": bus["lon"],
             })
+
+    # sem autocarro GPS a caminho: proximo horario GTFS programado na paragem
+    for entrada in linhas_na_paragem:
+        linha = entrada["linha"]
+        sentido = entrada["sentido"]
+        if (linha, sentido) in linhas_com_tempo_real:
+            continue
+        if stcp_paragens.encontrar_paragem_por_codigo(linha, sentido, codigo) is None:
+            continue
+
+        horario = calculadora.proximo_horario_programado(linha, sentido, codigo)
+        if not horario:
+            continue
+
+        todos_tempos.append({
+            "linha": linha,
+            "sentido": sentido,
+            "origem": entrada["origem"],
+            "destino": entrada["destino"],
+            "veiculo_id": None,
+            "lat": None,
+            "lon": None,
+            **horario,
+        })
 
     todos_tempos.sort(key=lambda x: x["tempo_estimado_min"])
 

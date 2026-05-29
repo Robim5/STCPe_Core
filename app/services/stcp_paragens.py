@@ -1,5 +1,6 @@
 import csv
 import json
+from collections import defaultdict
 from pathlib import Path
 from app.database import garantir_pool
 from app.services import calculadora
@@ -70,6 +71,22 @@ def obter_municipio_linha(linha: str):
     return _MUNICIPIOS_POR_LINHA.get(linha.upper())
 
 
+def _unir_paragens_de_viagens(listas_por_viagem: list[list[dict]]) -> list[dict]:
+    """ uniao de paragens de todas as viagens GTFS do mesmo sentido. A STCP usa codigos distintos por sentido (ex. DMAN1 ida, DMAN2 volta) entao usar so a viagem mais longa deixava de fora paragens validas para algumas linhas """
+    if not listas_por_viagem:
+        return []
+    resultado: list[dict] = []
+    vistos: set[str] = set()
+    for paragens in sorted(listas_por_viagem, key=len, reverse=True):
+        for p in paragens:
+            codigo = p["codigo"]
+            if codigo in vistos:
+                continue
+            vistos.add(codigo)
+            resultado.append(p)
+    return resultado
+
+
 async def _carregar_paragens_da_db() -> dict:
     pool = await garantir_pool()
     if not pool:
@@ -78,46 +95,33 @@ async def _carregar_paragens_da_db() -> dict:
     async with pool.acquire() as conn:
         rows = await conn.fetch(
             """
-            WITH trips_rank AS (
-                SELECT
-                    r.route_short_name AS linha,
-                    t.direction_id AS direction_id,
-                    t.trip_id AS trip_id,
-                    COUNT(*) AS total_paragens,
-                    ROW_NUMBER() OVER (
-                        PARTITION BY r.route_short_name, t.direction_id
-                        ORDER BY COUNT(*) DESC, t.trip_id
-                    ) AS rn
-                FROM routes r
-                JOIN trips t ON t.route_id = r.route_id
-                JOIN stop_times st ON st.trip_id = t.trip_id
-                WHERE r.route_short_name IS NOT NULL
-                    AND t.direction_id IN (0, 1)
-                GROUP BY r.route_short_name, t.direction_id, t.trip_id
-            )
             SELECT
-                tr.linha,
-                tr.direction_id,
+                r.route_short_name AS linha,
+                t.direction_id,
+                t.trip_id,
                 st.stop_sequence,
                 COALESCE(s.stop_code, s.stop_id) AS codigo,
                 s.stop_name,
                 s.stop_lat,
                 s.stop_lon
-            FROM trips_rank tr
-            JOIN stop_times st ON st.trip_id = tr.trip_id
+            FROM routes r
+            JOIN trips t ON t.route_id = r.route_id
+            JOIN stop_times st ON st.trip_id = t.trip_id
             JOIN stops s ON s.stop_id = st.stop_id
-            WHERE tr.rn = 1
-            ORDER BY tr.linha, tr.direction_id, st.stop_sequence
+            WHERE r.route_short_name IS NOT NULL
+                AND t.direction_id IN (0, 1)
+            ORDER BY r.route_short_name, t.direction_id, t.trip_id, st.stop_sequence
             """
         )
 
-    por_linha = {}
+    viagens_por_chave: dict[tuple[str, str, str], list[dict]] = defaultdict(list)
     for row in rows:
         linha = (row["linha"] or "").upper().strip()
         if not linha:
             continue
         sentido = _sentido_txt(row["direction_id"])
-        por_linha.setdefault(linha, {"ida": [], "volta": []})[sentido].append(
+        trip_id = str(row["trip_id"])
+        viagens_por_chave[(linha, sentido, trip_id)].append(
             {
                 "codigo": str(row["codigo"]).upper(),
                 "nome": row["stop_name"],
@@ -125,6 +129,18 @@ async def _carregar_paragens_da_db() -> dict:
                 "lon": float(row["stop_lon"]),
             }
         )
+
+    listas_por_linha_sentido: dict[tuple[str, str], list[list[dict]]] = defaultdict(list)
+    for (linha, sentido, _trip_id), paragens in viagens_por_chave.items():
+        if paragens:
+            listas_por_linha_sentido[(linha, sentido)].append(paragens)
+
+    por_linha: dict[str, dict[str, list]] = {}
+    for (linha, sentido), listas in listas_por_linha_sentido.items():
+        unidas = _unir_paragens_de_viagens(listas)
+        if unidas:
+            por_linha.setdefault(linha, {"ida": [], "volta": []})[sentido] = unidas
+
     return {linha: sentidos for linha, sentidos in por_linha.items() if sentidos["ida"] or sentidos["volta"]}
 
 
@@ -185,20 +201,18 @@ def _carregar_paragens_de_gtfs_local() -> dict:
             continue
         stops_by_trip.setdefault(trip_id, []).append((sequence, stop_id))
 
-    melhores = {}
+    viagens_por_chave: dict[tuple[str, str], list[list[dict]]] = defaultdict(list)
     for trip_id, paragens_trip in stops_by_trip.items():
         linha, sentido = trip_meta[trip_id]
-        chave = (linha, sentido)
         ordenadas = [stop_by_id[stop_id] for _, stop_id in sorted(paragens_trip)]
-        if not ordenadas:
-            continue
-        atual = melhores.get(chave)
-        if atual is None or len(ordenadas) > len(atual):
-            melhores[chave] = ordenadas
+        if ordenadas:
+            viagens_por_chave[(linha, sentido)].append(ordenadas)
 
     por_linha = {}
-    for (linha, sentido), paragens in melhores.items():
-        por_linha.setdefault(linha, {"ida": [], "volta": []})[sentido] = paragens
+    for (linha, sentido), listas in viagens_por_chave.items():
+        unidas = _unir_paragens_de_viagens(listas)
+        if unidas:
+            por_linha.setdefault(linha, {"ida": [], "volta": []})[sentido] = unidas
     return {linha: sentidos for linha, sentidos in por_linha.items() if sentidos["ida"] or sentidos["volta"]}
 
 

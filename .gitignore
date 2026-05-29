@@ -8,3 +8,10 @@ __pycache__/
 importar_railway.py
 stcp_real_time.md
 dados/gtfs/*.txt
+
+# testes locais (nao publicar)
+tests/test_paragens_tempos.py
+tests/test_maia_paragens.py
+tests/maia.json
+tests/maia_codigos_404.txt
+docs/*.md

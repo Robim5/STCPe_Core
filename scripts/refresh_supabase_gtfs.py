@@ -1,8 +1,15 @@
 import argparse
 import asyncio
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
 
 from load_supabase_data import run, run_dry_run
+
+# carrega .env na raiz do projeto (como app/config.py)
+_RAIZ = Path(__file__).resolve().parent.parent
+load_dotenv(_RAIZ / ".env", override=False)
 
 
 CONFIRM_TOKEN = "ATUALIZAR"
@@ -54,9 +61,6 @@ def main():
     args = parse_args()
     dsn = normalizar_dsn(args.database_url)
 
-    if not dsn:
-        raise SystemExit("DATABASE_URL nao definido. Usa --database-url ou define DATABASE_URL.")
-
     if not args.skip_dry_run:
         print("[1/3] A validar GTFS (dry-run)...")
         run_dry_run()
@@ -64,6 +68,12 @@ def main():
     if args.dry_run_only:
         print("Dry-run concluido. Nenhuma alteracao foi aplicada na base de dados.")
         return
+
+    if not dsn:
+        raise SystemExit(
+            "DATABASE_URL nao definido. Coloca no ficheiro .env na raiz do projeto "
+            "ou passa --database-url \"postgresql://...\""
+        )
 
     if not args.yes:
         print("[2/3] Confirmacao de limpeza da base...")

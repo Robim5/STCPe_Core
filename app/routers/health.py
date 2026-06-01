@@ -1,5 +1,6 @@
 import os
 from fastapi import APIRouter
+from app.config import modo_refresh_realtime, STCP_REFRESH_INTERVAL_SECONDS
 from app.services import stcp_realtime, stcp_paragens
 from app.database import garantir_pool
 
@@ -14,6 +15,8 @@ async def health():
     url_configurada = bool(os.getenv("STCP_API_URL"))
     return {
         "estado": "online",
+        "refresh_modo": modo_refresh_realtime(),
+        "refresh_intervalo_segundos": STCP_REFRESH_INTERVAL_SECONDS,
         "autocarros_ativos": len(stcp_realtime.autocarros_processados),
         "linhas_carregadas": len(stcp_paragens.todas_paragens),
         "ultima_atualizacao": stcp_realtime.ultima_atualizacao,
@@ -45,10 +48,11 @@ async def estatisticas():
 
 @router.get("/internal/refresh")
 async def refresh_manual():
-    """endpoint interno para forcar refresh (ideal para scheduler externo)"""
+    """endpoint interno para forcar refresh (scheduler externo, ex. cron-job.org)"""
     await stcp_realtime.garantir_dados_recentes(force=True)
     return {
         "ok": True,
+        "refresh_modo": modo_refresh_realtime(),
         "autocarros_ativos": len(stcp_realtime.autocarros_processados),
         "ultima_atualizacao": stcp_realtime.ultima_atualizacao,
     }

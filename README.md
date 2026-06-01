@@ -221,9 +221,9 @@ Painel integrado para testar a API sem Postman.
 | `STCP_API_URL` | Sim* | URL do feed STCP em tempo real |
 | `DATABASE_URL` | Recomendada | PostgreSQL (Supabase) |
 | `API_KEY` | Produção | Protege endpoints `/api/*` |
-| `CRON_SECRET` | Refresh interno | `Authorization: Bearer ...` em `/api/internal/refresh` |
-| `ENABLE_BACKGROUND_POLLING` | Não | Polling contínuo do feed (Railway) |
-| `STCP_REFRESH_INTERVAL_SECONDS` | Não | Mínimo entre refreshes (default 15) |
+| `CRON_SECRET` | Produção (recomendado) | Scheduler chama `GET /api/internal/refresh` com `Authorization: Bearer ...` |
+| `ENABLE_BACKGROUND_POLLING` | Não | `false` por defeito; `true` só se quiseres loop interno (mais CPU) |
+| `STCP_REFRESH_INTERVAL_SECONDS` | Não | Idade máxima do cache em memória (default 15); alinha com o intervalo do cron |
 | `CORS_ALLOW_ORIGINS` | Produção | Origens permitidas, separadas por vírgula |
 | `DB_SSL`, `DB_SSL_CA_FILE` | Supabase | Ver `.env.example` e `certs/prod-ca-2021.crt` |
 
@@ -236,9 +236,32 @@ Ver `.env.example` para a lista completa.
 1. Executar `supabase/schema.sql` no Supabase
 2. Carregar GTFS com `scripts/refresh_supabase_gtfs.py`
 3. Ligar o repositório ao Railway
-4. Configurar variáveis (`DATABASE_URL`, `STCP_API_URL`, `API_KEY`, `CORS_ALLOW_ORIGINS`, etc.)
+4. Configurar variáveis (`DATABASE_URL`, `STCP_API_URL`, `API_KEY`, `CRON_SECRET`, `CORS_ALLOW_ORIGINS`, etc.)
 5. Garantir ficheiros GTFS em `dados/gtfs/` no deploy
 6. Validar `GET /healthz`
+7. **Agendar refresh do feed** (ver secção abaixo) — `ENABLE_BACKGROUND_POLLING` fica `false` por defeito
+
+### Refresh por cron (recomendado no Railway)
+
+Por defeito **não** há loop interno a bater na API STCP a cada 10 s (poupa CPU/rede). O cache de autocarros mantém-se com um scheduler externo:
+
+| Campo | Valor |
+|-------|--------|
+| URL | `https://<teu-dominio>/api/internal/refresh` |
+| Método | `GET` |
+| Header | `Authorization: Bearer <CRON_SECRET>` |
+| Intervalo | **15–30 s** (tempo real); **1 min** se o plano gratuito do cron só permitir |
+
+Exemplo com [cron-job.org](https://cron-job.org): criar job HTTP, colar a URL, em *Headers* `Authorization: Bearer o_teu_segredo`, intervalo 15 s ou 1 min.
+
+Confirmação: `GET /api/health` (com API Key) devolve `refresh_modo: "cron"` e `ultima_atualizacao` recente.
+
+```bash
+curl -s -H "Authorization: Bearer SEU_CRON_SECRET" \
+  "https://stcpe-core.railway.app/api/internal/refresh"
+```
+
+Para voltar ao loop interno (mais carga): `ENABLE_BACKGROUND_POLLING=true` no Railway.
 
 ---
 

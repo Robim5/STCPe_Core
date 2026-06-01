@@ -15,6 +15,7 @@ from app.config import (
     API_KEY,
     IS_SERVERLESS,
     ENABLE_BACKGROUND_POLLING,
+    modo_refresh_realtime,
     CRON_SECRET,
     CORS_ALLOW_ORIGINS,
     ALLOW_API_KEY_QUERY_PARAM,
@@ -96,12 +97,24 @@ async def lifespan(app: FastAPI):
     calculadora.carregar_tempos_gtfs()
     calculadora.carregar_horarios_programados()
 
+    modo = modo_refresh_realtime()
+    print(f"Refresh tempo real: {modo}")
+
     tarefa_realtime = None
     if ENABLE_BACKGROUND_POLLING and not IS_SERVERLESS:
         tarefa_realtime = asyncio.create_task(stcp_realtime.loop_atualizacao_continua())
     else:
-        # sem loop infinito ativo: atualiza sob pedido ou em arranque
+        # sem loop infinito: arranque + cron externo (/api/internal/refresh) ou refresh por pedido
         await stcp_realtime.garantir_dados_recentes(force=True)
+        if modo == "cron":
+            print(
+                "Agenda GET /api/internal/refresh a cada 15-30s (ex.: cron-job.org) "
+                "com Authorization: Bearer <CRON_SECRET>"
+            )
+        elif modo == "on_demand":
+            print(
+                "Aviso: sem CRON_SECRET nem polling; dados STCP so atualizam quando um endpoint pede."
+            )
 
     app.state.realtime_task = tarefa_realtime
 
@@ -181,7 +194,7 @@ async def adicionar_headers_seguranca(request: Request, call_next):
 async def verificar_api_key(request: Request, call_next):
     path = request.url.path
 
-    if RATE_LIMIT_ENABLED and path.startswith("/api/"):
+    if RATE_LIMIT_ENABLED and path.startswith("/api/") and path != "/api/internal/refresh":
         ip = _obter_ip_cliente(request)
         if _excedeu_rate_limit(ip):
             return JSONResponse(

@@ -46,9 +46,13 @@ IS_SERVERLESS = _bool_env("IS_SERVERLESS", False)
 # permite override por variavel de ambiente
 IS_PRODUCTION = _bool_env("IS_PRODUCTION", IS_RAILWAY or IS_SERVERLESS)
 
-# no railway polling continuo e um default util e em serverless fica desativado para n ter loops infinitos
-_default_background_polling = IS_RAILWAY and not IS_SERVERLESS
-ENABLE_BACKGROUND_POLLING = _bool_env("ENABLE_BACKGROUND_POLLING", _default_background_polling)
+# polling interno desligado por defeito (menos CPU/rede no Railway); usar cron em /api/internal/refresh
+# em serverless nunca ativar loop infinito
+_default_background_polling = False
+ENABLE_BACKGROUND_POLLING = _bool_env(
+	"ENABLE_BACKGROUND_POLLING",
+	_default_background_polling and not IS_SERVERLESS,
+)
 
 # protecao por API Key
 API_KEY = (os.getenv("API_KEY") or "").strip() or None
@@ -61,6 +65,13 @@ ALLOW_API_KEY_QUERY_PARAM = _bool_env("ALLOW_API_KEY_QUERY_PARAM", False)
 
 # autenticacao opcional para scheduler externo (Authorization: Bearer <CRON_SECRET>)
 CRON_SECRET = (os.getenv("CRON_SECRET") or "").strip() or None
+
+
+def modo_refresh_realtime() -> str:
+	"""como o feed STCP e mantido fresco: background | cron | on_demand"""
+	if IS_SERVERLESS or not ENABLE_BACKGROUND_POLLING:
+		return "cron" if CRON_SECRET else "on_demand"
+	return "background"
 
 # CORS: em producao, negar por omissao e exigir configuracao explicita
 _cors_default = ["*"] if not IS_PRODUCTION else []

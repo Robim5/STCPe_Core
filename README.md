@@ -106,7 +106,7 @@ Validação sem escrever na DB:
 python scripts/refresh_supabase_gtfs.py --database-url "postgresql://..." --dry-run-only
 ```
 
-> **Nota deploy:** paragens/shapes vêm da DB; **ETA e horários programados** leem os `.txt` em `dados/gtfs/` no servidor. Só ter GTFS na Supabase não chega — os ficheiros têm de existir no container Railway.
+> **Nota deploy:** paragens, shapes, **ETA e horários programados** vêm da base de dados (`stop_times`, `trips`, `routes`, `stops`). Os `.txt` em `dados/gtfs/` servem para alimentar a DB via `scripts/refresh_supabase_gtfs.py` (fallback local em dev sem DB).
 
 ### Tempo real (STCP)
 

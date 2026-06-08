@@ -1,7 +1,7 @@
 import os
 from fastapi import APIRouter
 from app.config import modo_refresh_realtime, STCP_REFRESH_INTERVAL_SECONDS
-from app.services import stcp_realtime, stcp_paragens
+from app.services import stcp_realtime, stcp_paragens, calculadora
 from app.database import garantir_pool
 
 router = APIRouter(prefix="/api", tags=["Health"])
@@ -21,6 +21,7 @@ async def health():
         "ultima_atualizacao": stcp_realtime.ultima_atualizacao,
         "api_stcp_configurada": url_configurada,
         "db_disponivel": bool(pool),
+        "gtfs": calculadora.estado_gtfs(),
     }
 
 

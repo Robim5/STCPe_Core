@@ -15,6 +15,8 @@ _tempos_gtfs_periodo = {}
 _tempos_gtfs_global = {}
 # horarios de passagem por paragem: (linha, direction, stop_id)
 _horarios_programados = {}
+# "db", "ficheiro" ou "nenhuma"
+_gtfs_fonte = "nenhuma"
 
 # fator de correcao estrada vs linha reta (urbano Porto)
 _FATOR_ESTRADA = 1.35
@@ -110,36 +112,13 @@ def _codigos_correspondem(codigo_a: str, codigo_b: str) -> bool:
     return bool(base_a and base_a == base_b)
 
 
-def carregar_tempos_gtfs():
-    """
-    carrega os tempos programados do GTFS (stop_times.txt + trips.txt)
-    separa viagens por periodo do dia (madrugada, ponta manha, dia, ponta tarde, noite)
-    para que as estimativas reflitam o transito real de cada periodo
-    """
-    global _tempos_gtfs_periodo, _tempos_gtfs_global
-
-    trips_file = _PASTA_GTFS / "trips.txt"
-    stop_times_file = _PASTA_GTFS / "stop_times.txt"
-
-    if not trips_file.exists() or not stop_times_file.exists():
-        print("Aviso: Ficheiros GTFS nao encontrados. ETA usara calculo por distancia.")
-        return
-
-    # trip_id -> (route_id, direction_id)
-    trip_route = {}
-    with open(trips_file, "r", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            trip_route[row["trip_id"]] = (row["route_id"], int(row["direction_id"]))
-
-    # agrupar stop_times por trip
-    trip_stops = defaultdict(list)
-    with open(stop_times_file, "r", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            trip_stops[row["trip_id"]].append(row)
-
-    # colecionar tempos acumulados por (rota, sentido, periodo) e globalmente
-    acum_periodo = defaultdict(lambda: defaultdict(list))
-    acum_global = defaultdict(lambda: defaultdict(list))
+def _processar_tempos_gtfs_viagens(
+    trip_route: dict[str, tuple[str, int]],
+    trip_stops: dict[str, list[dict]],
+) -> tuple[dict, dict]:
+    """agrega stop_times por viagem em medianas por periodo e global"""
+    acum_periodo: dict = defaultdict(lambda: defaultdict(list))
+    acum_global: dict = defaultdict(lambda: defaultdict(list))
 
     for tid, stops in trip_stops.items():
         if tid not in trip_route:
@@ -157,33 +136,70 @@ def carregar_tempos_gtfs():
         for s in stops:
             arr = _parse_time(s["arrival_time"])
             cumulativo = arr - base_time
-            # filtrar anomalias (tempos negativos ou superiores a 3h)
             if 0 <= cumulativo <= 10800:
                 acum_periodo[(route, direction, periodo)][s["stop_id"]].append(cumulativo)
                 acum_global[(route, direction)][s["stop_id"]].append(cumulativo)
 
-    # mediana por periodo (min 3 viagens para ser representativo)
+    tempos_periodo = {}
     for key, stops_dict in acum_periodo.items():
-        _tempos_gtfs_periodo[key] = {}
+        tempos_periodo[key] = {}
         for stop_code, times in stops_dict.items():
             if len(times) >= 3:
-                _tempos_gtfs_periodo[key][stop_code] = median(times)
+                tempos_periodo[key][stop_code] = median(times)
 
-    # mediana global (fallback)
+    tempos_global = {}
     for key, stops_dict in acum_global.items():
-        _tempos_gtfs_global[key] = {}
+        tempos_global[key] = {}
         for stop_code, times in stops_dict.items():
-            _tempos_gtfs_global[key][stop_code] = median(times)
+            tempos_global[key][stop_code] = median(times)
 
-    n_periodo = len(_tempos_gtfs_periodo)
-    n_global = len(_tempos_gtfs_global)
-    print(f"GTFS: {n_global} rotas globais + {n_periodo} rotas por periodo carregadas.")
+    return tempos_periodo, tempos_global
 
 
-def carregar_horarios_programados():
-    """ carrega horarios de passagem (stop_times) para o proximo autocarro programado na paragem, mesmo sem veiculo GPS a caminho """
+def _aplicar_tempos_gtfs(tempos_periodo: dict, tempos_global: dict) -> bool:
+    global _tempos_gtfs_periodo, _tempos_gtfs_global
+    _tempos_gtfs_periodo = tempos_periodo
+    _tempos_gtfs_global = tempos_global
+    return bool(tempos_periodo or tempos_global)
+
+
+def _aplicar_horarios_programados(horarios: dict) -> bool:
     global _horarios_programados
+    _horarios_programados = horarios
+    return bool(horarios)
 
+
+def _carregar_tempos_gtfs_de_ficheiros() -> bool:
+    """fallback local: stop_times.txt + trips.txt"""
+    trips_file = _PASTA_GTFS / "trips.txt"
+    stop_times_file = _PASTA_GTFS / "stop_times.txt"
+
+    if not trips_file.exists() or not stop_times_file.exists():
+        print("Aviso: Ficheiros GTFS nao encontrados. ETA usara calculo por distancia.")
+        return False
+
+    trip_route = {}
+    with open(trips_file, "r", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            trip_route[row["trip_id"]] = (row["route_id"], int(row["direction_id"]))
+
+    trip_stops = defaultdict(list)
+    with open(stop_times_file, "r", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            trip_stops[row["trip_id"]].append(row)
+
+    tempos_periodo, tempos_global = _processar_tempos_gtfs_viagens(trip_route, trip_stops)
+    ok = _aplicar_tempos_gtfs(tempos_periodo, tempos_global)
+    if ok:
+        print(
+            f"GTFS (ficheiro): {len(tempos_global)} rotas globais + "
+            f"{len(tempos_periodo)} rotas por periodo carregadas."
+        )
+    return ok
+
+
+def _carregar_horarios_programados_de_ficheiros() -> bool:
+    """fallback local: routes/trips/stops/stop_times.txt"""
     routes_file = _PASTA_GTFS / "routes.txt"
     trips_file = _PASTA_GTFS / "trips.txt"
     stops_file = _PASTA_GTFS / "stops.txt"
@@ -191,8 +207,8 @@ def carregar_horarios_programados():
 
     if not all(f.exists() for f in (routes_file, trips_file, stops_file, stop_times_file)):
         print("Aviso: Ficheiros GTFS incompletos. Horarios programados indisponiveis.")
-        _horarios_programados = {}
-        return
+        _aplicar_horarios_programados({})
+        return False
 
     route_short = {}
     with open(routes_file, "r", encoding="utf-8") as f:
@@ -236,8 +252,162 @@ def carregar_horarios_programados():
             codigo = stop_codigo.get(stop_id, stop_id.upper())
             horarios[(linha, direction, codigo)].append(_parse_time(arrival))
 
-    _horarios_programados = {k: sorted(set(v)) for k, v in horarios.items() if v}
-    print(f"GTFS: horarios programados para {len(_horarios_programados)} paragens.")
+    ok = _aplicar_horarios_programados(
+        {k: sorted(set(v)) for k, v in horarios.items() if v}
+    )
+    if ok:
+        print(f"GTFS (ficheiro): horarios programados para {len(_horarios_programados)} paragens.")
+    return ok
+
+
+async def _carregar_tempos_gtfs_da_db(pool) -> bool:
+    async with pool.acquire() as conn:
+        tem_stop_times = await conn.fetchval(
+            "SELECT EXISTS(SELECT 1 FROM stop_times LIMIT 1)"
+        )
+        if not tem_stop_times:
+            return False
+
+        rows = await conn.fetch(
+            """
+            SELECT
+                t.trip_id,
+                UPPER(TRIM(r.route_short_name)) AS linha,
+                COALESCE(t.direction_id, 0) AS direction_id,
+                st.stop_sequence,
+                st.arrival_time,
+                st.departure_time,
+                st.stop_id
+            FROM stop_times st
+            INNER JOIN trips t ON t.trip_id = st.trip_id
+            INNER JOIN routes r ON r.route_id = t.route_id
+            WHERE r.route_short_name IS NOT NULL
+              AND TRIM(r.route_short_name) <> ''
+            ORDER BY t.trip_id, st.stop_sequence
+            """
+        )
+
+    trip_route: dict[str, tuple[str, int]] = {}
+    trip_stops: dict[str, list[dict]] = defaultdict(list)
+    for row in rows:
+        trip_id = row["trip_id"]
+        if trip_id not in trip_route:
+            trip_route[trip_id] = (row["linha"], int(row["direction_id"]))
+        trip_stops[trip_id].append(
+            {
+                "stop_sequence": str(row["stop_sequence"]),
+                "arrival_time": row["arrival_time"],
+                "departure_time": row["departure_time"],
+                "stop_id": row["stop_id"],
+            }
+        )
+
+    tempos_periodo, tempos_global = _processar_tempos_gtfs_viagens(trip_route, trip_stops)
+    ok = _aplicar_tempos_gtfs(tempos_periodo, tempos_global)
+    if ok:
+        print(
+            f"GTFS (DB): {len(tempos_global)} rotas globais + "
+            f"{len(tempos_periodo)} rotas por periodo carregadas."
+        )
+    return ok
+
+
+async def _carregar_horarios_programados_da_db(pool) -> bool:
+    async with pool.acquire() as conn:
+        tem_stop_times = await conn.fetchval(
+            "SELECT EXISTS(SELECT 1 FROM stop_times LIMIT 1)"
+        )
+        if not tem_stop_times:
+            return False
+
+        rows = await conn.fetch(
+            """
+            SELECT
+                UPPER(TRIM(r.route_short_name)) AS linha,
+                COALESCE(t.direction_id, 0) AS direction_id,
+                UPPER(COALESCE(NULLIF(TRIM(s.stop_code), ''), s.stop_id)) AS codigo,
+                COALESCE(NULLIF(TRIM(st.arrival_time), ''), st.departure_time) AS arrival_time
+            FROM stop_times st
+            INNER JOIN trips t ON t.trip_id = st.trip_id
+            INNER JOIN routes r ON r.route_id = t.route_id
+            INNER JOIN stops s ON s.stop_id = st.stop_id
+            WHERE r.route_short_name IS NOT NULL
+              AND TRIM(r.route_short_name) <> ''
+            """
+        )
+
+    horarios = defaultdict(list)
+    for row in rows:
+        arrival = (row["arrival_time"] or "").strip()
+        if not arrival:
+            continue
+        horarios[(row["linha"], int(row["direction_id"]), row["codigo"])].append(
+            _parse_time(arrival)
+        )
+
+    ok = _aplicar_horarios_programados(
+        {k: sorted(set(v)) for k, v in horarios.items() if v}
+    )
+    if ok:
+        print(f"GTFS (DB): horarios programados para {len(_horarios_programados)} paragens.")
+    return ok
+
+
+async def carregar_gtfs():
+    """
+    carrega tempos GTFS e horarios programados.
+    prioridade: base de dados; fallback para ficheiros locais (dev).
+    """
+    global _gtfs_fonte
+
+    from app.database import garantir_pool
+
+    pool = await garantir_pool()
+    horarios_db = False
+    tempos_db = False
+    horarios_ok = False
+    tempos_ok = False
+
+    if pool:
+        try:
+            horarios_db = await _carregar_horarios_programados_da_db(pool)
+            tempos_db = await _carregar_tempos_gtfs_da_db(pool)
+            horarios_ok = horarios_db
+            tempos_ok = tempos_db
+        except Exception as e:
+            print(f"Aviso: falha ao carregar GTFS da base de dados - {e}")
+
+    if not horarios_ok:
+        horarios_ok = _carregar_horarios_programados_de_ficheiros()
+    if not tempos_ok:
+        tempos_ok = _carregar_tempos_gtfs_de_ficheiros()
+
+    if horarios_db or tempos_db:
+        _gtfs_fonte = "db"
+    elif horarios_ok or tempos_ok:
+        _gtfs_fonte = "ficheiro"
+    else:
+        _gtfs_fonte = "nenhuma"
+
+
+def carregar_tempos_gtfs():
+    """compatibilidade: apenas ficheiros locais"""
+    _carregar_tempos_gtfs_de_ficheiros()
+
+
+def carregar_horarios_programados():
+    """compatibilidade: apenas ficheiros locais"""
+    _carregar_horarios_programados_de_ficheiros()
+
+
+def estado_gtfs() -> dict:
+    return {
+        "fonte": _gtfs_fonte,
+        "horarios_programados": len(_horarios_programados),
+        "tempos_gtfs_global": len(_tempos_gtfs_global),
+        "tempos_gtfs_periodo": len(_tempos_gtfs_periodo),
+        "disponivel": bool(_horarios_programados or _tempos_gtfs_global),
+    }
 
 
 def _horarios_para_codigo(linha: str, direction: int, codigo: str) -> list[int]:

@@ -97,8 +97,15 @@ async def lifespan(app: FastAPI):
     await database.criar_pool()
     await stcp_realtime.inicializar_tabela_veiculos()
     await stcp_paragens.carregar_paragens()
-    calculadora.carregar_tempos_gtfs()
-    calculadora.carregar_horarios_programados()
+    await calculadora.carregar_gtfs()
+
+    gtfs = calculadora.estado_gtfs()
+    print(
+        f"GTFS: fonte={gtfs['fonte']} | "
+        f"horarios={gtfs['horarios_programados']} paragens | "
+        f"tempos_global={gtfs['tempos_gtfs_global']} rotas | "
+        f"tempos_periodo={gtfs['tempos_gtfs_periodo']} rotas"
+    )
 
     modo = modo_refresh_realtime()
     print(f"Refresh tempo real: {modo}")
@@ -107,8 +114,14 @@ async def lifespan(app: FastAPI):
     if ENABLE_BACKGROUND_POLLING and not IS_SERVERLESS:
         tarefa_realtime = asyncio.create_task(stcp_realtime.loop_atualizacao_continua())
     else:
-        # sem loop infinito: arranque + cron externo (/api/internal/refresh) ou refresh por pedido
         await stcp_realtime.garantir_dados_recentes(force=True)
+        if not stcp_realtime.autocarros_processados:
+            print("Aviso: primeira tentativa STCP sem dados. A tentar novamente em 3s...")
+            await asyncio.sleep(3)
+            await stcp_realtime.garantir_dados_recentes(force=True)
+
+        print(f"Arranque: {len(stcp_realtime.autocarros_processados)} autocarros carregados")
+
         if modo == "cron":
             print(
                 "Agenda GET /api/internal/refresh a cada 15-30s (ex.: cron-job.org) "
@@ -179,7 +192,7 @@ app.add_middleware(
 
 
 # Cache-Control automatico por tipo de rota (reduz re-fetches e custo de CPU)
-_REALTIME_PREFIXES = ("/api/autocarros", "/api/tempo/", "/api/health", "/api/paragem/")
+_NO_CACHE_PREFIXES = ("/api/tempo/", "/api/paragem/", "/api/internal/")
 _STATIC_PREFIXES = ("/api/linhas", "/api/paragens", "/api/estatisticas")
 
 
@@ -189,9 +202,9 @@ async def adicionar_cache_control(request: Request, call_next):
     path = request.url.path
 
     if "Cache-Control" not in response.headers and path.startswith("/api/"):
-        if path == "/api/internal/refresh":
+        if any(path.startswith(p) for p in _NO_CACHE_PREFIXES):
             response.headers["Cache-Control"] = "no-store"
-        elif any(path.startswith(p) for p in _REALTIME_PREFIXES):
+        elif path.startswith("/api/autocarros"):
             response.headers["Cache-Control"] = f"public, max-age={CACHE_TTL_REALTIME}"
         elif any(path.startswith(p) for p in _STATIC_PREFIXES):
             response.headers["Cache-Control"] = f"public, max-age={CACHE_TTL_STATIC}"

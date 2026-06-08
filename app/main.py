@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -24,6 +25,8 @@ from app.config import (
     RATE_LIMIT_ENABLED,
     RATE_LIMIT_REQUESTS,
     RATE_LIMIT_WINDOW_SECONDS,
+    CACHE_TTL_REALTIME,
+    CACHE_TTL_STATIC,
 )
 from app import database
 from app.services import stcp_realtime, stcp_paragens, calculadora
@@ -142,6 +145,8 @@ app = FastAPI(
     openapi_url=None if IS_PRODUCTION else "/openapi.json",
 )
 
+app.add_middleware(GZipMiddleware, minimum_size=500)
+
 _STATIC_DIR = Path(__file__).resolve().parent / "static"
 app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
 app.mount("/frontend/static", StaticFiles(directory=str(_STATIC_DIR)), name="frontend_static_legacy")
@@ -173,7 +178,27 @@ app.add_middleware(
 )
 
 
-# mete headers extra de seguranca
+# Cache-Control automatico por tipo de rota (reduz re-fetches e custo de CPU)
+_REALTIME_PREFIXES = ("/api/autocarros", "/api/tempo/", "/api/health", "/api/paragem/")
+_STATIC_PREFIXES = ("/api/linhas", "/api/paragens", "/api/estatisticas")
+
+
+@app.middleware("http")
+async def adicionar_cache_control(request: Request, call_next):
+    response = await call_next(request)
+    path = request.url.path
+
+    if "Cache-Control" not in response.headers and path.startswith("/api/"):
+        if path == "/api/internal/refresh":
+            response.headers["Cache-Control"] = "no-store"
+        elif any(path.startswith(p) for p in _REALTIME_PREFIXES):
+            response.headers["Cache-Control"] = f"public, max-age={CACHE_TTL_REALTIME}"
+        elif any(path.startswith(p) for p in _STATIC_PREFIXES):
+            response.headers["Cache-Control"] = f"public, max-age={CACHE_TTL_STATIC}"
+
+    return response
+
+
 @app.middleware("http")
 async def adicionar_headers_seguranca(request: Request, call_next):
     response = await call_next(request)

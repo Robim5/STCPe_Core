@@ -9,7 +9,6 @@ router = APIRouter(prefix="/api", tags=["Health"])
 
 @router.get("/health")
 async def health():
-    await stcp_realtime.garantir_dados_recentes()
     pool = await garantir_pool()
 
     url_configurada = bool(os.getenv("STCP_API_URL"))
@@ -27,8 +26,6 @@ async def health():
 
 @router.get("/estatisticas")
 async def estatisticas():
-    await stcp_realtime.garantir_dados_recentes()
-
     pool = await garantir_pool()
     totais_db = {}
     if pool:

@@ -86,12 +86,16 @@ RATE_LIMIT_REQUESTS = _int_env("RATE_LIMIT_REQUESTS", 120, min_value=20)
 RATE_LIMIT_WINDOW_SECONDS = _int_env("RATE_LIMIT_WINDOW_SECONDS", 60, min_value=10)
 
 # frequencias de refresh com piso de 10s para evitar carga excessiva acidental
-STCP_REFRESH_INTERVAL_SECONDS = _int_env("STCP_REFRESH_INTERVAL_SECONDS", 15, min_value=10)
-STCP_BACKGROUND_INTERVAL_SECONDS = _int_env("STCP_BACKGROUND_INTERVAL_SECONDS", 10, min_value=10)
+STCP_REFRESH_INTERVAL_SECONDS = _int_env("STCP_REFRESH_INTERVAL_SECONDS", 30, min_value=10)
+STCP_BACKGROUND_INTERVAL_SECONDS = _int_env("STCP_BACKGROUND_INTERVAL_SECONDS", 30, min_value=10)
+
+# TTL de Cache-Control para respostas publicas (segundos); reduz re-fetches dos clientes
+CACHE_TTL_REALTIME = _int_env("CACHE_TTL_REALTIME", 15, min_value=5)
+CACHE_TTL_STATIC = _int_env("CACHE_TTL_STATIC", 300, min_value=30)
 
 # limites de conexoes ao PostgreSQL (reduz risco de estourar quota no Supabase)
 _db_pool_min = _int_env("DB_POOL_MIN_SIZE", 1, min_value=1, max_value=20)
-_db_pool_max = _int_env("DB_POOL_MAX_SIZE", 5, min_value=1, max_value=30)
+_db_pool_max = _int_env("DB_POOL_MAX_SIZE", 3, min_value=1, max_value=30)
 if _db_pool_min > _db_pool_max:
 	_db_pool_min = _db_pool_max
 DB_POOL_MIN_SIZE = _db_pool_min

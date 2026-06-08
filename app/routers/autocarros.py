@@ -8,9 +8,11 @@ router = APIRouter(prefix="/api", tags=["Autocarros"])
 async def obter_autocarros():
     await stcp_realtime.garantir_dados_recentes()
     dados = await stcp_realtime.listar_autocarros_api()
+    feed = stcp_realtime.estado_feed()
     return {
         "total": len(dados),
         "ultima_atualizacao": stcp_realtime.ultima_atualizacao,
+        "feed": feed,
         "dados": dados,
     }
 
@@ -31,5 +33,6 @@ async def obter_autocarros_linha(linha: str, sentido: str = Query(None)):
         "linha": linha_upper,
         "total": len(dados),
         "ultima_atualizacao": stcp_realtime.ultima_atualizacao,
+        "feed": stcp_realtime.estado_feed(),
         "dados": dados,
     }

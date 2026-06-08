@@ -22,6 +22,7 @@ async def health():
         "api_stcp_configurada": url_configurada,
         "db_disponivel": bool(pool),
         "gtfs": calculadora.estado_gtfs(),
+        "feed_stcp": stcp_realtime.estado_feed(),
     }
 
 

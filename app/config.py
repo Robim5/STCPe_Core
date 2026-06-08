@@ -88,6 +88,10 @@ RATE_LIMIT_WINDOW_SECONDS = _int_env("RATE_LIMIT_WINDOW_SECONDS", 60, min_value=
 # frequencias de refresh com piso de 10s para evitar carga excessiva acidental
 STCP_REFRESH_INTERVAL_SECONDS = _int_env("STCP_REFRESH_INTERVAL_SECONDS", 30, min_value=10)
 STCP_BACKGROUND_INTERVAL_SECONDS = _int_env("STCP_BACKGROUND_INTERVAL_SECONDS", 30, min_value=10)
+# idade maxima do timestamp GPS do feed STCP (segundos); acima disto e "obsoleto"
+STCP_MAX_GPS_AGE_SECONDS = _int_env("STCP_MAX_GPS_AGE_SECONDS", 600, min_value=60)
+# se o feed so tiver GPS obsoleto, devolver mes assim com aviso (melhor que lista vazia)
+STCP_INCLUIR_GPS_OBSOLETO = _bool_env("STCP_INCLUIR_GPS_OBSOLETO", True)
 
 # TTL de Cache-Control para respostas publicas (segundos); reduz re-fetches dos clientes
 CACHE_TTL_REALTIME = _int_env("CACHE_TTL_REALTIME", 15, min_value=5)

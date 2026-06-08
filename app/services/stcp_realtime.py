@@ -17,6 +17,7 @@ memoria_autocarros = []  # bruto vindo do feed
 autocarros_processados = []  # pronto para os endpoints
 autocarros_por_linha = {}  # agrupado por linha
 ultima_atualizacao = None
+_feed_estado: dict = {}
 
 # intervalo minimo para refresh sob pedido
 _INTERVALO_REFRESH_S = STCP_REFRESH_INTERVAL_SECONDS
@@ -73,9 +74,13 @@ def _dados_em_memoria_recentes() -> bool:
 
 
 # puxa feed stcp e atualiza cache
+def estado_feed() -> dict:
+    return dict(_feed_estado)
+
+
 async def atualizar_autocarros_uma_vez() -> bool:
     """faz um refresh unico a partir da API STCP e persiste na DB"""
-    global memoria_autocarros, autocarros_processados, autocarros_por_linha, ultima_atualizacao
+    global memoria_autocarros, autocarros_processados, autocarros_por_linha, ultima_atualizacao, _feed_estado
 
     url = os.getenv("STCP_API_URL")
 
@@ -105,10 +110,14 @@ async def atualizar_autocarros_uma_vez() -> bool:
             return False
 
         memoria_autocarros = dados
-        autocarros_processados, autocarros_por_linha = processar_dados(dados)
+        autocarros_processados, autocarros_por_linha, _feed_estado = processar_dados(dados)
         ultima_atualizacao = datetime.now(timezone.utc).isoformat()
         await gravar_veiculos_db(autocarros_processados)
-        print(f"Sucesso: {len(autocarros_processados)} autocarros processados de {len(dados)} entidades.")
+        modo = _feed_estado.get("modo", "tempo_real")
+        print(
+            f"Sucesso: {len(autocarros_processados)} autocarros processados de {len(dados)} entidades "
+            f"({modo})."
+        )
         return True
 
     except Exception as e:
@@ -142,6 +151,8 @@ def _bus_para_resposta_api(bus: dict) -> dict:
         "velocidade": bus.get("velocidade", 0),
         "bearing": bus.get("bearing", 0),
         "timestamp": bus.get("ultima_atualizacao"),
+        "gps_fresco": bus.get("gps_fresco"),
+        "idade_gps_segundos": bus.get("idade_gps_segundos"),
         "nome_rota": None,
         "cor_linha": None,
         "destino": None,

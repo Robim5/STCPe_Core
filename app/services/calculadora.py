@@ -4,6 +4,10 @@ from pathlib import Path
 from collections import defaultdict
 from datetime import datetime
 from statistics import median
+from zoneinfo import ZoneInfo
+
+# horarios GTFS da STCP sao hora local de Portugal (Railway corre em UTC)
+_TZ_STCP = ZoneInfo("Europe/Lisbon")
 
 # pasta dos ficheiros GTFS
 _PASTA_GTFS = Path(__file__).resolve().parent.parent.parent / "dados" / "gtfs"
@@ -42,8 +46,12 @@ _FATOR_PONTA_CALCULO = 1.06
 _BUFFER_ALINHAMENTO_MIN = 1.0
 
 
+def _agora_local() -> datetime:
+    return datetime.now(_TZ_STCP)
+
+
 def _segundos_agora() -> int:
-    agora = datetime.now()
+    agora = _agora_local()
     return agora.hour * 3600 + agora.minute * 60 + agora.second
 
 
@@ -76,7 +84,7 @@ def periodo_atual() -> str:
 
 
 def _periodo_de_segundos(seg: int) -> str:
-    """determina o periodo do dia com base em segundos desde meia-noite"""
+    """determina o periodo do dia com base em segundos desde meia noite"""
     s = seg % 86400
     if s < 23400:       # 00:00 - 06:30
         return "madrugada"
@@ -97,11 +105,9 @@ def _parse_time(t: str) -> int:
 
 
 def _formatar_hora(segundos: int) -> str:
-    """formata segundos (mod 24h) para HH:MM"""
+    """formata segundos GTFS (podem ser >24h) para HH:MM hora local"""
     s = segundos % 86400
-    h = s // 3600
-    m = (s % 3600) // 60
-    return f"{h:02d}:{m:02d}"
+    return f"{s // 3600:02d}:{(s % 3600) // 60:02d}"
 
 
 def _codigos_correspondem(codigo_a: str, codigo_b: str) -> bool:
@@ -422,6 +428,7 @@ def _horarios_para_codigo(linha: str, direction: int, codigo: str) -> list[int]:
 
 
 def _segundos_ate_proximo_horario(horarios: list[int], agora: int) -> tuple[int, int] | None:
+    """encontra a proxima passagem; horarios GTFS podem exceder 24h"""
     if not horarios:
         return None
 
@@ -429,15 +436,16 @@ def _segundos_ate_proximo_horario(horarios: list[int], agora: int) -> tuple[int,
     melhor_hora = None
 
     for h in horarios:
-        opcoes = [h]
-        if h < 86400:
-            opcoes.append(h + 86400)
+        if h >= agora:
+            t, delta = h, h - agora
+        else:
+            # ja passou hoje; proxima ocorrencia no ciclo de servico
+            t = h + 86400
+            delta = t - agora
 
-        for t in opcoes:
-            delta = (t - agora) if t >= agora else (t + 86400) - agora
-            if melhor_delta is None or delta < melhor_delta:
-                melhor_delta = delta
-                melhor_hora = t % 86400
+        if melhor_delta is None or delta < melhor_delta:
+            melhor_delta = delta
+            melhor_hora = t
 
     if melhor_delta is None:
         return None

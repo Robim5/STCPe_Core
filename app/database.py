@@ -97,6 +97,9 @@ async def criar_pool():
                 ssl_ctx.verify_mode = ssl.CERT_NONE
                 print("Aviso: DB_SSL_VERIFY=false. Validacao do certificado SSL desativada.")
 
+        # statement_cache_size=0 necessario com PgBouncer (Supabase) em transaction/statement pooling
+        usar_pgbouncer = _bool_env("DB_PGBOUNCER", True)
+
         try:
             _pool = await asyncpg.create_pool(
                 dsn=dsn,
@@ -105,6 +108,7 @@ async def criar_pool():
                 command_timeout=30,
                 ssl=ssl_ctx,
                 server_settings={"application_name": "stcpe_core"},
+                statement_cache_size=0 if usar_pgbouncer else 100,
             )
             _ultimo_erro_pool = None
             print("DB conectada: PostgreSQL")
